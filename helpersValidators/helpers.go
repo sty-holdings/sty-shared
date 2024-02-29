@@ -1,4 +1,4 @@
-// Package coreHelpersValidators
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,7 +32,7 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package coreHelpersValidators
+package sty_shared
 
 import (
 	b64 "encoding/base64"
@@ -47,6 +47,7 @@ import (
 	"time"
 
 	rcv "github.com/sty-holdings/resuable-const-vars/src"
+	pi "github.com/sty-holdings/sty-shared/programInfo"
 )
 
 // Base64Decode - will decode a base64 string to a string. If there is an error,

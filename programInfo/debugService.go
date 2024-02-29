@@ -1,4 +1,4 @@
-// Package sharedServices
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,7 +32,7 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package sharedServices
+package sty_shared
 
 import (
 	// Add imports here
@@ -58,7 +58,10 @@ const (
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func PrintDebugFunctionInfo(debugModeOn bool, outputMode string) {
+func PrintDebugFunctionInfo(
+	debugModeOn bool,
+	outputMode string,
+) {
 
 	var (
 		tFunctionInfo = GetFunctionInfo(1)
@@ -82,7 +85,11 @@ func PrintDebugFunctionInfo(debugModeOn bool, outputMode string) {
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func PrintDebugLine(message string, debugModeOn bool, outputMode string) {
+func PrintDebugLine(
+	message string,
+	debugModeOn bool,
+	outputMode string,
+) {
 
 	var (
 		tFunctionInfo = GetFunctionInfo(1)

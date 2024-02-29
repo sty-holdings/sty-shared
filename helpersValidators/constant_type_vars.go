@@ -1,4 +1,4 @@
-// Package coreHelpersValidators
+// Package sty_shared
 /*
 General description of the purpose of the go file.
 
@@ -29,7 +29,7 @@ COPYRIGHT:
 	limitations under the License.
 
 */
-package coreHelpersValidators
+package sty_shared
 
 //goland:noinspection GoSnakeCaseUsage
 const (

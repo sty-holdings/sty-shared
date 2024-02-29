@@ -1,4 +1,4 @@
-// package sharedServices
+// package sty_shared
 /*
 NOTES:
     None
@@ -18,7 +18,7 @@ COPYRIGHT:
 	limitations under the License.
 
 */
-package sharedServices
+package sty_shared
 
 import (
 	"runtime"
@@ -95,9 +95,11 @@ func TestPrintDebugFunctionInfo(tPtr *testing.T) {
 	}
 
 	for _, ts := range tests {
-		tPtr.Run(tFunctionName, func(t *testing.T) {
-			PrintDebugFunctionInfo(ts.arguments.debugModeOn, ts.arguments.outputMode)
-		})
+		tPtr.Run(
+			tFunctionName, func(t *testing.T) {
+				PrintDebugFunctionInfo(ts.arguments.debugModeOn, ts.arguments.outputMode)
+			},
+		)
 	}
 }
 
@@ -170,8 +172,10 @@ func TestPrintDebugLine(tPtr *testing.T) {
 	}
 
 	for _, ts := range tests {
-		tPtr.Run(tFunctionName, func(t *testing.T) {
-			PrintDebugLine(ts.arguments.message, ts.arguments.debugModeOn, ts.arguments.outputMode)
-		})
+		tPtr.Run(
+			tFunctionName, func(t *testing.T) {
+				PrintDebugLine(ts.arguments.message, ts.arguments.debugModeOn, ts.arguments.outputMode)
+			},
+		)
 	}
 }

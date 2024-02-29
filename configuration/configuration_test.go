@@ -1,4 +1,4 @@
-// Package coreOptions
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,7 +32,7 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package sharedServices
+package sty_shared
 
 import (
 	"fmt"
@@ -41,6 +41,7 @@ import (
 	"testing"
 
 	rcv "github.com/sty-holdings/resuable-const-vars/src"
+	pi "github.com/sty-holdings/sty-shared/programInfo"
 )
 
 var (
