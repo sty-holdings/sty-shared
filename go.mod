@@ -1,11 +1,11 @@
 module github.com/sty-holdings/sty-shared/v2024
 
-go 1.21
+go 1.21.5
 
 require (
 	cloud.google.com/go/firestore v1.14.0
 	firebase.google.com/go v3.13.0+incompatible
-	github.com/sty-holdings/resuable-const-vars v2024.12.0+incompatible
+	github.com/sty-holdings/resuable-const-vars v2024.13.1+incompatible
 )
 
 require (
