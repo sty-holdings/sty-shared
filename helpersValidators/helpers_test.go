@@ -76,8 +76,8 @@ var (
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
 // 				reply: GoodReply{
-// 					Name: rcv.TEST_FIELD_NAME,
-// 					Blah: rcv.TEST_STRING,
+// 					Name: ctv.TEST_FIELD_NAME,
+// 					Blah: ctv.TEST_STRING,
 // 				},
 // 			},
 // 			wantError: false,
@@ -92,7 +92,7 @@ var (
 // 		{
 // 			name: "Negative Case: Empty Reply!",
 // 			arguments: arguments{
-// 				reply: rcv.TEST_STRING,
+// 				reply: ctv.TEST_STRING,
 // 			},
 // 			wantError: true,
 // 		},
@@ -100,7 +100,7 @@ var (
 //
 // 	for _, ts := range tests {
 // 		tPtr.Run(ts.name, func(t *testing.T) {
-// 			if tJSONReply = BuildJSONReply(ts.arguments.reply, rcv.EMPTY, rcv.EMPTY); len(tJSONReply) == 0 {
+// 			if tJSONReply = BuildJSONReply(ts.arguments.reply, ctv.EMPTY, ctv.EMPTY); len(tJSONReply) == 0 {
 // 				gotError = true
 // 			} else {
 // 				gotError = false
@@ -148,8 +148,8 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 	)
 
 	// Append the constants to the slice
-	paymentMethods = append(paymentMethods, rcv.PAYMENT_METHOD_TYPE_CARD)
-	paymentMethods = append(paymentMethods, rcv.PAYMENT_METHOD_TYPE_PAYNOW)
+	paymentMethods = append(paymentMethods, ctv.PAYMENT_METHOD_TYPE_CARD)
+	paymentMethods = append(paymentMethods, ctv.PAYMENT_METHOD_TYPE_PAYNOW)
 
 	tests := []struct {
 		name      string
@@ -157,7 +157,7 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 		wantError bool
 	}{
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Successful!",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Successful!",
 			arguments: arguments{
 				paymentMethodTypes: paymentMethods,
 			},
@@ -184,7 +184,7 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // This is needed, because GIT must have read access for push,
 // and it must be the first test in this file.
 // func TestCreateUnreadableFile(tPtr *testing.T) {
-// 	_, _ = os.OpenFile(rcv.TEST_UNREADABLE_FQN, os.O_CREATE, 0333)
+// 	_, _ = os.OpenFile(ctv.TEST_UNREADABLE_FQN, os.O_CREATE, 0333)
 // }
 
 // func TestDoesDirectoryExist(tPtr *testing.T) {
@@ -195,12 +195,12 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 	)
 //
 // 	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-// 		if coreValidators.DoesDirectoryExist(rcv.TEST_GOOD_FQN) == false {
-// 			tPtr.Errorf("%v Failed: DoesDirectoryExist returned false for %v which should exist.", tFunctionName, rcv.TEST_GOOD_FQN)
+// 		if coreValidators.DoesDirectoryExist(ctv.TEST_GOOD_FQN) == false {
+// 			tPtr.Errorf("%v Failed: DoesDirectoryExist returned false for %v which should exist.", tFunctionName, ctv.TEST_GOOD_FQN)
 // 		}
-// 		_ = os.Remove(rcv.TEST_NO_SUCH_FILE)
-// 		if coreValidators.DoesDirectoryExist(rcv.TEST_NO_SUCH_FILE) {
-// 			tPtr.Errorf("%v Failed: DoesDirectoryExist returned true for %v afer it was removed.", tFunctionName, rcv.TEST_NO_SUCH_FILE)
+// 		_ = os.Remove(ctv.TEST_NO_SUCH_FILE)
+// 		if coreValidators.DoesDirectoryExist(ctv.TEST_NO_SUCH_FILE) {
+// 			tPtr.Errorf("%v Failed: DoesDirectoryExist returned true for %v afer it was removed.", tFunctionName, ctv.TEST_NO_SUCH_FILE)
 // 		}
 // 	})
 // }
@@ -213,12 +213,12 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 	)
 //
 // 	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-// 		if coreValidators.DoesFileExist(rcv.TEST_GOOD_FQN) == false {
-// 			tPtr.Errorf("%v Failed: DoesFileExist returned false for %v which should exist.", tFunctionName, rcv.TEST_GOOD_FQN)
+// 		if coreValidators.DoesFileExist(ctv.TEST_GOOD_FQN) == false {
+// 			tPtr.Errorf("%v Failed: DoesFileExist returned false for %v which should exist.", tFunctionName, ctv.TEST_GOOD_FQN)
 // 		}
-// 		_ = os.Remove(rcv.TEST_NO_SUCH_FILE)
-// 		if coreValidators.DoesFileExist(rcv.TEST_NO_SUCH_FILE) {
-// 			tPtr.Errorf("%v Failed: DoesFileExist returned true for %v afer it was removed.", tFunctionName, rcv.TEST_NO_SUCH_FILE)
+// 		_ = os.Remove(ctv.TEST_NO_SUCH_FILE)
+// 		if coreValidators.DoesFileExist(ctv.TEST_NO_SUCH_FILE) {
+// 			tPtr.Errorf("%v Failed: DoesFileExist returned true for %v afer it was removed.", tFunctionName, ctv.TEST_NO_SUCH_FILE)
 // 		}
 // 	})
 // }
@@ -231,7 +231,7 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 	)
 //
 // 	tPtr.Run(tFunctionName, func(t *testing.T) {
-// 		if FloatToPennies(rcv.TEST_FLOAT_123_01) != rcv.TEST_FLOAT_123_01*100 {
+// 		if FloatToPennies(ctv.TEST_FLOAT_123_01) != ctv.TEST_FLOAT_123_01*100 {
 // 			tPtr.Errorf("%v Failed: Expected the numbers to match", tFunctionName)
 // 		}
 // 	})
@@ -262,8 +262,8 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful Secure, localhost, 1234",
 // 			arguments: arguments{
-// 				protocol: rcv.HTTP_PROTOCOL_SECURE,
-// 				domain:   rcv.HTTP_DOMAIN_LOCALHOST,
+// 				protocol: ctv.HTTP_PROTOCOL_SECURE,
+// 				domain:   ctv.HTTP_DOMAIN_LOCALHOST,
 // 				port:     1234,
 // 			},
 // 			wantError: false,
@@ -271,8 +271,8 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful Non-Secure, localhost, 1234",
 // 			arguments: arguments{
-// 				protocol: rcv.HTTP_PROTOCOL_NON_SECURE,
-// 				domain:   rcv.HTTP_DOMAIN_LOCALHOST,
+// 				protocol: ctv.HTTP_PROTOCOL_NON_SECURE,
+// 				domain:   ctv.HTTP_DOMAIN_LOCALHOST,
 // 				port:     1234,
 // 			},
 // 			wantError: false,
@@ -280,8 +280,8 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful Secure, api-dev.savup.com, 1234",
 // 			arguments: arguments{
-// 				protocol: rcv.HTTP_PROTOCOL_SECURE,
-// 				domain:   rcv.HTTP_DOMAIN_API_DEV,
+// 				protocol: ctv.HTTP_PROTOCOL_SECURE,
+// 				domain:   ctv.HTTP_DOMAIN_API_DEV,
 // 				port:     1234,
 // 			},
 // 			wantError: false,
@@ -289,8 +289,8 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful Non-Secure, api-dev.savup.com, 1234",
 // 			arguments: arguments{
-// 				protocol: rcv.HTTP_PROTOCOL_NON_SECURE,
-// 				domain:   rcv.HTTP_DOMAIN_API_DEV,
+// 				protocol: ctv.HTTP_PROTOCOL_NON_SECURE,
+// 				domain:   ctv.HTTP_DOMAIN_API_DEV,
 // 				port:     1234,
 // 			},
 // 			wantError: false,
@@ -328,7 +328,7 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		if tEnd = GenerateEndDate("2024-01-10", 0); tEnd != "2024-01-10" {
 // 			tPtr.Errorf("%v Failed: End date was not equal to start date.", tFunctionName)
 // 		}
-// 		if tEnd = GenerateEndDate("", 0); tEnd != rcv.EMPTY {
+// 		if tEnd = GenerateEndDate("", 0); tEnd != ctv.EMPTY {
 // 			tPtr.Errorf("%v Failed: End date was not empty.", tFunctionName)
 // 		}
 // 	})
@@ -394,42 +394,42 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful local and secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_LOCAL,
+// 				environment: ctv.ENVIRONMENT_LOCAL,
 // 				secure:      true,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful local and non-secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_LOCAL,
+// 				environment: ctv.ENVIRONMENT_LOCAL,
 // 				secure:      false,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful development and secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_DEVELOPMENT,
+// 				environment: ctv.ENVIRONMENT_DEVELOPMENT,
 // 				secure:      true,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful development and non-secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_DEVELOPMENT,
+// 				environment: ctv.ENVIRONMENT_DEVELOPMENT,
 // 				secure:      false,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful production and secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_PRODUCTION,
+// 				environment: ctv.ENVIRONMENT_PRODUCTION,
 // 				secure:      true,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful production and non-secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_PRODUCTION,
+// 				environment: ctv.ENVIRONMENT_PRODUCTION,
 // 				secure:      false,
 // 			},
 // 		},
@@ -459,42 +459,42 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful local and secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_LOCAL,
+// 				environment: ctv.ENVIRONMENT_LOCAL,
 // 				secure:      true,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful local and non-secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_LOCAL,
+// 				environment: ctv.ENVIRONMENT_LOCAL,
 // 				secure:      false,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful development and secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_DEVELOPMENT,
+// 				environment: ctv.ENVIRONMENT_DEVELOPMENT,
 // 				secure:      true,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful development and non-secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_DEVELOPMENT,
+// 				environment: ctv.ENVIRONMENT_DEVELOPMENT,
 // 				secure:      false,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful production and secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_PRODUCTION,
+// 				environment: ctv.ENVIRONMENT_PRODUCTION,
 // 				secure:      true,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful production and non-secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_PRODUCTION,
+// 				environment: ctv.ENVIRONMENT_PRODUCTION,
 // 				secure:      false,
 // 			},
 // 		},
@@ -524,42 +524,42 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful local and secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_LOCAL,
+// 				environment: ctv.ENVIRONMENT_LOCAL,
 // 				secure:      true,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful local and non-secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_LOCAL,
+// 				environment: ctv.ENVIRONMENT_LOCAL,
 // 				secure:      false,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful development and secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_DEVELOPMENT,
+// 				environment: ctv.ENVIRONMENT_DEVELOPMENT,
 // 				secure:      true,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful development and non-secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_DEVELOPMENT,
+// 				environment: ctv.ENVIRONMENT_DEVELOPMENT,
 // 				secure:      false,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful production and secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_PRODUCTION,
+// 				environment: ctv.ENVIRONMENT_PRODUCTION,
 // 				secure:      true,
 // 			},
 // 		},
 // 		{
 // 			name: "Positive Case: Successful production and non-secure",
 // 			arguments: arguments{
-// 				environment: rcv.ENVIRONMENT_PRODUCTION,
+// 				environment: ctv.ENVIRONMENT_PRODUCTION,
 // 				secure:      false,
 // 			},
 // 		},
@@ -629,7 +629,7 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 //
 // 	for _, ts := range tests {
 // 		tPtr.Run(ts.name, func(t *testing.T) {
-// 			if tLegalName := BuildLegalName(ts.arguments.firstName, ts.arguments.lastName); tLegalName == rcv.EMPTY {
+// 			if tLegalName := BuildLegalName(ts.arguments.firstName, ts.arguments.lastName); tLegalName == ctv.EMPTY {
 // 				gotError = true
 // 			} else {
 // 				gotError = false
@@ -725,14 +725,14 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 	)
 //
 // 	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-// 		if coreValidators.IsFileReadable(rcv.TEST_GOOD_FQN) == false {
+// 		if coreValidators.IsFileReadable(ctv.TEST_GOOD_FQN) == false {
 // 			tPtr.Errorf("%v Failed: File is not readable.", tFunctionName)
 // 		}
-// 		_, _ = os.ReadFile(rcv.TEST_NO_SUCH_FILE)
-// 		if coreValidators.IsFileReadable(rcv.TEST_NO_SUCH_FILE) == true {
+// 		_, _ = os.ReadFile(ctv.TEST_NO_SUCH_FILE)
+// 		if coreValidators.IsFileReadable(ctv.TEST_NO_SUCH_FILE) == true {
 // 			tPtr.Errorf("%v Failed: File is not readable.", tFunctionName)
 // 		}
-// 		if coreValidators.IsFileReadable(rcv.TEST_UNREADABLE_FQN) == true {
+// 		if coreValidators.IsFileReadable(ctv.TEST_UNREADABLE_FQN) == true {
 // 			tPtr.Errorf("%v Failed: File is not readable.", tFunctionName)
 // 		}
 // 	})
@@ -747,8 +747,8 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 	)
 //
 // 	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-// 		if tAmount = PenniesToFloat(rcv.TEST_NUMBER_44); tAmount != rcv.TEST_NUMBER_44/100 {
-// 			tPtr.Errorf("%v Failed: Was expected %v and got error.", tFunctionName, rcv.TEST_NUMBER_44/100)
+// 		if tAmount = PenniesToFloat(ctv.TEST_NUMBER_44); tAmount != ctv.TEST_NUMBER_44/100 {
+// 			tPtr.Errorf("%v Failed: Was expected %v and got error.", tFunctionName, ctv.TEST_NUMBER_44/100)
 // 		}
 // 		if tAmount = PenniesToFloat(0); tAmount != 0 {
 // 			tPtr.Errorf("%v Failed: Was expected zero and got %v.", tFunctionName, tAmount)
@@ -769,7 +769,7 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		if tLogFileHandlerPtr, _ = RedirectLogOutput("/tmp"); tLogFileHandlerPtr == nil {
 // 			tPtr.Errorf("%v Failed: Was expecting a pointer to be returned and got nil.", tFunctionName)
 // 		}
-// 		if _, tLogFQN = RedirectLogOutput("/tmp"); tLogFQN == rcv.EMPTY {
+// 		if _, tLogFQN = RedirectLogOutput("/tmp"); tLogFQN == ctv.EMPTY {
 // 			tPtr.Errorf("%v Failed: Was expecting the LogFQN to be populated and it was empty.", tFunctionName)
 // 		}
 // 	})
@@ -823,21 +823,21 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				service: rcv.AUTH_COGNITO,
+// 				service: ctv.AUTH_COGNITO,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Negative Case: Not Supported!",
 // 			arguments: arguments{
-// 				service: rcv.AUTH_FIREBASE,
+// 				service: ctv.AUTH_FIREBASE,
 // 			},
 // 			wantError: true,
 // 		},
 // 		{
 // 			name: "Negative Case: Empty method!",
 // 			arguments: arguments{
-// 				service: rcv.EMPTY,
+// 				service: ctv.EMPTY,
 // 			},
 // 			wantError: true,
 // 		},
@@ -868,10 +868,10 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 	)
 //
 // 	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-// 		if errorInfo = coreValidators.ValidateDirectory(rcv.TEST_PID_DIRECTORY); errorInfo.Error != nil {
+// 		if errorInfo = coreValidators.ValidateDirectory(ctv.TEST_PID_DIRECTORY); errorInfo.Error != nil {
 // 			tPtr.Errorf("%v Failed: Expected err to be 'nil' and got %v.", tFunctionName, errorInfo.Error.Error())
 // 		}
-// 		if errorInfo = coreValidators.ValidateDirectory(rcv.TEST_STRING); errorInfo.Error == nil {
+// 		if errorInfo = coreValidators.ValidateDirectory(ctv.TEST_STRING); errorInfo.Error == nil {
 // 			tPtr.Errorf("%v Failed: Expected an error and got nil.", tFunctionName)
 // 		}
 // 	})
@@ -896,35 +896,35 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				method: rcv.TRANFER_STRIPE,
+// 				method: ctv.TRANFER_STRIPE,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				method: rcv.TRANFER_WIRE,
+// 				method: ctv.TRANFER_WIRE,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				method: rcv.TRANFER_CHECK,
+// 				method: ctv.TRANFER_CHECK,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				method: rcv.TRANFER_ZELLE,
+// 				method: ctv.TRANFER_ZELLE,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Negative Case: Empty method!",
 // 			arguments: arguments{
-// 				method: rcv.EMPTY,
+// 				method: ctv.EMPTY,
 // 			},
 // 			wantError: true,
 // 		},
@@ -956,20 +956,20 @@ func TestConvertSliceToSliceOfPtrs(tPtr *testing.T) {
 //
 // 	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
 // 		// Create PID file
-// 		if errorInfo = WritePidFile(rcv.TEST_PID_DIRECTORY); errorInfo.Error != nil {
+// 		if errorInfo = WritePidFile(ctv.TEST_PID_DIRECTORY); errorInfo.Error != nil {
 // 			tPtr.Errorf("%v Failed: Expected err to be 'nil'.", tFunctionName)
 // 		}
 // 		// PID directory is not provided
-// 		if errorInfo = WritePidFile(rcv.EMPTY); errorInfo.Error == nil {
+// 		if errorInfo = WritePidFile(ctv.EMPTY); errorInfo.Error == nil {
 // 			tPtr.Errorf("%v Failed: Expected err to be 'nil'.", tFunctionName)
 // 		}
 // 		// PID file exists
-// 		if errorInfo = WritePidFile(rcv.TEST_PID_DIRECTORY); errorInfo.Error != nil {
+// 		if errorInfo = WritePidFile(ctv.TEST_PID_DIRECTORY); errorInfo.Error != nil {
 // 			tPtr.Errorf("%v Failed: Expected err to be 'nil'.", tFunctionName)
 // 		}
 // 	})
 //
-// 	_ = RemovePidFile(rcv.TEST_PID_DIRECTORY)
+// 	_ = RemovePidFile(ctv.TEST_PID_DIRECTORY)
 //
 // }
 
@@ -984,11 +984,11 @@ func TestIsDirectoryFullyQualified(tPtr *testing.T) {
 		tFunctionName, func(tPtr *testing.T) {
 			// Adds working directory to file name
 			if IsDirectoryFullyQualified(TEST_DIRECTORY_ENDING_SLASH) == false {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.TXT_GOT_WRONG_BOOLEAN)
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.TXT_GOT_WRONG_BOOLEAN)
 			}
 			// Pass working directory and get back working directory
 			if IsDirectoryFullyQualified(TEST_DIRECTORY) {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.TXT_GOT_WRONG_BOOLEAN)
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.TXT_GOT_WRONG_BOOLEAN)
 			}
 		},
 	)
@@ -1011,11 +1011,11 @@ func TestPrependWorkingDirectory(tPtr *testing.T) {
 		tFunctionName, func(tPtr *testing.T) {
 			// Adds working directory to file name
 			if tPrependedFileName = PrependWorkingDirectory(TEST_FILE_NAME); tPrependedFileName != tTestFileName {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.TXT_DID_NOT_MATCH)
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.TXT_DID_NOT_MATCH)
 			}
 			// Pass working directory and get back working directory
 			if tPrependedFileName = PrependWorkingDirectory(tWorkingDirectory); tPrependedFileName != tWorkingDirectory {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.TXT_DID_NOT_MATCH)
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.TXT_DID_NOT_MATCH)
 			}
 		},
 	)
@@ -1062,7 +1062,7 @@ func TestPrependWorkingDirectoryWithEndingSlash(tPtr *testing.T) {
 				tPtr.Run(
 					tt.name, func(t *testing.T) {
 						if output := PrependWorkingDirectoryWithEndingSlash(tt.input); output != tt.expected {
-							t.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tt.name, rcv.TXT_DID_NOT_MATCH)
+							t.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tt.name, ctv.TXT_DID_NOT_MATCH)
 						}
 					},
 				)
@@ -1085,13 +1085,13 @@ func TestRedirectLogOutput(tPtr *testing.T) {
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
-			if errorInfo = RedirectLogOutput(tLogFileHandlerPtr, rcv.MODE_OUTPUT_LOG); errorInfo.Error != nil {
+			if errorInfo = RedirectLogOutput(tLogFileHandlerPtr, ctv.MODE_OUTPUT_LOG); errorInfo.Error != nil {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, errorInfo.Error.Error())
 			}
-			if errorInfo = RedirectLogOutput(tLogFileHandlerPtr, rcv.MODE_OUTPUT_LOG_DISPLAY); errorInfo.Error != nil {
+			if errorInfo = RedirectLogOutput(tLogFileHandlerPtr, ctv.MODE_OUTPUT_LOG_DISPLAY); errorInfo.Error != nil {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, errorInfo.Error.Error())
 			}
-			if errorInfo = RedirectLogOutput(tLogFileHandlerPtr, rcv.VAL_EMPTY); errorInfo.Error == nil {
+			if errorInfo = RedirectLogOutput(tLogFileHandlerPtr, ctv.VAL_EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf(pi.EXPECTED_ERROR_FORMAT, tFunctionName)
 			}
 		},
@@ -1115,7 +1115,7 @@ func TestRemovePidFile(tPtr *testing.T) {
 			if errorInfo = RemovePidFile(tTestFQN); errorInfo.Error != nil {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, errorInfo.Error.Error())
 			}
-			if errorInfo = RemovePidFile(rcv.VAL_EMPTY); errorInfo.Error == nil {
+			if errorInfo = RemovePidFile(ctv.VAL_EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf(pi.EXPECTED_ERROR_FORMAT, tFunctionName)
 			}
 		},
@@ -1133,11 +1133,11 @@ func TestWriteFile(tPtr *testing.T) {
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
-			if errorInfo = WriteFile(tTestFQN, []byte(rcv.TXT_EMPTY), 0777); errorInfo.Error != nil {
+			if errorInfo = WriteFile(tTestFQN, []byte(ctv.TXT_EMPTY), 0777); errorInfo.Error != nil {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, errorInfo.Error.Error())
 			}
 			_ = os.Remove(tTestFQN)
-			if errorInfo = WriteFile(rcv.VAL_EMPTY, []byte(rcv.TXT_EMPTY), 0777); errorInfo.Error == nil {
+			if errorInfo = WriteFile(ctv.VAL_EMPTY, []byte(ctv.TXT_EMPTY), 0777); errorInfo.Error == nil {
 				tPtr.Errorf(pi.EXPECTED_ERROR_FORMAT, tFunctionName)
 			}
 		},
@@ -1159,7 +1159,7 @@ func TestWritePidFile(tPtr *testing.T) {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, errorInfo.Error.Error())
 			}
 			_ = os.Remove(tTestFQN)
-			if errorInfo = WritePidFile(rcv.VAL_EMPTY, 777); errorInfo.Error == nil {
+			if errorInfo = WritePidFile(ctv.VAL_EMPTY, 777); errorInfo.Error == nil {
 				tPtr.Errorf(pi.EXPECTED_ERROR_FORMAT, tFunctionName)
 			}
 		},
@@ -1178,15 +1178,15 @@ func TestCreateAndRedirectLogOutput(tPtr *testing.T) {
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
-			if _, tLogFQN, errorInfo = CreateAndRedirectLogOutput(TEST_DIRECTORY_ENDING_SLASH, rcv.MODE_OUTPUT_LOG); errorInfo.Error != nil {
+			if _, tLogFQN, errorInfo = CreateAndRedirectLogOutput(TEST_DIRECTORY_ENDING_SLASH, ctv.MODE_OUTPUT_LOG); errorInfo.Error != nil {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, errorInfo.Error.Error())
 			}
 			fmt.Println(os.Remove(tLogFQN))
-			if _, tLogFQN, errorInfo = CreateAndRedirectLogOutput(TEST_DIRECTORY_ENDING_SLASH, rcv.MODE_OUTPUT_LOG_DISPLAY); errorInfo.Error != nil {
+			if _, tLogFQN, errorInfo = CreateAndRedirectLogOutput(TEST_DIRECTORY_ENDING_SLASH, ctv.MODE_OUTPUT_LOG_DISPLAY); errorInfo.Error != nil {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, errorInfo.Error.Error())
 			}
 			fmt.Println(os.Remove(tLogFQN))
-			if _, tLogFQN, errorInfo = CreateAndRedirectLogOutput(TEST_DIRECTORY_ENDING_SLASH, rcv.VAL_EMPTY); errorInfo.Error == nil {
+			if _, tLogFQN, errorInfo = CreateAndRedirectLogOutput(TEST_DIRECTORY_ENDING_SLASH, ctv.VAL_EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf(pi.EXPECTED_ERROR_FORMAT, tFunctionName)
 			}
 		},

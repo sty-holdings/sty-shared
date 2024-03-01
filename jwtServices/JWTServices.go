@@ -1,4 +1,4 @@
-// Package sharedServices
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,18 +32,16 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package sharedServices
+package sty_shared
 
 import (
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	"errors"
-	"fmt"
 	"log"
 
-	jwt2 "github.com/golang-jwtServices/jwtServices/v4"
-	ctv "github.com/sty-holdings/GriesPikeThomp/shared-services"
+	"github.com/golang-jwt/jwt/v5"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
@@ -143,7 +141,7 @@ func ParsePrivateKey(tRawPrivateKey []byte) (
 	errorInfo pi.ErrorInfo,
 ) {
 
-	if privateKey, errorInfo.Error = jwt2.ParseRSAPrivateKeyFromPEM(tRawPrivateKey); errorInfo.Error != nil {
+	if privateKey, errorInfo.Error = jwt.ParseRSAPrivateKeyFromPEM(tRawPrivateKey); errorInfo.Error != nil {
 		errorInfo.Error = errors.New("Unable to parse the private key referred to in the configuration file.")
 		log.Println(errorInfo.Error)
 	}
@@ -157,44 +155,44 @@ func ValidateSavUpJWT(
 	jwt string,
 ) (errorInfo pi.ErrorInfo) {
 
-	var (
-		tParsedPrivateKey *rsa.PrivateKey
-		//  ToDo is this needed?
-		// tToken         *jwt2.Token
-	)
-
-	if len(privateKey) == 0 || jwt == ctv.VAL_EMPTY {
-		errorInfo.Error = errors.New(
-			fmt.Sprintf(
-				"Require information is missing! %v: '%v' %v: '%v'",
-				rcv.FN_PRIVATE_KEY,
-				privateKey,
-				rcv.FN_JWT,
-				jwt,
-			),
-		)
-		log.Println(errorInfo.Error)
-	} else {
-		if tParsedPrivateKey, errorInfo = ParsePrivateKey(privateKey); errorInfo.Error == nil {
-			publicKey := tParsedPrivateKey.Public()
-			//  ToDo is this needed?
-			// tToken, err = jwt2.Parse(jwtServices, func(jwtToken *jwt2.Token) (interface{}, error) {
-			if _, errorInfo.Error = jwt2.Parse(
-				jwt,
-				func(jwtToken *jwt2.Token) (
-					interface{},
-					error,
-				) {
-					if _, ok := jwtToken.Method.(*jwt2.SigningMethodRSA); !ok {
-						return nil, fmt.Errorf("unexpected method: %s", jwtToken.Header["alg"])
-					}
-					return publicKey, nil
-				},
-			); errorInfo.Error != nil {
-				log.Println(errorInfo.Error)
-			}
-		}
-	}
+	// var (
+	// 	tParsedPrivateKey *rsa.PrivateKey
+	// 	//  ToDo is this needed?
+	// 	// tToken         *jwt2.Token
+	// )
+	//
+	// if len(privateKey) == 0 || jwt == ctv.VAL_EMPTY {
+	// 	errorInfo.Error = errors.New(
+	// 		fmt.Sprintf(
+	// 			"Require information is missing! %v: '%v' %v: '%v'",
+	// 			ctv.FN_PRIVATE_KEY,
+	// 			privateKey,
+	// 			ctv.FN_JWT,
+	// 			jwt,
+	// 		),
+	// 	)
+	// 	log.Println(errorInfo.Error)
+	// } else {
+	// 	if tParsedPrivateKey, errorInfo = ParsePrivateKey(privateKey); errorInfo.Error == nil {
+	// 		publicKey := tParsedPrivateKey.Public()
+	// 		//  ToDo is this needed?
+	// 		// tToken, err = jwt2.Parse(jwtServices, func(jwtToken *jwt2.Token) (interface{}, error) {
+	// 		if _, errorInfo.Error = jwt.Parse(
+	// 			jwt,
+	// 			func(jwtToken *jwt.Token) (
+	// 				interface{},
+	// 				error,
+	// 			) {
+	// 				if _, ok := jwtToken.Method.(*jwt.SigningMethodRSA); !ok {
+	// 					return nil, fmt.Errorf("unexpected method: %s", jwtToken.Header["alg"])
+	// 				}
+	// 				return publicKey, nil
+	// 			},
+	// 		); errorInfo.Error != nil {
+	// 			log.Println(errorInfo.Error)
+	// 		}
+	// 	}
+	// }
 
 	return
 }

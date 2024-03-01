@@ -67,8 +67,8 @@ func NewErrorInfo(
 	} else {
 		errorInfo = newError(myError)
 	}
-	if additionalInfo == rcv.VAL_EMPTY {
-		errorInfo.AdditionalInfo = rcv.TXT_EMPTY
+	if additionalInfo == ctv.VAL_EMPTY {
+		errorInfo.AdditionalInfo = ctv.TXT_EMPTY
 	} else {
 		errorInfo.AdditionalInfo = additionalInfo
 	}
@@ -98,8 +98,8 @@ func PrintError(
 	} else {
 		errorInfo = newError(myError)
 	}
-	if additionalInfo == rcv.VAL_EMPTY {
-		errorInfo.AdditionalInfo = rcv.TXT_EMPTY
+	if additionalInfo == ctv.VAL_EMPTY {
+		errorInfo.AdditionalInfo = ctv.TXT_EMPTY
 	} else {
 		errorInfo.AdditionalInfo = additionalInfo
 	}
@@ -169,22 +169,22 @@ func getErrorFunctionFileNameLineNumber(level int) (errorInfo ErrorInfo) {
 // 	GetFunctionInfo(1)
 //
 // 	switch strings.ToLower(finding) {
-// 	case rcv.TXT_EMPTY:
+// 	case ctv.TXT_EMPTY:
 // 		errorInfo = ErrorInfo{
 // 			Error:   ErrMapIsEmpty,
 // 			Message: ErrMapIsEmpty.Error(),
 // 		}
-// 	case rcv.TXT_MISSING_KEY:
+// 	case ctv.TXT_MISSING_KEY:
 // 		errorInfo = ErrorInfo{
 // 			Error:   ErrMapIsMissingKey,
 // 			Message: ErrMapIsMissingKey.Error(),
 // 		}
-// 	case rcv.TXT_MISSING_VALUE:
+// 	case ctv.TXT_MISSING_VALUE:
 // 		errorInfo = ErrorInfo{
 // 			Error:   ErrMapIsMissingValue,
 // 			Message: ErrMapIsMissingValue.Error(),
 // 		}
-// 	case rcv.VAL_EMPTY:
+// 	case ctv.VAL_EMPTY:
 // 		fallthrough
 // 	default:
 // 		errorInfo.Error = ErrRequiredArgumentMissing

@@ -1,4 +1,4 @@
-// Package coreGCP
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,7 +32,7 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package coreGCP
+package sty_shared
 
 import (
 	"context"
@@ -41,7 +41,6 @@ import (
 	"os"
 	"runtime"
 
-	"albert/constants"
 	"cloud.google.com/go/storage"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"

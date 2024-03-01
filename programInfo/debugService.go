@@ -40,7 +40,7 @@ import (
 	"fmt"
 	"log"
 
-	rcv "github.com/sty-holdings/resuable-const-vars/src"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 )
 
 //goland:noinspection GoSnakeCaseUsage
@@ -68,7 +68,7 @@ func PrintDebugFunctionInfo(
 	)
 
 	if debugModeOn {
-		if outputMode == rcv.MODE_OUTPUT_DISPLAY {
+		if outputMode == ctv.MODE_OUTPUT_DISPLAY {
 			fmt.Printf(DEBUG_FUNCTION_FORMAT, tFunctionInfo.FileName, tFunctionInfo.Name, tFunctionInfo.LineNumber)
 		} else {
 			log.Printf(DEBUG_FUNCTION_FORMAT, tFunctionInfo.FileName, tFunctionInfo.Name, tFunctionInfo.LineNumber)
@@ -95,12 +95,12 @@ func PrintDebugLine(
 		tFunctionInfo = GetFunctionInfo(1)
 	)
 
-	if message == rcv.VAL_EMPTY {
-		message = rcv.TXT_MISSING
+	if message == ctv.VAL_EMPTY {
+		message = ctv.TXT_MISSING
 	}
 
 	if debugModeOn {
-		if outputMode == rcv.MODE_OUTPUT_DISPLAY {
+		if outputMode == ctv.MODE_OUTPUT_DISPLAY {
 			fmt.Printf(DEBUG_MESSAGE_FORMAT, tFunctionInfo.FileName, tFunctionInfo.Name, message)
 		} else {
 			log.Printf(DEBUG_MESSAGE_FORMAT, tFunctionInfo.FileName, tFunctionInfo.Name, message)

@@ -1,4 +1,4 @@
-// Package coreOS
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,13 +32,13 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package coreOS
+package sty_shared
 
 import (
 	"net"
 	"regexp"
 
-	"GriesPikeThomp/shared-services/src/coreValidators"
+	hv "github.com/sty-holdings/sty-shared/v2024/helpersValidators"
 )
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
@@ -85,7 +85,7 @@ func GetIPAddresses() (ipList []string) {
 func GetIPv4Addresses() (ipV4List []string) {
 
 	for _, ipAddress := range GetIPAddresses() {
-		if coreValidators.IsIPv4Valid(ipAddress) {
+		if hv.IsIPv4Valid(ipAddress) {
 			ipV4List = append(ipV4List, ipAddress)
 		}
 	}
@@ -101,7 +101,7 @@ func GetIPv4Addresses() (ipV4List []string) {
 func GetIPv6Addresses() (ipV6List []string) {
 
 	for _, ipAddress := range GetIPAddresses() {
-		if coreValidators.IsIPv6Valid(ipAddress) {
+		if hv.IsIPv6Valid(ipAddress) {
 			ipV6List = append(ipV6List, ipAddress)
 		}
 	}

@@ -76,24 +76,24 @@ func GenerateConfigFileSkeleton(serverName, SkeletonConfigFQD string) (errorInfo
 		tSkeletonConfigNoteFilename string
 	)
 
-	if serverName == rcv.VAL_EMPTY {
-		pi.PrintError(pi.ErrMissingServerName, fmt.Sprintf("%v %v", rcv.TXT_SERVER_NAME, serverName))
+	if serverName == ctv.VAL_EMPTY {
+		pi.PrintError(pi.ErrMissingServerName, fmt.Sprintf("%v %v", ctv.TXT_SERVER_NAME, serverName))
 		return
 	}
-	if SkeletonConfigFQD == rcv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrFileMissing, fmt.Sprintf("%v%v", rcv.TXT_DIRECTORY, SkeletonConfigFQD))
+	if SkeletonConfigFQD == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrFileMissing, fmt.Sprintf("%v%v", ctv.TXT_DIRECTORY, SkeletonConfigFQD))
 		return
 	}
 	tSkeletonConfigFilename = fmt.Sprintf("%v%v", SkeletonConfigFQD, DEFAULT_SKELETON_CONFIG_FILENAME)
 	tSkeletonConfigNoteFilename = fmt.Sprintf("%v%v", SkeletonConfigFQD, DEFAULT_SKELETON_CONFIG_NOTE_FILENAME)
 
 	if tSkeletonConfigData, errorInfo.Error = os.ReadFile(tSkeletonConfigFilename); errorInfo.Error != nil {
-		pi.PrintError(pi.ErrFileUnreadable, fmt.Sprintf("%v %v", rcv.TXT_FILENAME, tSkeletonConfigFilename))
+		pi.PrintError(pi.ErrFileUnreadable, fmt.Sprintf("%v %v", ctv.TXT_FILENAME, tSkeletonConfigFilename))
 		return
 	}
 
 	if tSkeletonConfigNoteData, errorInfo.Error = os.ReadFile(tSkeletonConfigNoteFilename); errorInfo.Error != nil {
-		pi.PrintError(pi.ErrFileUnreadable, fmt.Sprintf("%v %v", rcv.TXT_FILENAME, tSkeletonConfigNoteFilename))
+		pi.PrintError(pi.ErrFileUnreadable, fmt.Sprintf("%v %v", ctv.TXT_FILENAME, tSkeletonConfigNoteFilename))
 		return
 	}
 
@@ -117,7 +117,7 @@ func ProcessBaseConfigFile(configFileFQN string) (
 ) {
 
 	var (
-		tAdditionalInfo = fmt.Sprintf("%v %v", rcv.TXT_FILENAME, configFileFQN)
+		tAdditionalInfo = fmt.Sprintf("%v %v", ctv.TXT_FILENAME, configFileFQN)
 		tConfigData     []byte
 	)
 
@@ -147,7 +147,7 @@ func ReadConfigFile(configFileFQN string) (
 ) {
 
 	var (
-		tAdditionalInfo = fmt.Sprintf("%v %v", rcv.TXT_FILENAME, configFileFQN)
+		tAdditionalInfo = fmt.Sprintf("%v %v", ctv.TXT_FILENAME, configFileFQN)
 	)
 
 	if configData, errorInfo.Error = os.ReadFile(configFileFQN); errorInfo.Error != nil {
@@ -167,23 +167,23 @@ func ReadConfigFile(configFileFQN string) (
 func ValidateConfiguration(config BaseConfiguration) (errorInfo pi.ErrorInfo) {
 
 	if hv.IsEnvironmentValid(config.Environment) == false {
-		errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", rcv.TXT_EVIRONMENT, config.Environment))
+		errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, config.Environment))
 		return
 	}
 	if hv.DoesDirectoryExist(config.LogDirectory) == false {
-		pi.PrintError(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v - Default Set: %v", rcv.TXT_DIRECTORY, config.LogDirectory, DEFAULT_LOG_DIRECTORY))
+		pi.PrintError(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v - Default Set: %v", ctv.TXT_DIRECTORY, config.LogDirectory, DEFAULT_LOG_DIRECTORY))
 		config.LogDirectory = DEFAULT_LOG_DIRECTORY
 	}
 	if config.MaxThreads < 1 || config.MaxThreads > THREAD_CAP {
-		pi.PrintError(pi.ErrMaxThreadsInvalid, fmt.Sprintf("%v%v - Default Set: %v", rcv.TXT_MAX_THREADS, config.LogDirectory, DEFAULT_MAX_THREADS))
+		pi.PrintError(pi.ErrMaxThreadsInvalid, fmt.Sprintf("%v%v - Default Set: %v", ctv.TXT_MAX_THREADS, config.LogDirectory, DEFAULT_MAX_THREADS))
 		config.MaxThreads = DEFAULT_MAX_THREADS
 	}
 	if hv.DoesDirectoryExist(config.PIDDirectory) == false {
-		pi.PrintError(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v - Default Set: %v", rcv.TXT_DIRECTORY, config.LogDirectory, DEFAULT_PID_DIRECTORY))
+		pi.PrintError(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v - Default Set: %v", ctv.TXT_DIRECTORY, config.LogDirectory, DEFAULT_PID_DIRECTORY))
 		config.PIDDirectory = DEFAULT_PID_DIRECTORY
 	}
 	if hv.DoesDirectoryExist(config.SkeletonConfigFQD) == false {
-		pi.PrintError(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v", rcv.TXT_DIRECTORY, config.SkeletonConfigFQD))
+		pi.PrintError(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v", ctv.TXT_DIRECTORY, config.SkeletonConfigFQD))
 		config.LogDirectory = DEFAULT_LOG_DIRECTORY
 	}
 

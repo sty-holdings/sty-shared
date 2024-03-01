@@ -48,35 +48,45 @@ var (
 
 func TestUsernameAlreadyExists(tPtr *testing.T) {
 
-	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-		_ = UsernameAlreadyExists(rcv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE)
-	})
+	tPtr.Run(
+		tFunctionName, func(tPtr *testing.T) {
+			_ = UsernameAlreadyExists(ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE)
+		},
+	)
 }
 
 func TestUserCreatedVerifyEmailNext(tPtr *testing.T) {
 
-	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-		_ = UserCreatedVerifyEmailNextStep()
-	})
+	tPtr.Run(
+		tFunctionName, func(tPtr *testing.T) {
+			_ = UserCreatedVerifyEmailNextStep()
+		},
+	)
 }
 
 func TestUnexpectedError(tPtr *testing.T) {
 
-	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-		_ = UnexpectedError()
-	})
+	tPtr.Run(
+		tFunctionName, func(tPtr *testing.T) {
+			_ = UnexpectedError()
+		},
+	)
 }
 
 func TestUsernameNotFound(tPtr *testing.T) {
 
-	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-		_ = UsernameNotFound(rcv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE)
-	})
+	tPtr.Run(
+		tFunctionName, func(tPtr *testing.T) {
+			_ = UsernameNotFound(ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE)
+		},
+	)
 }
 
 func TestUserRetryLimitHit(tPtr *testing.T) {
 
-	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-		_ = UserRetryLimitHit()
-	})
+	tPtr.Run(
+		tFunctionName, func(tPtr *testing.T) {
+			_ = UserRetryLimitHit()
+		},
+	)
 }

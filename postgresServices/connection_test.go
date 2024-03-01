@@ -1,4 +1,4 @@
-// Package corePostgres
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,14 +32,11 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package corePostgres
+package sty_shared
 
 import (
 	"runtime"
 	"testing"
-
-	"albert/constants"
-	"github.com/nats-io/nats.go"
 )
 
 func TestSetConnectionValue(tPtr *testing.T) {

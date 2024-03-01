@@ -464,9 +464,9 @@ func areAWSClaimsValid(FirestoreClientPtr *firestore.Client, subject, email, use
 	}); errorInfo.Error == nil {
 		switch strings.ToUpper(tokenUse) {
 		case ctv.TOKEN_TYPE_ID:
-			if tSubjectInterface, errorInfo.Error = tDocumentPtr.DataAt(rcv.FN_REQUESTOR_ID); errorInfo.Error == nil {
-				if tUsernameInterface, errorInfo.Error = tDocumentPtr.DataAt(rcv.FN_USERNAME); errorInfo.Error == nil {
-					if tEmailInterface, errorInfo.Error = tDocumentPtr.DataAt(rcv.FN_EMAIL); errorInfo.Error == nil {
+			if tSubjectInterface, errorInfo.Error = tDocumentPtr.DataAt(ctv.FN_REQUESTOR_ID); errorInfo.Error == nil {
+				if tUsernameInterface, errorInfo.Error = tDocumentPtr.DataAt(ctv.FN_USERNAME); errorInfo.Error == nil {
+					if tEmailInterface, errorInfo.Error = tDocumentPtr.DataAt(ctv.FN_EMAIL); errorInfo.Error == nil {
 						if emailVerified && tSubjectInterface.(string) == subject && tEmailInterface.(string) == email && tUsernameInterface.(string) == username {
 							return true
 						}
@@ -474,8 +474,8 @@ func areAWSClaimsValid(FirestoreClientPtr *firestore.Client, subject, email, use
 				}
 			}
 		case ctv.TOKEN_TYPE_ACCESS:
-			if tSubjectInterface, errorInfo.Error = tDocumentPtr.DataAt(rcv.FN_REQUESTOR_ID); errorInfo.Error == nil {
-				if tUsernameInterface, errorInfo.Error = tDocumentPtr.DataAt(rcv.FN_USERNAME); errorInfo.Error == nil {
+			if tSubjectInterface, errorInfo.Error = tDocumentPtr.DataAt(ctv.FN_REQUESTOR_ID); errorInfo.Error == nil {
+				if tUsernameInterface, errorInfo.Error = tDocumentPtr.DataAt(ctv.FN_USERNAME); errorInfo.Error == nil {
 					if emailVerified && tSubjectInterface.(string) == subject && tUsernameInterface.(string) == username {
 						return true
 					}

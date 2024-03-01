@@ -1,4 +1,4 @@
-// Package corePostgres
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,17 +32,16 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package corePostgres
+package sty_shared
 
 import (
 	"context"
 	"fmt"
 	"strings"
 
-	"albert/constants"
 	"albert/core/coreValidators"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
 type ConnValues struct {
@@ -123,7 +122,7 @@ func setConnectionValues(
 	port, timeout, poolMaxConns int,
 ) (dbConnString string) {
 
-	return fmt.Sprintf(rcv.POSTGRES__CONN_STRING, dbName, user, password, host, port, timeout, sslMode, poolMaxConns)
+	return fmt.Sprintf(ctv.POSTGRES__CONN_STRING, dbName, user, password, host, port, timeout, sslMode, poolMaxConns)
 
 }
 

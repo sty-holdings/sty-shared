@@ -53,16 +53,16 @@ func TestNewErrorInfo(tPtr *testing.T) {
 		arguments arguments
 	}{
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "No Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "No Data Supplied",
 			arguments: arguments{
 				additionalInfo: "",
 				myError:        nil,
 			},
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
 		},
@@ -90,7 +90,7 @@ func TestPrintError(tPtr *testing.T) {
 		outputMode string
 	}{
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "No Data Supplied - No Output Mode",
+			name: ctv.TEST_POSITIVE_SUCCESS + "No Data Supplied - No Output Mode",
 			arguments: arguments{
 				additionalInfo: "",
 				myError:        nil,
@@ -98,44 +98,44 @@ func TestPrintError(tPtr *testing.T) {
 			outputMode: "",
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied - No Output Mode",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied - No Output Mode",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
 			outputMode: "",
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "No Data Supplied - Display Output Mode",
+			name: ctv.TEST_POSITIVE_SUCCESS + "No Data Supplied - Display Output Mode",
 			arguments: arguments{
 				additionalInfo: "",
 				myError:        nil,
 			},
-			outputMode: rcv.MODE_OUTPUT_DISPLAY,
+			outputMode: ctv.MODE_OUTPUT_DISPLAY,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied - Display Output Mode",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied - Display Output Mode",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
-			outputMode: rcv.MODE_OUTPUT_DISPLAY,
+			outputMode: ctv.MODE_OUTPUT_DISPLAY,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "No Data Supplied - Log Output Mode",
+			name: ctv.TEST_POSITIVE_SUCCESS + "No Data Supplied - Log Output Mode",
 			arguments: arguments{
 				additionalInfo: "",
 				myError:        nil,
 			},
-			outputMode: rcv.MODE_OUTPUT_LOG,
+			outputMode: ctv.MODE_OUTPUT_LOG,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied - Log Output Mode",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied - Log Output Mode",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
-			outputMode: rcv.MODE_OUTPUT_LOG,
+			outputMode: ctv.MODE_OUTPUT_LOG,
 		},
 	}
 
@@ -161,7 +161,7 @@ func TestPrintErrorInfo(tPtr *testing.T) {
 		outputMode string
 	}{
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "No Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "No Data Supplied",
 			arguments: arguments{
 				additionalInfo: "",
 				myError:        nil,
@@ -169,44 +169,44 @@ func TestPrintErrorInfo(tPtr *testing.T) {
 			outputMode: "",
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
 			outputMode: "",
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "No Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "No Data Supplied",
 			arguments: arguments{
 				additionalInfo: "",
 				myError:        nil,
 			},
-			outputMode: rcv.MODE_OUTPUT_LOG,
+			outputMode: ctv.MODE_OUTPUT_LOG,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
-			outputMode: rcv.MODE_OUTPUT_LOG,
+			outputMode: ctv.MODE_OUTPUT_LOG,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "No Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "No Data Supplied",
 			arguments: arguments{
 				additionalInfo: "",
 				myError:        nil,
 			},
-			outputMode: rcv.MODE_OUTPUT_DISPLAY,
+			outputMode: ctv.MODE_OUTPUT_DISPLAY,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
-			outputMode: rcv.MODE_OUTPUT_DISPLAY,
+			outputMode: ctv.MODE_OUTPUT_DISPLAY,
 		},
 	}
 
@@ -232,28 +232,28 @@ func TestOutputError(tPtr *testing.T) {
 		outputMode string
 	}{
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
 			outputMode: "",
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
-			outputMode: rcv.MODE_OUTPUT_LOG,
+			outputMode: ctv.MODE_OUTPUT_LOG,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "Data Supplied",
+			name: ctv.TEST_POSITIVE_SUCCESS + "Data Supplied",
 			arguments: arguments{
-				additionalInfo: rcv.TXT_EMPTY,
+				additionalInfo: ctv.TXT_EMPTY,
 				myError:        ErrErrorMissing,
 			},
-			outputMode: rcv.MODE_OUTPUT_DISPLAY,
+			outputMode: ctv.MODE_OUTPUT_DISPLAY,
 		},
 	}
 

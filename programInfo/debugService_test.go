@@ -64,7 +64,7 @@ func TestPrintDebugFunctionInfo(tPtr *testing.T) {
 			name: "Positive Case: Debug False - Output Display.",
 			arguments: arguments{
 				debugModeOn: false,
-				outputMode:  rcv.MODE_OUTPUT_DISPLAY,
+				outputMode:  ctv.MODE_OUTPUT_DISPLAY,
 			},
 			wantError: false,
 		},
@@ -72,7 +72,7 @@ func TestPrintDebugFunctionInfo(tPtr *testing.T) {
 			name: "Positive Case: Debug True - Output Display.",
 			arguments: arguments{
 				debugModeOn: true,
-				outputMode:  rcv.MODE_OUTPUT_DISPLAY,
+				outputMode:  ctv.MODE_OUTPUT_DISPLAY,
 			},
 			wantError: false,
 		},
@@ -80,7 +80,7 @@ func TestPrintDebugFunctionInfo(tPtr *testing.T) {
 			name: "Positive Case: Debug False - Output Log.",
 			arguments: arguments{
 				debugModeOn: false,
-				outputMode:  rcv.MODE_OUTPUT_LOG,
+				outputMode:  ctv.MODE_OUTPUT_LOG,
 			},
 			wantError: false,
 		},
@@ -88,7 +88,7 @@ func TestPrintDebugFunctionInfo(tPtr *testing.T) {
 			name: "Positive Case: Debug True - Output Log.",
 			arguments: arguments{
 				debugModeOn: true,
-				outputMode:  rcv.MODE_OUTPUT_LOG,
+				outputMode:  ctv.MODE_OUTPUT_LOG,
 			},
 			wantError: false,
 		},
@@ -141,7 +141,7 @@ func TestPrintDebugLine(tPtr *testing.T) {
 			name: "Positive Case: Debug False - Output Display.",
 			arguments: arguments{
 				debugModeOn: false,
-				outputMode:  rcv.MODE_OUTPUT_DISPLAY,
+				outputMode:  ctv.MODE_OUTPUT_DISPLAY,
 			},
 			wantError: false,
 		},
@@ -149,7 +149,7 @@ func TestPrintDebugLine(tPtr *testing.T) {
 			name: "Positive Case: Debug True - Output Display.",
 			arguments: arguments{
 				debugModeOn: true,
-				outputMode:  rcv.MODE_OUTPUT_DISPLAY,
+				outputMode:  ctv.MODE_OUTPUT_DISPLAY,
 			},
 			wantError: false,
 		},
@@ -157,7 +157,7 @@ func TestPrintDebugLine(tPtr *testing.T) {
 			name: "Positive Case: Debug False - Output Log.",
 			arguments: arguments{
 				debugModeOn: false,
-				outputMode:  rcv.MODE_OUTPUT_LOG,
+				outputMode:  ctv.MODE_OUTPUT_LOG,
 			},
 			wantError: false,
 		},
@@ -165,7 +165,7 @@ func TestPrintDebugLine(tPtr *testing.T) {
 			name: "Positive Case: Debug True - Output Log.",
 			arguments: arguments{
 				debugModeOn: true,
-				outputMode:  rcv.MODE_OUTPUT_LOG,
+				outputMode:  ctv.MODE_OUTPUT_LOG,
 			},
 			wantError: false,
 		},

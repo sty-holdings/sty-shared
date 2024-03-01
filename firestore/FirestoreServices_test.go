@@ -47,12 +47,12 @@ import (
 
 var (
 	tFireTestNameValue = map[any]interface{}{
-		rcv.FN_REQUESTOR_ID: ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
-		rcv.FN_EMAIL:        ctv.TEST_STRING,
+		ctv.FN_REQUESTOR_ID: ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
+		ctv.FN_EMAIL:        ctv.TEST_STRING,
 	}
 	tFireTestNameValueSubCollection = map[any]interface{}{
-		rcv.FN_INSTITUTION_NAME:   ctv.TEST_INSTITUTION_CHASE,
-		rcv.FN_PLAID_ACCESS_TOKEN: ctv.TEST_STRING,
+		ctv.FN_INSTITUTION_NAME:   ctv.TEST_INSTITUTION_CHASE,
+		ctv.FN_PLAID_ACCESS_TOKEN: ctv.TEST_STRING,
 	}
 )
 
@@ -92,7 +92,7 @@ func TestDoesDocumentExist(tPtr *testing.T) {
 
 	tFirestoreClientPtr = getTestFirestoreConnection()
 	buildTestDocuments(tFirestoreClientPtr, 1)
-	tDocumentReferencePtr, _ = getDocumentRef(tFirestoreClientPtr, ctv.TEST_DATASTORE, fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 0))
+	tDocumentReferencePtr, _ = getDocumentRef(tFirestoreClientPtr, ctv.TEST_DATASTORE, fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 0))
 
 	tPtr.Run(
 		tFunctionName, func(t *testing.T) {
@@ -130,7 +130,7 @@ func TestFindDocument(tPtr *testing.T) {
 		tNameValues         = make(map[string]interface{})
 	)
 
-	tNameValues[rcv.FN_REQUESTOR_ID] = ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID
+	tNameValues[ctv.FN_REQUESTOR_ID] = ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID
 	tests := []struct {
 		name      string
 		arguments arguments
@@ -271,9 +271,9 @@ func TestGetAllDocumentsWhere(tPtr *testing.T) {
 			//  No Pointer
 			if _, errorInfo = GetAllDocumentsWhere(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				rcv.FN_REQUESTOR_ID,
-				rcv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
+				ctv.TEST_DATASTORE,
+				ctv.FN_REQUESTOR_ID,
+				ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
 			); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
@@ -282,9 +282,9 @@ func TestGetAllDocumentsWhere(tPtr *testing.T) {
 			tFirestoreClientPtr = getTestFirestoreConnection()
 			if tDocuments, errorInfo = GetAllDocumentsWhere(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				rcv.FN_REQUESTOR_ID,
-				rcv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
+				ctv.TEST_DATASTORE,
+				ctv.FN_REQUESTOR_ID,
+				ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
 			); errorInfo.Error != nil && len(tDocuments) > 0 {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 			}
@@ -293,9 +293,9 @@ func TestGetAllDocumentsWhere(tPtr *testing.T) {
 			buildTestDocuments(tFirestoreClientPtr, 6)
 			if tDocuments, errorInfo = GetAllDocumentsWhere(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				rcv.FN_REQUESTOR_ID,
-				rcv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
+				ctv.TEST_DATASTORE,
+				ctv.FN_REQUESTOR_ID,
+				ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
 			); errorInfo.Error != nil && len(tDocuments) == 0 {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 			}
@@ -359,8 +359,8 @@ func TestGetDocumentRef(tPtr *testing.T) {
 			//  Found
 			if _, errorInfo = getDocumentRef(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 0),
+				ctv.TEST_DATASTORE,
+				fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 0),
 			); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 			}
@@ -373,8 +373,8 @@ func TestGetDocumentRef(tPtr *testing.T) {
 			)
 			if _, errorInfo = getDocumentRef(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 0),
+				ctv.TEST_DATASTORE,
+				fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 0),
 			); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
@@ -443,7 +443,7 @@ func TestGetDocumentIdsWithSubCollections(tPtr *testing.T) {
 		},
 	}
 
-	tFirebase.AppPtr, _, _ = coreFirebase.GetFirebaseAppAuthConnection(rcv.TEST_FIREBASE_CREDENTIALS)
+	tFirebase.AppPtr, _, _ = coreFirebase.GetFirebaseAppAuthConnection(ctv.TEST_FIREBASE_CREDENTIALS)
 	tFirebase.FirestoreClientPtr, _ = GetFirestoreClientConnection(tFirebase.AppPtr)
 
 	for _, ts := range tests {
@@ -541,14 +541,14 @@ func TestGetDocumentFromSubCollectionByDocumentId(tPtr *testing.T) {
 		},
 	}
 
-	tFirebase.AppPtr, _, _ = coreFirebase.GetFirebaseAppAuthConnection(rcv.TEST_FIREBASE_CREDENTIALS)
+	tFirebase.AppPtr, _, _ = coreFirebase.GetFirebaseAppAuthConnection(ctv.TEST_FIREBASE_CREDENTIALS)
 	tFirebase.FirestoreClientPtr, _ = GetFirestoreClientConnection(tFirebase.AppPtr)
 	_ = SetDocumentWithSubCollection(
 		tFirebase.FirestoreClientPtr,
-		rcv.DATASTORE_USER_INSTITUTIONS,
-		rcv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
-		rcv.COLLECTION_INSTITUTIONS,
-		rcv.TEST_INSTITUTION_CHASE,
+		ctv.DATASTORE_USER_INSTITUTIONS,
+		ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
+		ctv.COLLECTION_INSTITUTIONS,
+		ctv.TEST_INSTITUTION_CHASE,
 		tFireTestNameValueSubCollection,
 	)
 
@@ -575,10 +575,10 @@ func TestGetDocumentFromSubCollectionByDocumentId(tPtr *testing.T) {
 
 	_ = RemoveDocumentFromSubCollectionByDocumentId(
 		tFirebase.FirestoreClientPtr,
-		rcv.DATASTORE_USER_INSTITUTIONS,
-		rcv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
-		rcv.COLLECTION_INSTITUTIONS,
-		rcv.TEST_INSTITUTION_CHASE,
+		ctv.DATASTORE_USER_INSTITUTIONS,
+		ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
+		ctv.COLLECTION_INSTITUTIONS,
+		ctv.TEST_INSTITUTION_CHASE,
 	)
 }
 
@@ -591,7 +591,7 @@ func TestGetFirestoreClientConnection(tPtr *testing.T) {
 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
 	)
 
-	tAppPtr, _ = coreFirebase.NewFirebaseApp(rcv.TEST_FIREBASE_CREDENTIALS)
+	tAppPtr, _ = coreFirebase.NewFirebaseApp(ctv.TEST_FIREBASE_CREDENTIALS)
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
@@ -789,9 +789,9 @@ func TestRemoveDocumentFromSubCollection(tPtr *testing.T) {
 			name: "Positive Case: Success",
 			arguments: arguments{
 				dataStore:        ctv.TEST_DATASTORE,
-				parentDocumentId: fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 0),
+				parentDocumentId: fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 0),
 				subCollection:    ctv.TEST_DATASTORE_SUBCOLLECTION,
-				documentId:       fmt.Sprintf(rcv.TEST_USER_REQUESTOR_ID_F, 0),
+				documentId:       fmt.Sprintf(ctv.TEST_USER_REQUESTOR_ID_F, 0),
 			},
 			wantError: false,
 		},
@@ -799,9 +799,9 @@ func TestRemoveDocumentFromSubCollection(tPtr *testing.T) {
 			name: "Negative Case: Missing datastore",
 			arguments: arguments{
 				dataStore:        ctv.EMPTY,
-				parentDocumentId: fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 1),
+				parentDocumentId: fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 1),
 				subCollection:    ctv.TEST_DATASTORE_SUBCOLLECTION,
-				documentId:       fmt.Sprintf(rcv.TEST_USER_REQUESTOR_ID_F, 1),
+				documentId:       fmt.Sprintf(ctv.TEST_USER_REQUESTOR_ID_F, 1),
 			},
 			wantError: true,
 		},
@@ -811,7 +811,7 @@ func TestRemoveDocumentFromSubCollection(tPtr *testing.T) {
 				dataStore:        ctv.TEST_DATASTORE,
 				parentDocumentId: ctv.EMPTY,
 				subCollection:    ctv.TEST_DATASTORE_SUBCOLLECTION,
-				documentId:       fmt.Sprintf(rcv.TEST_USER_REQUESTOR_ID_F, 1),
+				documentId:       fmt.Sprintf(ctv.TEST_USER_REQUESTOR_ID_F, 1),
 			},
 			wantError: true,
 		},
@@ -819,9 +819,9 @@ func TestRemoveDocumentFromSubCollection(tPtr *testing.T) {
 			name: "Negative Case: Missing sub-collection",
 			arguments: arguments{
 				dataStore:        ctv.TEST_DATASTORE,
-				parentDocumentId: fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 2),
+				parentDocumentId: fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 2),
 				subCollection:    ctv.EMPTY,
-				documentId:       fmt.Sprintf(rcv.TEST_USER_REQUESTOR_ID_F, 1),
+				documentId:       fmt.Sprintf(ctv.TEST_USER_REQUESTOR_ID_F, 1),
 			},
 			wantError: true,
 		},
@@ -829,7 +829,7 @@ func TestRemoveDocumentFromSubCollection(tPtr *testing.T) {
 			name: "Negative Case: Missing sub-collection",
 			arguments: arguments{
 				dataStore:        ctv.TEST_DATASTORE,
-				parentDocumentId: fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 3),
+				parentDocumentId: fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 3),
 				subCollection:    ctv.TEST_DATASTORE_SUBCOLLECTION,
 				documentId:       ctv.EMPTY,
 			},
@@ -878,8 +878,8 @@ func TestSetDocument(tPtr *testing.T) {
 		tNameValues         = make(map[any]interface{})
 	)
 
-	tNameValues[rcv.FN_REQUESTOR_ID] = ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID
-	tNameValues[rcv.FN_EMAIL] = ctv.TEST_STRING
+	tNameValues[ctv.FN_REQUESTOR_ID] = ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID
+	tNameValues[ctv.FN_EMAIL] = ctv.TEST_STRING
 
 	tests := []struct {
 		name      string
@@ -1035,8 +1035,8 @@ func TestSetDocumentWithSubCollection(tPtr *testing.T) {
 	tFirestoreClientPtr = getTestFirestoreConnection()
 
 	tNameValues := make(map[any]interface{})
-	tNameValues[rcv.FN_REQUESTOR_ID] = ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID
-	tNameValues[rcv.FN_EMAIL] = ctv.TEST_STRING
+	tNameValues[ctv.FN_REQUESTOR_ID] = ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID
+	tNameValues[ctv.FN_EMAIL] = ctv.TEST_STRING
 
 	for _, ts := range tests {
 		tPtr.Run(
@@ -1086,8 +1086,8 @@ func TestUpdateDocument(tPtr *testing.T) {
 		tFunctionName, func(tPtr *testing.T) {
 			if errorInfo = UpdateDocument(
 				tFirestoreClientPtr,
-				rcv.EMPTY,
-				fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 0),
+				ctv.EMPTY,
+				fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 0),
 				tNameValues,
 			); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
@@ -1097,8 +1097,8 @@ func TestUpdateDocument(tPtr *testing.T) {
 			}
 			if errorInfo = UpdateDocument(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 0),
+				ctv.TEST_DATASTORE,
+				fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 0),
 				tNameValues,
 			); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
@@ -1108,8 +1108,8 @@ func TestUpdateDocument(tPtr *testing.T) {
 			tNameValues["Field_3"] = "Value_3"
 			if errorInfo = UpdateDocument(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, 0),
+				ctv.TEST_DATASTORE,
+				fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, 0),
 				tNameValues,
 			); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: The Update was not successful! Error: '%v'", tFunctionName, errorInfo.Error.Error())
@@ -1146,10 +1146,10 @@ func TestUpdateDocumentFromSubCollectionByDocumentId(tPtr *testing.T) {
 			// Successful
 			if errorInfo = UpdateDocumentFromSubCollectionByDocumentId(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				rcv.TEST_DOCUMENT_ID_0,
-				rcv.TEST_DATASTORE_SUBCOLLECTION,
-				fmt.Sprintf(rcv.TEST_USER_REQUESTOR_ID_F, 0),
+				ctv.TEST_DATASTORE,
+				ctv.TEST_DOCUMENT_ID_0,
+				ctv.TEST_DATASTORE_SUBCOLLECTION,
+				fmt.Sprintf(ctv.TEST_USER_REQUESTOR_ID_F, 0),
 				tUpdates,
 			); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
@@ -1158,18 +1158,18 @@ func TestUpdateDocumentFromSubCollectionByDocumentId(tPtr *testing.T) {
 			//
 			RemoveDocumentFromSubCollectionByDocumentId(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				rcv.TEST_DOCUMENT_ID_0,
-				rcv.TEST_DATASTORE_SUBCOLLECTION,
-				fmt.Sprintf(rcv.TEST_USER_REQUESTOR_ID_F, 0),
+				ctv.TEST_DATASTORE,
+				ctv.TEST_DOCUMENT_ID_0,
+				ctv.TEST_DATASTORE_SUBCOLLECTION,
+				fmt.Sprintf(ctv.TEST_USER_REQUESTOR_ID_F, 0),
 			)
 			//
 			if errorInfo = UpdateDocumentFromSubCollectionByDocumentId(
 				tFirestoreClientPtr,
-				rcv.TEST_DATASTORE,
-				rcv.TEST_DOCUMENT_ID_0,
-				rcv.TEST_DATASTORE_SUBCOLLECTION,
-				fmt.Sprintf(rcv.TEST_USER_REQUESTOR_ID_F, 0),
+				ctv.TEST_DATASTORE,
+				ctv.TEST_DOCUMENT_ID_0,
+				ctv.TEST_DATASTORE_SUBCOLLECTION,
+				fmt.Sprintf(ctv.TEST_USER_REQUESTOR_ID_F, 0),
 				tUpdates,
 			); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
@@ -1184,7 +1184,7 @@ func getTestFirestoreConnection() (firestoreClientPtr *firestore.Client) {
 		tAppPtr *firebase.App
 	)
 
-	tAppPtr, _ = coreFirebase.NewFirebaseApp(rcv.TEST_FIREBASE_CREDENTIALS)
+	tAppPtr, _ = coreFirebase.NewFirebaseApp(ctv.TEST_FIREBASE_CREDENTIALS)
 	firestoreClientPtr, _ = GetFirestoreClientConnection(tAppPtr)
 
 	return
@@ -1202,7 +1202,7 @@ func buildTestDocuments(
 		count = 1
 	}
 	for i := 0; i < count; i++ {
-		_ = SetDocument(firestoreClientPtr, ctv.TEST_DATASTORE, fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, i), tFireTestNameValue)
+		_ = SetDocument(firestoreClientPtr, ctv.TEST_DATASTORE, fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, i), tFireTestNameValue)
 	}
 
 }
@@ -1215,10 +1215,10 @@ func buildTestDocumentsWithSubCollection(
 	for i := 0; i < count; i++ {
 		_ = SetDocumentWithSubCollection(
 			firestoreClientPtr,
-			rcv.TEST_DATASTORE,
-			fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, i),
-			rcv.TEST_DATASTORE_SUBCOLLECTION,
-			fmt.Sprintf(rcv.TEST_USER_REQUESTOR_ID_F, i),
+			ctv.TEST_DATASTORE,
+			fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, i),
+			ctv.TEST_DATASTORE_SUBCOLLECTION,
+			fmt.Sprintf(ctv.TEST_USER_REQUESTOR_ID_F, i),
 			tFireTestNameValue,
 		)
 	}
@@ -1231,7 +1231,7 @@ func removeTestDocument(
 ) {
 
 	for i := 0; i < count+1; i++ {
-		RemoveDocumentById(firestoreClientPtr, ctv.TEST_DATASTORE, fmt.Sprintf(rcv.TEST_DOCUMENT_ID_F, i))
+		RemoveDocumentById(firestoreClientPtr, ctv.TEST_DATASTORE, fmt.Sprintf(ctv.TEST_DOCUMENT_ID_F, i))
 	}
 
 }

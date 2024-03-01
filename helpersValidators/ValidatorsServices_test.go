@@ -65,7 +65,7 @@ var (
 // 			tPtr.Errorf("%v Failed: Expected map keys to fail.", tFunctionName)
 // 		}
 // 		tMyMap = make(map[any]interface{})
-// 		tMyMap[rcv.EMPTY] = "string"
+// 		tMyMap[ctv.EMPTY] = "string"
 // 		if AreMapKeysPopulated(tMyMap) {
 // 			tPtr.Errorf("%v Failed: Expected map keys to fail.", tFunctionName)
 // 		}
@@ -98,33 +98,33 @@ var (
 //
 // 	tPtr.Run(tFunctionName, func(t *testing.T) {
 // 		tMyMap = make(map[any]interface{})
-// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != rcv.EMPTY_WORD {
-// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, rcv.EMPTY_WORD)
+// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != ctv.EMPTY_WORD {
+// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, ctv.EMPTY_WORD)
 // 		}
 // 		tMyMap = make(map[any]interface{})
-// 		tMyMap[rcv.EMPTY] = "string"
-// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != rcv.MISSING_KEY {
-// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, rcv.MISSING_KEY)
+// 		tMyMap[ctv.EMPTY] = "string"
+// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != ctv.MISSING_KEY {
+// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, ctv.MISSING_KEY)
 // 		}
 // 		tMyMap = make(map[any]interface{})
-// 		tMyMap[1] = rcv.EMPTY
-// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != rcv.MISSING_VALUE {
-// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, rcv.MISSING_VALUE)
+// 		tMyMap[1] = ctv.EMPTY
+// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != ctv.MISSING_VALUE {
+// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, ctv.MISSING_VALUE)
 // 		}
 // 		tMyMap = make(map[any]interface{})
 // 		tMyMap["string"] = "string"
-// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != rcv.GOOD {
-// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, rcv.GOOD)
+// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != ctv.GOOD {
+// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, ctv.GOOD)
 // 		}
 // 		tMyMap = make(map[any]interface{})
 // 		tMyMap[1] = "string"
-// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != rcv.GOOD {
-// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, rcv.GOOD)
+// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != ctv.GOOD {
+// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, ctv.GOOD)
 // 		}
 // 		tMyMap = make(map[any]interface{})
 // 		tMyMap[1] = 1
-// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != rcv.GOOD {
-// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, rcv.GOOD)
+// 		if tFinding = AreMapKeysValuesPopulated(tMyMap); tFinding != ctv.GOOD {
+// 			tPtr.Errorf("%v Failed: Expected a finding of %v.", tFunctionName, ctv.GOOD)
 // 		}
 // 	})
 // }
@@ -139,12 +139,12 @@ var (
 //
 // 	tPtr.Run(tFunctionName, func(t *testing.T) {
 // 		tMyMap = make(map[any]interface{})
-// 		tMyMap["string"] = rcv.EMPTY
+// 		tMyMap["string"] = ctv.EMPTY
 // 		if AreMapValuesPopulated(tMyMap) {
 // 			tPtr.Errorf("%v Failed: Expected map keys to fail.", tFunctionName)
 // 		}
 // 		tMyMap = make(map[any]interface{})
-// 		tMyMap[1] = rcv.EMPTY
+// 		tMyMap[1] = ctv.EMPTY
 // 		if AreMapValuesPopulated(tMyMap) {
 // 			tPtr.Errorf("%v Failed: Expected map keys to pass.", tFunctionName)
 // 		}
@@ -173,7 +173,7 @@ func TestBase64Decode(tPtr *testing.T) {
 		tFunctionName, func(tPtr *testing.T) {
 			if tValue, _ = Base64Decode(TEST_BASE64_STRING); bytes.Equal(tValue, TEST_BYTE_ARRAY) {
 			} else {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.VAL_EMPTY)
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.VAL_EMPTY)
 			}
 			if tValue, _ = Base64Decode(TEST_STRING); bytes.Equal(tValue, TEST_BYTE_ARRAY) {
 				tPtr.Errorf(pi.EXPECTED_ERROR_FORMAT, tFunctionName)
@@ -193,7 +193,7 @@ func TestBase64Encode(tPtr *testing.T) {
 		tFunctionName, func(tPtr *testing.T) {
 			// Adds working directory to file name
 			if Base64Encode(TEST_STRING) != TEST_BASE64_STRING {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.VAL_EMPTY)
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.VAL_EMPTY)
 			}
 		},
 	)
@@ -217,7 +217,7 @@ func TestCheckFileExistsAndReadable(tPtr *testing.T) {
 		wantError bool
 	}{
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "File exists and is readable.",
+			name: ctv.TEST_POSITIVE_SUCCESS + "File exists and is readable.",
 			arguments: arguments{
 				FQN:       TEST_FILE_EXISTS_FILENAME,
 				fileLabel: "Test Good filename",
@@ -225,22 +225,22 @@ func TestCheckFileExistsAndReadable(tPtr *testing.T) {
 			wantError: false,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "File exists and is readable - No Label.",
+			name: ctv.TEST_POSITIVE_SUCCESS + "File exists and is readable - No Label.",
 			arguments: arguments{
 				FQN: TEST_FILE_EXISTS_FILENAME,
 			},
 			wantError: false,
 		},
 		{
-			name: rcv.TEST_NEGATIVE_SUCCESS + "File doesn't exist.",
+			name: ctv.TEST_NEGATIVE_SUCCESS + "File doesn't exist.",
 			arguments: arguments{
-				FQN:       rcv.VAL_EMPTY,
+				FQN:       ctv.VAL_EMPTY,
 				fileLabel: "Test No Such filename",
 			},
 			wantError: true,
 		},
 		{
-			name: rcv.TEST_NEGATIVE_SUCCESS + "File is not readable",
+			name: ctv.TEST_NEGATIVE_SUCCESS + "File is not readable",
 			arguments: arguments{
 				FQN:       TEST_FILE_UNREADABLE,
 				fileLabel: "Test Unreadable FQN",
@@ -286,7 +286,7 @@ func TestCheckFileExistsAndReadable(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: File contains valid JSON.",
 // 			arguments: arguments{
-// 				FQN:       rcv.TEST_GOOD_FQN,
+// 				FQN:       ctv.TEST_GOOD_FQN,
 // 				fileLabel: "Test Good JSON",
 // 			},
 // 			wantError: false,
@@ -294,7 +294,7 @@ func TestCheckFileExistsAndReadable(tPtr *testing.T) {
 // 		{
 // 			name: "Negative Case: File is not readable.",
 // 			arguments: arguments{
-// 				FQN:       rcv.TEST_UNREADABLE_FQN,
+// 				FQN:       ctv.TEST_UNREADABLE_FQN,
 // 				fileLabel: "Test Unreadable File",
 // 			},
 // 			wantError: true,
@@ -302,7 +302,7 @@ func TestCheckFileExistsAndReadable(tPtr *testing.T) {
 // 		{
 // 			name: "Negative Case: File contains INVALID JSON.",
 // 			arguments: arguments{
-// 				FQN:       rcv.TEST_MALFORMED_JSON_FILE,
+// 				FQN:       ctv.TEST_MALFORMED_JSON_FILE,
 // 				fileLabel: "Test Bad JSON",
 // 			},
 // 			wantError: true,
@@ -335,10 +335,10 @@ func TestDoesDirectoryExist(tPtr *testing.T) {
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
 			if DoesDirectoryExist(tWorkingDirectory) == false {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.TXT_DIRECTORY_DOES_NOT_EXIST)
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.TXT_DIRECTORY_DOES_NOT_EXIST)
 			}
-			if DoesDirectoryExist(rcv.VAL_EMPTY) {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.TXT_DIRECTORY_EXISTS)
+			if DoesDirectoryExist(ctv.VAL_EMPTY) {
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.TXT_DIRECTORY_EXISTS)
 			}
 		},
 	)
@@ -354,10 +354,10 @@ func TestDoesFileExist(tPtr *testing.T) {
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
 			if DoesFileExist(TEST_FILE_EXISTS_FILENAME) == false {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.TXT_FILENAME_DOES_NOT_EXISTS)
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.TXT_FILENAME_DOES_NOT_EXISTS)
 			}
-			if DoesFileExist(rcv.VAL_EMPTY) {
-				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, rcv.TXT_FILENAME_EXISTS)
+			if DoesFileExist(ctv.VAL_EMPTY) {
+				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, ctv.TXT_FILENAME_EXISTS)
 			}
 		},
 	)
@@ -378,7 +378,7 @@ func TestIsBase64Encode(tPtr *testing.T) {
 			if IsBase64Encode(TEST_BASE64_STRING) == false {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, pi.FALSE_SHOULD_BE_TRUE)
 			}
-			if IsBase64Encode(rcv.VAL_EMPTY) == false {
+			if IsBase64Encode(ctv.VAL_EMPTY) == false {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, pi.FALSE_SHOULD_BE_TRUE)
 			}
 		},
@@ -402,21 +402,21 @@ func TestIsDomainValid(tPtr *testing.T) {
 		wantError bool
 	}{
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "No domain",
+			name: ctv.TEST_POSITIVE_SUCCESS + "No domain",
 			arguments: arguments{
-				domain: rcv.VAL_EMPTY,
+				domain: ctv.VAL_EMPTY,
 			},
 			wantError: true,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "invalid domain",
+			name: ctv.TEST_POSITIVE_SUCCESS + "invalid domain",
 			arguments: arguments{
 				domain: TEST_INVALID_DOMAIN,
 			},
 			wantError: true,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "good domain",
+			name: ctv.TEST_POSITIVE_SUCCESS + "good domain",
 			arguments: arguments{
 				domain: TEST_DOMAIN,
 			},
@@ -433,7 +433,7 @@ func TestIsDomainValid(tPtr *testing.T) {
 					gotError = true
 				}
 				if gotError != ts.wantError {
-					tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, ts.name, rcv.TXT_GOT_WRONG_BOOLEAN)
+					tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, ts.name, ctv.TXT_GOT_WRONG_BOOLEAN)
 				}
 			},
 		)
@@ -449,16 +449,16 @@ func TestIsGinModeValid(tPtr *testing.T) {
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
-			if IsGinModeValid(rcv.MODE_DEBUG) == false {
+			if IsGinModeValid(ctv.MODE_DEBUG) == false {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, pi.FALSE_SHOULD_BE_TRUE)
 			}
-			if IsGinModeValid(rcv.MODE_RELEASE) == false {
+			if IsGinModeValid(ctv.MODE_RELEASE) == false {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, pi.FALSE_SHOULD_BE_TRUE)
 			}
-			if IsGinModeValid(rcv.TXT_EMPTY) {
+			if IsGinModeValid(ctv.TXT_EMPTY) {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, pi.TRUE_SHOULD_BE_FALSE)
 			}
-			if IsGinModeValid(rcv.VAL_EMPTY) {
+			if IsGinModeValid(ctv.VAL_EMPTY) {
 				tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, tFunctionName, pi.TRUE_SHOULD_BE_FALSE)
 			}
 		},
@@ -481,51 +481,51 @@ func TestIsEnvironmentValid(tPtr *testing.T) {
 		wantError bool
 	}{
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "No environment",
+			name: ctv.TEST_POSITIVE_SUCCESS + "No environment",
 			arguments: arguments{
 				environment: "",
 			},
 			wantError: true,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "LOCAL environment",
+			name: ctv.TEST_POSITIVE_SUCCESS + "LOCAL environment",
 			arguments: arguments{
-				environment: strings.ToUpper(rcv.ENVIRONMENT_LOCAL),
+				environment: strings.ToUpper(ctv.ENVIRONMENT_LOCAL),
 			},
 			wantError: false,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "local environment",
+			name: ctv.TEST_POSITIVE_SUCCESS + "local environment",
 			arguments: arguments{
-				environment: strings.ToLower(rcv.ENVIRONMENT_LOCAL),
+				environment: strings.ToLower(ctv.ENVIRONMENT_LOCAL),
 			},
 			wantError: false,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "DEVELOPMENT environment",
+			name: ctv.TEST_POSITIVE_SUCCESS + "DEVELOPMENT environment",
 			arguments: arguments{
-				environment: strings.ToUpper(rcv.ENVIRONMENT_DEVELOPMENT),
+				environment: strings.ToUpper(ctv.ENVIRONMENT_DEVELOPMENT),
 			},
 			wantError: false,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "development environment",
+			name: ctv.TEST_POSITIVE_SUCCESS + "development environment",
 			arguments: arguments{
-				environment: strings.ToLower(rcv.ENVIRONMENT_DEVELOPMENT),
+				environment: strings.ToLower(ctv.ENVIRONMENT_DEVELOPMENT),
 			},
 			wantError: false,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "PRODUCTION environment",
+			name: ctv.TEST_POSITIVE_SUCCESS + "PRODUCTION environment",
 			arguments: arguments{
-				environment: strings.ToUpper(rcv.ENVIRONMENT_PRODUCTION),
+				environment: strings.ToUpper(ctv.ENVIRONMENT_PRODUCTION),
 			},
 			wantError: false,
 		},
 		{
-			name: rcv.TEST_POSITIVE_SUCCESS + "production environment",
+			name: ctv.TEST_POSITIVE_SUCCESS + "production environment",
 			arguments: arguments{
-				environment: strings.ToLower(rcv.ENVIRONMENT_PRODUCTION),
+				environment: strings.ToLower(ctv.ENVIRONMENT_PRODUCTION),
 			},
 			wantError: false,
 		},
@@ -540,7 +540,7 @@ func TestIsEnvironmentValid(tPtr *testing.T) {
 					gotError = true
 				}
 				if gotError != ts.wantError {
-					tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, ts.name, rcv.TXT_GOT_WRONG_BOOLEAN)
+					tPtr.Errorf(pi.EXPECTING_NO_ERROR_FORMAT, ts.name, ctv.TXT_GOT_WRONG_BOOLEAN)
 				}
 			},
 		)
@@ -562,7 +562,7 @@ func TestIsFileReadable(tPtr *testing.T) {
 			if IsFileReadable(TEST_FILE_EXISTS_FILENAME) == false {
 				tPtr.Error(pi.FALSE_SHOULD_BE_TRUE)
 			}
-			if IsFileReadable(rcv.VAL_EMPTY) == true {
+			if IsFileReadable(ctv.VAL_EMPTY) == true {
 				tPtr.Error(pi.TRUE_SHOULD_BE_FALSE)
 			}
 		},
@@ -581,10 +581,10 @@ func TestIsJSONValid(tPtr *testing.T) {
 			if IsJSONValid(testValidJson) == false {
 				tPtr.Error(pi.FALSE_SHOULD_BE_TRUE)
 			}
-			if IsJSONValid([]byte(rcv.VAL_EMPTY)) == true {
+			if IsJSONValid([]byte(ctv.VAL_EMPTY)) == true {
 				tPtr.Error(pi.TRUE_SHOULD_BE_FALSE)
 			}
-			if IsJSONValid([]byte(rcv.TXT_EMPTY)) == true {
+			if IsJSONValid([]byte(ctv.TXT_EMPTY)) == true {
 				tPtr.Error(pi.TRUE_SHOULD_BE_FALSE)
 			}
 		},
@@ -599,10 +599,10 @@ func TestIsJSONValid(tPtr *testing.T) {
 // 	)
 //
 // 	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-// 		if IsURLValid(rcv.TEST_URL_VALID) == false {
+// 		if IsURLValid(ctv.TEST_URL_VALID) == false {
 // 			tPtr.Errorf("%v Failed: Expected JSON string to be valid.", tFunctionName)
 // 		}
-// 		if IsURLValid(rcv.TEST_URL_INVALID) == true {
+// 		if IsURLValid(ctv.TEST_URL_INVALID) == true {
 // 			tPtr.Errorf("%v Failed: Expected JSON string to be invalid.", tFunctionName)
 // 		}
 // 	})
@@ -616,10 +616,10 @@ func TestIsJSONValid(tPtr *testing.T) {
 // 	)
 //
 // 	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-// 		if IsUUIDValid(rcv.TEST_UUID_VALID) == false {
+// 		if IsUUIDValid(ctv.TEST_UUID_VALID) == false {
 // 			tPtr.Errorf("%v Failed: Expected JSON string to be valid.", tFunctionName)
 // 		}
-// 		if IsUUIDValid(rcv.TEST_UUID_INVALID) == true {
+// 		if IsUUIDValid(ctv.TEST_UUID_INVALID) == true {
 // 			tPtr.Errorf("%v Failed: Expected JSON string to be invalid.", tFunctionName)
 // 		}
 // 	})
@@ -644,21 +644,21 @@ func TestIsJSONValid(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				service: rcv.AUTH_COGNITO,
+// 				service: ctv.AUTH_COGNITO,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Negative Case: Not Supported!",
 // 			arguments: arguments{
-// 				service: rcv.AUTH_FIREBASE,
+// 				service: ctv.AUTH_FIREBASE,
 // 			},
 // 			wantError: true,
 // 		},
 // 		{
 // 			name: "Negative Case: Empty method!",
 // 			arguments: arguments{
-// 				service: rcv.EMPTY,
+// 				service: ctv.EMPTY,
 // 			},
 // 			wantError: true,
 // 		},
@@ -693,10 +693,10 @@ func TestValidateDirectory(tPtr *testing.T) {
 			if errorInfo = ValidateDirectory(tWorkingDirectory); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Expected err to be 'nil' and got %v.", tFunctionName, errorInfo.Error.Error())
 			}
-			if errorInfo = ValidateDirectory(rcv.VAL_EMPTY); errorInfo.Error == nil {
+			if errorInfo = ValidateDirectory(ctv.VAL_EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Expected an error and got nil.", tFunctionName)
 			}
-			if errorInfo = ValidateDirectory(rcv.TXT_EMPTY); errorInfo.Error == nil {
+			if errorInfo = ValidateDirectory(ctv.TXT_EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Expected an error and got nil.", tFunctionName)
 			}
 		},
@@ -722,35 +722,35 @@ func TestValidateDirectory(tPtr *testing.T) {
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				method: rcv.TRANFER_STRIPE,
+// 				method: ctv.TRANFER_STRIPE,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				method: rcv.TRANFER_WIRE,
+// 				method: ctv.TRANFER_WIRE,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				method: rcv.TRANFER_CHECK,
+// 				method: ctv.TRANFER_CHECK,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Positive Case: Successful!",
 // 			arguments: arguments{
-// 				method: rcv.TRANFER_ZELLE,
+// 				method: ctv.TRANFER_ZELLE,
 // 			},
 // 			wantError: false,
 // 		},
 // 		{
 // 			name: "Negative Case: Empty method!",
 // 			arguments: arguments{
-// 				method: rcv.EMPTY,
+// 				method: ctv.EMPTY,
 // 			},
 // 			wantError: true,
 // 		},

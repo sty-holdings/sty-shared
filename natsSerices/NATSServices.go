@@ -1,4 +1,4 @@
-// Package sharedServices
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,7 +32,7 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package sharedServices
+package sty_shared
 
 import (
 	"encoding/json"
@@ -42,8 +42,8 @@ import (
 	"strings"
 	"time"
 
-	ext "github.com/sty-holdings/GriesPikeThomp/servers/natsSerices-connect/loadExtensions"
-	ctv "github.com/sty-holdings/GriesPikeThomp/shared-services"
+	"github.com/nats-io/nats.go"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
@@ -73,11 +73,11 @@ func BuildInstanceName(
 	}
 	switch strings.Trim(strings.ToLower(method), ctv.SPACES_ONE) {
 	case METHOD_DASHES:
-		instanceName, errorInfo = buildInstanceName(rcv.DASH, nodes...)
+		instanceName, errorInfo = buildInstanceName(ctv.DASH, nodes...)
 	case METHOD_UNDERSCORES:
-		instanceName, errorInfo = buildInstanceName(rcv.UNDERSCORE, nodes...)
+		instanceName, errorInfo = buildInstanceName(ctv.UNDERSCORE, nodes...)
 	default:
-		instanceName, errorInfo = buildInstanceName(rcv.VAL_EMPTY, nodes...)
+		instanceName, errorInfo = buildInstanceName(ctv.VAL_EMPTY, nodes...)
 	}
 
 	return
@@ -219,7 +219,7 @@ func buildInstanceName(
 ) {
 
 	if len(nodes) == ctv.VAL_ZERO {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprint(rcv.TXT_AT_LEAST_ONE))
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprint(ctv.TXT_AT_LEAST_ONE))
 		return
 	}
 	for index, node := range nodes {
@@ -265,11 +265,11 @@ func buildURLPort(
 ) {
 
 	if url == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprint(rcv.FN_URL))
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprint(ctv.FN_URL))
 		return
 	}
 	if port == ctv.VAL_ZERO {
-		errorInfo = pi.NewErrorInfo(pi.ErrGreatThanZero, fmt.Sprint(rcv.FN_PORT))
+		errorInfo = pi.NewErrorInfo(pi.ErrGreatThanZero, fmt.Sprint(ctv.FN_PORT))
 		return
 	}
 

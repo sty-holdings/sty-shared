@@ -1,4 +1,4 @@
-// Package sharedServices
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,7 +32,7 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package sharedServices
+package sty_shared
 
 import (
 	"errors"
@@ -40,9 +40,8 @@ import (
 	"runtime"
 	"testing"
 
-	ext "GriesPikeThomp/servers/natsSerices-connect/loadExtensions"
-	cj "GriesPikeThomp/shared-services/src/coreJWT"
-	ctv "github.com/sty-holdings/GriesPikeThomp/shared-services"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
+	jwts "github.com/sty-holdings/sty-shared/v2024/jwtServices"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
@@ -72,7 +71,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 				config: ext.ExtensionConfiguration{
 					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
 					NATSPort:                4222,
-					NATSTLSInfo: cj.TLSInfo{
+					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
 						TLSPrivateKey: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/savup.com.key",
 						TLSCABundle:   "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/CAbundle.crt",
@@ -89,7 +88,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 				config: ext.ExtensionConfiguration{
 					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
 					NATSPort:                4222,
-					NATSTLSInfo: cj.TLSInfo{
+					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
 						TLSPrivateKey: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/savup.com.key",
 						TLSCABundle:   "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/CAbundle.crt",
@@ -106,7 +105,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 				config: ext.ExtensionConfiguration{
 					NATSCredentialsFilename: ctv.VAL_EMPTY,
 					NATSPort:                4222,
-					NATSTLSInfo: cj.TLSInfo{
+					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
 						TLSPrivateKey: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/savup.com.key",
 						TLSCABundle:   "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/CAbundle.crt",
@@ -123,7 +122,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 				config: ext.ExtensionConfiguration{
 					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
 					NATSPort:                0,
-					NATSTLSInfo: cj.TLSInfo{
+					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
 						TLSPrivateKey: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/savup.com.key",
 						TLSCABundle:   "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/CAbundle.crt",
@@ -140,7 +139,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 				config: ext.ExtensionConfiguration{
 					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
 					NATSPort:                4222,
-					NATSTLSInfo: cj.TLSInfo{
+					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       ctv.VAL_EMPTY,
 						TLSPrivateKey: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/savup.com.key",
 						TLSCABundle:   "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/CAbundle.crt",
@@ -157,7 +156,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 				config: ext.ExtensionConfiguration{
 					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
 					NATSPort:                4222,
-					NATSTLSInfo: cj.TLSInfo{
+					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
 						TLSPrivateKey: ctv.VAL_EMPTY,
 						TLSCABundle:   "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/CAbundle.crt",
@@ -174,7 +173,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 				config: ext.ExtensionConfiguration{
 					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
 					NATSPort:                4222,
-					NATSTLSInfo: cj.TLSInfo{
+					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
 						TLSPrivateKey: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/savup.com.key",
 						TLSCABundle:   ctv.VAL_EMPTY,
@@ -191,7 +190,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 				config: ext.ExtensionConfiguration{
 					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
 					NATSPort:                4222,
-					NATSTLSInfo: cj.TLSInfo{
+					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
 						TLSPrivateKey: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/savup.com.key",
 						TLSCABundle:   "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/CAbundle.crt",

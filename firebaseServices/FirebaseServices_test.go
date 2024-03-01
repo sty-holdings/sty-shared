@@ -55,7 +55,7 @@ func TestFindFirebaseAuthUser(tPtr *testing.T) {
 		errorInfo          pi.ErrorInfo
 	)
 
-	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(rcv.TEST_FIREBASE_CREDENTIALS)
+	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(ctv.TEST_FIREBASE_CREDENTIALS)
 
 	tPtr.Run(
 		tFunctionName, func(t *testing.T) {
@@ -76,7 +76,7 @@ func TestGetIdTokenPayload(tPtr *testing.T) {
 		tTokenPayload      = make(map[any]interface{})
 	)
 
-	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(rcv.TEST_FIREBASE_CREDENTIALS)
+	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(ctv.TEST_FIREBASE_CREDENTIALS)
 
 	tPtr.Run(
 		tFunctionName, func(t *testing.T) {
@@ -96,7 +96,7 @@ func TestGetIdTokenPtr(tPtr *testing.T) {
 		tIdTokenPtr        *auth.Token
 	)
 
-	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(rcv.TEST_FIREBASE_CREDENTIALS)
+	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(ctv.TEST_FIREBASE_CREDENTIALS)
 
 	tPtr.Run(
 		tFunctionName, func(t *testing.T) {
@@ -116,7 +116,7 @@ func TestIsFirebaseIdTokenValid(tPtr *testing.T) {
 		tValid             bool
 	)
 
-	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(rcv.TEST_FIREBASE_CREDENTIALS)
+	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(ctv.TEST_FIREBASE_CREDENTIALS)
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
@@ -141,7 +141,7 @@ func TestNewFirebaseApp(tPtr *testing.T) {
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
-			if tAppPtr, errorInfo = NewFirebaseApp(rcv.TEST_FIREBASE_CREDENTIALS); tAppPtr == nil || errorInfo.Error != nil {
+			if tAppPtr, errorInfo = NewFirebaseApp(ctv.TEST_FIREBASE_CREDENTIALS); tAppPtr == nil || errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Firebase app was not created.", tFunctionName)
 			}
 		},
@@ -159,15 +159,15 @@ func TestValidateFirebaseJWTPayload(tPtr *testing.T) {
 		tValid             bool
 	)
 
-	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(rcv.TEST_FIREBASE_CREDENTIALS)
+	_, tAuthPtr, _ = GetFirebaseAppAuthConnection(ctv.TEST_FIREBASE_CREDENTIALS)
 	tTokenPayload, _ = GetFirebaseIdTokenPayload(tAuthPtr, TEST_FIREBASE_IDTOKEN_VALID)
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
 			if errorInfo = ValidateFirebaseJWTPayload(
 				tTokenPayload,
-				rcv.CERT_SAVUPDEV_AUDIENCE,
-				rcv.CERT_DEV_ID_TOEKN_ISSUER,
+				ctv.CERT_SAVUPDEV_AUDIENCE,
+				ctv.CERT_DEV_ID_TOEKN_ISSUER,
 			); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Token payload should be valid. Valid: %v", tFunctionName, tValid)
 			}

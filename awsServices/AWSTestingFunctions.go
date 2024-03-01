@@ -66,7 +66,7 @@ func StartTest() (
 		errorInfo pi.ErrorInfo
 	)
 
-	myAWS, errorInfo = NewAWSSession(rcv.TEST_AWS_INFORMATION_FQN)
+	myAWS, errorInfo = NewAWSSession(ctv.TEST_AWS_INFORMATION_FQN)
 
 	if errorInfo.Error == nil {
 		myFireBase.CredentialsLocation = ctv.TEST_FIREBASE_CREDENTIALS
@@ -92,14 +92,14 @@ func StopTest(myFireBase coreHelpers.FirebaseFirestoreHelper) {
 func BuildTestUser(myFireBase coreHelpers.FirebaseFirestoreHelper) {
 
 	testUser := map[any]interface{}{
-		rcv.FN_REQUESTOR_ID:     ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
-		rcv.FN_FIRST_NAME:       ctv.TEST_USER_FIRST_NAME,
-		rcv.FN_LAST_NAME:        ctv.TEST_USER_LAST_NAME,
-		rcv.FN_EMAIL:            ctv.TEST_USER_EMAIL,
-		rcv.FN_AREA_CODE:        ctv.TEST_USER_AREA_CODE,
-		rcv.FN_PHONE_NUMBER:     ctv.TEST_USER_PHONE_NUMBER,
-		rcv.FN_USERNAME:         ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE,
-		rcv.FN_CREATE_TIMESTAMP: time.Now(),
+		ctv.FN_REQUESTOR_ID:     ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID,
+		ctv.FN_FIRST_NAME:       ctv.TEST_USER_FIRST_NAME,
+		ctv.FN_LAST_NAME:        ctv.TEST_USER_LAST_NAME,
+		ctv.FN_EMAIL:            ctv.TEST_USER_EMAIL,
+		ctv.FN_AREA_CODE:        ctv.TEST_USER_AREA_CODE,
+		ctv.FN_PHONE_NUMBER:     ctv.TEST_USER_PHONE_NUMBER,
+		ctv.FN_USERNAME:         ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE,
+		ctv.FN_CREATE_TIMESTAMP: time.Now(),
 	}
 
 	_ = coreFirestore.SetDocument(myFireBase.FirestoreClientPtr, ctv.DATASTORE_USERS, ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID, testUser)
@@ -136,7 +136,7 @@ func loadTestingTokens(
 	)
 
 	// Load raw token files
-	if tAWSTokens, err = os.ReadFile(rcv.TEST_AWS_TEST_TOKEN_FQN); err != nil {
+	if tAWSTokens, err = os.ReadFile(ctv.TEST_AWS_TEST_TOKEN_FQN); err != nil {
 		err = errors.New(fmt.Sprintf("Not able to read the AWS Token file: %v.", ctv.TEST_AWS_TEST_TOKEN_FQN))
 		log.Println(err.Error())
 	} else {
@@ -145,13 +145,13 @@ func loadTestingTokens(
 		for _, token := range tTokens {
 			tNameValue = strings.Split(token, "_token=")
 			if tNameValue[0] == ctv.TOKEN_TYPE_ACCESS {
-				if err = os.WriteFile(rcv.TEST_AWS_RAW_ACCESS_TOKEN_FQN, []byte(tNameValue[1]), 0666); err != nil {
+				if err = os.WriteFile(ctv.TEST_AWS_RAW_ACCESS_TOKEN_FQN, []byte(tNameValue[1]), 0666); err != nil {
 					err = errors.New(fmt.Sprintf("Not able to write the AWS Access Token file: %v.", ctv.TEST_AWS_RAW_ACCESS_TOKEN_FQN))
 					log.Println(err.Error())
 				}
 			}
 			if tNameValue[0] == ctv.TOKEN_TYPE_ID {
-				if err = os.WriteFile(rcv.TEST_AWS_RAW_ID_TOKEN_FQN, []byte(tNameValue[1]), 0666); err != nil {
+				if err = os.WriteFile(ctv.TEST_AWS_RAW_ID_TOKEN_FQN, []byte(tNameValue[1]), 0666); err != nil {
 					err = errors.New(fmt.Sprintf("Not able to write the AWS Id Token file: %v.", ctv.TEST_AWS_RAW_ID_TOKEN_FQN))
 					log.Println(err.Error())
 				}
@@ -160,12 +160,12 @@ func loadTestingTokens(
 	}
 
 	// Checking that test ACCESS token is valid
-	if testingAccessTokenValid, err = os.ReadFile(rcv.TEST_AWS_RAW_ACCESS_TOKEN_FQN); err == nil {
+	if testingAccessTokenValid, err = os.ReadFile(ctv.TEST_AWS_RAW_ACCESS_TOKEN_FQN); err == nil {
 		if tValid, _ = myAWS.ValidAWSJWT(firestoreClientPtr, ctv.TOKEN_TYPE_ACCESS, string(testingAccessTokenValid)); tValid == false {
 			err = errors.New("ACCESS Token loading failed")
-			fmt.Println(rcv.EMPTY)
+			fmt.Println(ctv.EMPTY)
 			fmt.Printf("NOTE: Make sure to create user %v in the USERS datastorel.\n", ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE)
-			fmt.Println(rcv.EMPTY)
+			fmt.Println(ctv.EMPTY)
 			fmt.Printf("NOTE: The username must be %v or tests will fail.\n", ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE)
 			fmt.Printf(
 				"The access token is not valid! You need to create one using \n%v and paste the URL into the \n%v file.\n",
@@ -176,12 +176,12 @@ func loadTestingTokens(
 	}
 
 	// Checking that test ID token is valid
-	if testingIdTokenValid, err = os.ReadFile(rcv.TEST_AWS_RAW_ID_TOKEN_FQN); err == nil {
+	if testingIdTokenValid, err = os.ReadFile(ctv.TEST_AWS_RAW_ID_TOKEN_FQN); err == nil {
 		if tValid, _ = myAWS.ValidAWSJWT(firestoreClientPtr, ctv.TOKEN_TYPE_ID, string(testingIdTokenValid)); tValid == false {
 			err = errors.New("ID Token loading failed")
-			fmt.Println(rcv.EMPTY)
+			fmt.Println(ctv.EMPTY)
 			fmt.Printf("NOTE: Make sure to create user %v in the USERS datastorel.\n", ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE)
-			fmt.Println(rcv.EMPTY)
+			fmt.Println(ctv.EMPTY)
 			fmt.Printf("NOTE: The username must be %v or tests will fail.\n", ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE)
 			fmt.Printf(
 				"The Id token is not valid! You need to create one using (%v) and paste the URL into the %v file.\n",

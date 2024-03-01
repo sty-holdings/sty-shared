@@ -115,13 +115,13 @@ func GetFirebaseIdTokenPayload(
 
 	tokenPayload = make(map[any]interface{})
 	if tIdTokenPtr, errorInfo = GetIdTokenPtr(authPtr, idToken); errorInfo.Error == nil {
-		tokenPayload[rcv.PAYLOAD_SUBJECT_FN] = tIdTokenPtr.Subject
-		tokenPayload[rcv.PAYLOAD_CLAIMS_FN] = tIdTokenPtr.Claims
-		tokenPayload[rcv.PAYLOAD_AUDIENCE_FN] = tIdTokenPtr.Audience
-		tokenPayload[rcv.PAYLOAD_REQUESTOR_ID_FN] = tIdTokenPtr.UID
-		tokenPayload[rcv.PAYLOAD_EXPIRES_FN] = tIdTokenPtr.Expires
-		tokenPayload[rcv.PAYLOAD_ISSUER_FN] = tIdTokenPtr.Issuer
-		tokenPayload[rcv.PAYLOAD_ISSUED_AT_FN] = tIdTokenPtr.IssuedAt
+		tokenPayload[ctv.PAYLOAD_SUBJECT_FN] = tIdTokenPtr.Subject
+		tokenPayload[ctv.PAYLOAD_CLAIMS_FN] = tIdTokenPtr.Claims
+		tokenPayload[ctv.PAYLOAD_AUDIENCE_FN] = tIdTokenPtr.Audience
+		tokenPayload[ctv.PAYLOAD_REQUESTOR_ID_FN] = tIdTokenPtr.UID
+		tokenPayload[ctv.PAYLOAD_EXPIRES_FN] = tIdTokenPtr.Expires
+		tokenPayload[ctv.PAYLOAD_ISSUER_FN] = tIdTokenPtr.Issuer
+		tokenPayload[ctv.PAYLOAD_ISSUED_AT_FN] = tIdTokenPtr.IssuedAt
 	} else {
 		errorInfo.Error = errors.New(fmt.Sprintf("The provided idTokenPtr is invalid. ERROR: %v", errorInfo.Error.Error()))
 	}
@@ -262,9 +262,9 @@ func ValidateFirebaseJWTPayload(
 			errorInfo.Error = errors.New(
 				fmt.Sprintf(
 					"Require information is missing! %v: '%v' %v: '%v'",
-					rcv.FN_AUDIENCE,
+					ctv.FN_AUDIENCE,
 					audience,
-					rcv.FN_ISSUER,
+					ctv.FN_ISSUER,
 					issuer,
 				),
 			)

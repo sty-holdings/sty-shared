@@ -1,4 +1,4 @@
-// Package sharedServices
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,7 +32,7 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package sharedServices
+package sty_shared
 
 import (
 	"encoding/json"
@@ -44,21 +44,22 @@ import (
 	// "os"
 	// "time"
 
-	cj "GriesPikeThomp/shared-services/v2024/coreJWT"
-	hv "GriesPikeThomp/shared-services/v2024/helpersValidators"
-	ctv "github.com/sty-holdings/GriesPikeThomp/shared-services"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
+	config "github.com/sty-holdings/sty-shared/v2024/configuration"
+	hv "github.com/sty-holdings/sty-shared/v2024/helpersValidators"
+	jwts "github.com/sty-holdings/sty-shared/v2024/jwtServices"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
 type HTTPConfiguration struct {
-	CredentialsFilename string      `json:"credentials_filename"`
-	GinMode             string      `json:"gin_mode"`
-	HTTPDomain          string      `json:"http_domain"`
-	MessageEnvironment  string      `json:"message_environment"`
-	Port                int         `json:"port"`
-	RequestedThreads    uint        `json:"requested_threads"`
-	RouteRegistry       []RouteInfo `json:"route_registry"`
-	TLSInfo             cj.TLSInfo  `json:"tls_info"`
+	CredentialsFilename string       `json:"credentials_filename"`
+	GinMode             string       `json:"gin_mode"`
+	HTTPDomain          string       `json:"http_domain"`
+	MessageEnvironment  string       `json:"message_environment"`
+	Port                int          `json:"port"`
+	RequestedThreads    uint         `json:"requested_threads"`
+	RouteRegistry       []RouteInfo  `json:"route_registry"`
+	TLSInfo             jwts.TLSInfo `json:"tls_info"`
 }
 
 type RouteInfo struct {
@@ -90,7 +91,7 @@ func NewHTTP(configFilename string) (
 		tConfigData     []byte
 	)
 
-	if tConfigData, errorInfo = config.ReadConfigFile(chv.PrependWorkingDirectory(configFilename)); errorInfo.Error != nil {
+	if tConfigData, errorInfo = config.ReadConfigFile(hv.PrependWorkingDirectory(configFilename)); errorInfo.Error != nil {
 		return
 	}
 

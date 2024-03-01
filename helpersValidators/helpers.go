@@ -64,7 +64,7 @@ func Base64Decode(base64Value string) (
 ) {
 
 	if value, errorInfo.Error = b64.StdEncoding.DecodeString(base64Value); errorInfo.Error != nil {
-		errorInfo.AdditionalInfo = fmt.Sprintf("%v%v", rcv.TXT_BASE64, base64Value[:20])
+		errorInfo.AdditionalInfo = fmt.Sprintf("%v%v", ctv.TXT_BASE64, base64Value[:20])
 	}
 
 	return
@@ -106,7 +106,7 @@ func Base64Encode(value string) string {
 // BuildLegalName
 // func BuildLegalName(firstName, lastName string) (legalName string) {
 //
-// 	if firstName != rcv.EMPTY && lastName != rcv.EMPTY {
+// 	if firstName != ctv.EMPTY && lastName != ctv.EMPTY {
 // 		legalName = fmt.Sprintf("%v %v", firstName, lastName)
 // 	}
 //
@@ -116,8 +116,8 @@ func Base64Encode(value string) string {
 // CapitalizeFirstLetter - will make the first letter of the string to upper case and the other letters to lower
 // func CapitalizeFirstLetter(stringIn string) string {
 //
-// 	if stringIn == rcv.EMPTY {
-// 		return rcv.EMPTY
+// 	if stringIn == ctv.EMPTY {
+// 		return ctv.EMPTY
 // 	}
 //
 // 	x := []byte(stringIn)
@@ -171,14 +171,14 @@ func CreateAndRedirectLogOutput(logDirectory, redirectTo string) (
 ) {
 
 	switch redirectTo {
-	case rcv.MODE_OUTPUT_LOG:
+	case ctv.MODE_OUTPUT_LOG:
 		logFileHandlerPtr, logFQN, errorInfo = createLogFile(logDirectory)
 		log.SetOutput(io.MultiWriter(logFileHandlerPtr))
-	case rcv.MODE_OUTPUT_LOG_DISPLAY:
+	case ctv.MODE_OUTPUT_LOG_DISPLAY:
 		logFileHandlerPtr, logFQN, errorInfo = createLogFile(logDirectory)
 		log.SetOutput(io.MultiWriter(os.Stdout, logFileHandlerPtr))
 	default:
-		errorInfo = pi.NewErrorInfo(pi.ErrMissingServerName, fmt.Sprintf("%v%v", rcv.TXT_REDIRECT, redirectTo))
+		errorInfo = pi.NewErrorInfo(pi.ErrMissingServerName, fmt.Sprintf("%v%v", ctv.TXT_REDIRECT, redirectTo))
 	}
 
 	return
@@ -220,8 +220,8 @@ func FloatToPennies(amount float64) (pennies int64) {
 //	Example: http://verifyemail.savup.com:2134, https://verifyemail.savup.com:2134, http://localhost:2134, https://localhost:2134
 // func formatURL(protocol, domain string, port uint) (url string) {
 //
-// 	if domain == rcv.ENVIRONMENT_LOCAL {
-// 		url = fmt.Sprintf("%v://%v:%v", protocol, rcv.HTTP_DOMAIN_LOCALHOST, port)
+// 	if domain == ctv.ENVIRONMENT_LOCAL {
+// 		url = fmt.Sprintf("%v://%v:%v", protocol, ctv.HTTP_DOMAIN_LOCALHOST, port)
 // 	} else {
 // 		url = fmt.Sprintf("%v://%v:%v", protocol, domain, port)
 // 	}
@@ -270,18 +270,18 @@ func FloatToPennies(amount float64) (pennies int64) {
 // func GenerateURL(environment string, secure bool) (url string) {
 //
 // 	switch fmt.Sprintf("%v,%v", strings.ToUpper(environment), secure) {
-// 	case fmt.Sprintf("%v,%v", rcv.ENVIRONMENT_LOCAL, true):
-// 		url = formatURL(rcv.HTTP_PROTOCOL_SECURE, rcv.HTTP_DOMAIN_API_LOCAL, rcv.HTTP_PORT_SECURE)
-// 	case fmt.Sprintf("%v,%v", rcv.ENVIRONMENT_LOCAL, false):
-// 		url = formatURL(rcv.HTTP_PROTOCOL_NON_SECURE, rcv.HTTP_DOMAIN_API_LOCAL, rcv.HTTP_PORT_NON_SECURE)
-// 	case fmt.Sprintf("%v,%v", rcv.ENVIRONMENT_DEVELOPMENT, true):
-// 		url = formatURL(rcv.HTTP_PROTOCOL_SECURE, rcv.HTTP_DOMAIN_API_DEV, rcv.HTTP_PORT_SECURE)
-// 	case fmt.Sprintf("%v,%v", rcv.ENVIRONMENT_DEVELOPMENT, false):
-// 		url = formatURL(rcv.HTTP_PROTOCOL_NON_SECURE, rcv.HTTP_DOMAIN_API_DEV, rcv.HTTP_PORT_NON_SECURE)
-// 	case fmt.Sprintf("%v,%v", rcv.ENVIRONMENT_PRODUCTION, true):
-// 		url = formatURL(rcv.HTTP_PROTOCOL_SECURE, rcv.HTTP_DOMAIN_API_PROD, rcv.HTTP_PORT_SECURE)
-// 	case fmt.Sprintf("%v,%v", rcv.ENVIRONMENT_PRODUCTION, false):
-// 		url = formatURL(rcv.HTTP_PROTOCOL_NON_SECURE, rcv.HTTP_DOMAIN_API_PROD, rcv.HTTP_PORT_NON_SECURE)
+// 	case fmt.Sprintf("%v,%v", ctv.ENVIRONMENT_LOCAL, true):
+// 		url = formatURL(ctv.HTTP_PROTOCOL_SECURE, ctv.HTTP_DOMAIN_API_LOCAL, ctv.HTTP_PORT_SECURE)
+// 	case fmt.Sprintf("%v,%v", ctv.ENVIRONMENT_LOCAL, false):
+// 		url = formatURL(ctv.HTTP_PROTOCOL_NON_SECURE, ctv.HTTP_DOMAIN_API_LOCAL, ctv.HTTP_PORT_NON_SECURE)
+// 	case fmt.Sprintf("%v,%v", ctv.ENVIRONMENT_DEVELOPMENT, true):
+// 		url = formatURL(ctv.HTTP_PROTOCOL_SECURE, ctv.HTTP_DOMAIN_API_DEV, ctv.HTTP_PORT_SECURE)
+// 	case fmt.Sprintf("%v,%v", ctv.ENVIRONMENT_DEVELOPMENT, false):
+// 		url = formatURL(ctv.HTTP_PROTOCOL_NON_SECURE, ctv.HTTP_DOMAIN_API_DEV, ctv.HTTP_PORT_NON_SECURE)
+// 	case fmt.Sprintf("%v,%v", ctv.ENVIRONMENT_PRODUCTION, true):
+// 		url = formatURL(ctv.HTTP_PROTOCOL_SECURE, ctv.HTTP_DOMAIN_API_PROD, ctv.HTTP_PORT_SECURE)
+// 	case fmt.Sprintf("%v,%v", ctv.ENVIRONMENT_PRODUCTION, false):
+// 		url = formatURL(ctv.HTTP_PROTOCOL_NON_SECURE, ctv.HTTP_DOMAIN_API_PROD, ctv.HTTP_PORT_NON_SECURE)
 // 	}
 //
 // 	return
@@ -326,7 +326,7 @@ func FloatToPennies(amount float64) (pennies int64) {
 // func GenerateVerifyEmailURLWithUUIDUsername(username, environment string, secure bool) (url, uuid string) {
 //
 // 	uuid = GenerateUUIDType4(false)
-// 	url = fmt.Sprintf("%v?%v=%v&%v=%v", GenerateVerifyEmailURL(environment, secure), rcv.FN_UUID, uuid, rcv.FN_USERNAME, username)
+// 	url = fmt.Sprintf("%v?%v=%v&%v=%v", GenerateVerifyEmailURL(environment, secure), ctv.FN_UUID, uuid, ctv.FN_USERNAME, username)
 //
 // 	return
 // }
@@ -334,7 +334,7 @@ func FloatToPennies(amount float64) (pennies int64) {
 // GenerateVerifyEmailURL - return the url.
 // func GenerateVerifyEmailURL(environment string, secure bool) (url string) {
 //
-// 	url = fmt.Sprintf("%v/%v", GenerateURL(environment, secure), rcv.ENDPOINT_VERIFY_EMAIL)
+// 	url = fmt.Sprintf("%v/%v", GenerateURL(environment, secure), ctv.ENDPOINT_VERIFY_EMAIL)
 //
 // 	return
 // }
@@ -444,7 +444,7 @@ func PrependWorkingDirectoryWithEndingSlash(directory string) string {
 // func printDashLines(lines int, outputMode string) {
 //
 // 	for i := 0; i < lines; i++ {
-// 		if strings.ToLower(outputMode) == rcv.MODE_OUTPUT_DISPLAY {
+// 		if strings.ToLower(outputMode) == ctv.MODE_OUTPUT_DISPLAY {
 // 			fmt.Println("------------------------------------------")
 // 		} else {
 // 			log.Println("------------------------------------------")
@@ -474,12 +474,12 @@ func RedirectLogOutput(
 ) (errorInfo pi.ErrorInfo) {
 
 	switch redirectTo {
-	case rcv.MODE_OUTPUT_LOG:
+	case ctv.MODE_OUTPUT_LOG:
 		log.SetOutput(io.MultiWriter(inLogFileHandlerPtr))
-	case rcv.MODE_OUTPUT_LOG_DISPLAY:
+	case ctv.MODE_OUTPUT_LOG_DISPLAY:
 		log.SetOutput(io.MultiWriter(os.Stdout, inLogFileHandlerPtr))
 	default:
-		errorInfo = pi.NewErrorInfo(pi.ErrRedirectModeInvalid, fmt.Sprintf("%v%v", rcv.TXT_REDIRECT, redirectTo))
+		errorInfo = pi.NewErrorInfo(pi.ErrRedirectModeInvalid, fmt.Sprintf("%v%v", ctv.TXT_REDIRECT, redirectTo))
 	}
 
 	return
@@ -494,12 +494,12 @@ func RemovePidFile(pidFQN string) (errorInfo pi.ErrorInfo) {
 
 	// This doesn't use the coreValidator.DoesFileExist by design.
 	if _, err := os.Stat(pidFQN); err != nil {
-		errorInfo = pi.NewErrorInfo(pi.ErrFileMissing, fmt.Sprintf("%v%v", rcv.TXT_FILENAME, pidFQN))
+		errorInfo = pi.NewErrorInfo(pi.ErrFileMissing, fmt.Sprintf("%v%v", ctv.TXT_FILENAME, pidFQN))
 		return
 	}
 
 	if errorInfo.Error = os.Remove(pidFQN); errorInfo.Error != nil {
-		errorInfo = pi.NewErrorInfo(pi.ErrFileRemovalFailed, fmt.Sprintf("%v%v", rcv.TXT_FILENAME, pidFQN))
+		errorInfo = pi.NewErrorInfo(pi.ErrFileRemovalFailed, fmt.Sprintf("%v%v", ctv.TXT_FILENAME, pidFQN))
 		return
 	}
 
@@ -518,7 +518,7 @@ func WriteFile(
 ) (errorInfo pi.ErrorInfo) {
 
 	if errorInfo.Error = os.WriteFile(fqn, fileData, filePermissions); errorInfo.Error != nil {
-		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v %v%v", pi.ErrFileCreationFailed.Error(), rcv.TXT_FILENAME, fqn))
+		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v %v%v", pi.ErrFileCreationFailed.Error(), ctv.TXT_FILENAME, fqn))
 	}
 
 	return
@@ -535,7 +535,7 @@ func WritePidFile(
 ) (errorInfo pi.ErrorInfo) {
 
 	if errorInfo = WriteFile(pidFQN, []byte(strconv.Itoa(pid)), 0766); errorInfo.Error == nil {
-		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", rcv.TXT_FILENAME, pidFQN))
+		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_FILENAME, pidFQN))
 	}
 
 	return
@@ -559,22 +559,22 @@ func createLogFile(logFQD string) (
 	)
 
 	if IsDirectoryFullyQualified(logFQD) == false {
-		errorInfo = pi.NewErrorInfo(pi.ErrDirectoryNotFullyQualified, fmt.Sprintf("%v%v", rcv.TXT_DIRECTORY, logFQD))
+		errorInfo = pi.NewErrorInfo(pi.ErrDirectoryNotFullyQualified, fmt.Sprintf("%v%v", ctv.TXT_DIRECTORY, logFQD))
 		return
 	}
 
 	tDateTime := time.Now().Format("2006-01-02 15:04:05.000 Z0700")
 	tLogFileName = strings.Replace(
-		strings.Replace(strings.Replace(tDateTime, rcv.SPACES_ONE, rcv.UNDERSCORE, -1), rcv.COLON, rcv.UNDERSCORE, -1),
-		rcv.PERIOD,
-		rcv.UNDERSCORE,
+		strings.Replace(strings.Replace(tDateTime, ctv.SPACES_ONE, ctv.UNDERSCORE, -1), ctv.COLON, ctv.UNDERSCORE, -1),
+		ctv.PERIOD,
+		ctv.UNDERSCORE,
 		-1,
 	)
 	logFQN = fmt.Sprintf("%v%v.log", logFQD, tLogFileName)
 
 	// Set log file output
 	if logFileHandlerPtr, errorInfo.Error = os.OpenFile(logFQN, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666); errorInfo.Error != nil {
-		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", rcv.TXT_FILENAME, logFQN))
+		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_FILENAME, logFQN))
 		return
 	}
 

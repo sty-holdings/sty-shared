@@ -1,4 +1,4 @@
-// Package coreOS
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,7 +32,7 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package coreOS
+package sty_shared
 
 import (
 	"fmt"
@@ -47,16 +47,18 @@ func TestGetIPAddresses(tPtr *testing.T) {
 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
 	)
 
-	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-		// Success
-		if ipAddresses = GetIPAddresses(); len(ipAddresses) == 0 {
-			tPtr.Errorf("%v FAILED - THIS IS NOT WORKING. THERE SHOULD ALWAYS BE AN IP ADDRESS.", tFunctionName)
-		} else {
-			for _, address := range ipAddresses {
-				fmt.Println("IP: ", address)
+	tPtr.Run(
+		tFunctionName, func(tPtr *testing.T) {
+			// Success
+			if ipAddresses = GetIPAddresses(); len(ipAddresses) == 0 {
+				tPtr.Errorf("%v FAILED - THIS IS NOT WORKING. THERE SHOULD ALWAYS BE AN IP ADDRESS.", tFunctionName)
+			} else {
+				for _, address := range ipAddresses {
+					fmt.Println("IP: ", address)
+				}
 			}
-		}
-	})
+		},
+	)
 }
 
 func TestGetIPv4Addresses(tPtr *testing.T) {
@@ -66,16 +68,18 @@ func TestGetIPv4Addresses(tPtr *testing.T) {
 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
 	)
 
-	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-		// Success
-		if ipAddresses = GetIPv4Addresses(); len(ipAddresses) == 0 {
-			tPtr.Errorf("%v FAILED - THIS IS NOT WORKING. THERE SHOULD ALWAYS BE AN IPv4 ADDRESS.", tFunctionName)
-		} else {
-			for _, address := range ipAddresses {
-				fmt.Println("IP: ", address)
+	tPtr.Run(
+		tFunctionName, func(tPtr *testing.T) {
+			// Success
+			if ipAddresses = GetIPv4Addresses(); len(ipAddresses) == 0 {
+				tPtr.Errorf("%v FAILED - THIS IS NOT WORKING. THERE SHOULD ALWAYS BE AN IPv4 ADDRESS.", tFunctionName)
+			} else {
+				for _, address := range ipAddresses {
+					fmt.Println("IP: ", address)
+				}
 			}
-		}
-	})
+		},
+	)
 }
 
 func TestGetIPv6Addresses(tPtr *testing.T) {
@@ -85,14 +89,16 @@ func TestGetIPv6Addresses(tPtr *testing.T) {
 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
 	)
 
-	tPtr.Run(tFunctionName, func(tPtr *testing.T) {
-		// Success
-		if ipAddresses = GetIPv6Addresses(); len(ipAddresses) == 0 {
-			fmt.Printf("%v WARNING - Your system may not have an IPv6 assigned.", tFunctionName)
-		} else {
-			for _, address := range ipAddresses {
-				fmt.Println("IP: ", address)
+	tPtr.Run(
+		tFunctionName, func(tPtr *testing.T) {
+			// Success
+			if ipAddresses = GetIPv6Addresses(); len(ipAddresses) == 0 {
+				fmt.Printf("%v WARNING - Your system may not have an IPv6 assigned.", tFunctionName)
+			} else {
+				for _, address := range ipAddresses {
+					fmt.Println("IP: ", address)
+				}
 			}
-		}
-	})
+		},
+	)
 }

@@ -42,7 +42,7 @@ import (
 	"regexp"
 	"strings"
 
-	rcv "github.com/sty-holdings/resuable-const-vars/src"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
@@ -51,7 +51,7 @@ import (
 //
 // 	if IsMapPopulated(myMap) {
 // 		for key, _ := range myMap {
-// 			if key == nil || key == rcv.TXT_EMPTY {
+// 			if key == nil || key == ctv.TXT_EMPTY {
 // 				return false
 // 			}
 // 		}
@@ -67,7 +67,7 @@ import (
 //
 // 	if IsMapPopulated(myMap) {
 // 		for _, value := range myMap {
-// 			if value == nil || value == rcv.VAL_EMPTY {
+// 			if value == nil || value == ctv.VAL_EMPTY {
 // 				return false
 // 			}
 // 		}
@@ -78,8 +78,8 @@ import (
 // 	return true
 // }
 
-// AreMapKeysValuesPopulated - check keys and value for missing values. Findings are rcv.GOOD, rcv.MISSING_VALUE,
-// rcv.MISSING_KEY, or rcv.VAL_EMPTY_WORD.
+// AreMapKeysValuesPopulated - check keys and value for missing values. Findings are ctv.GOOD, ctv.MISSING_VALUE,
+// ctv.MISSING_KEY, or ctv.VAL_EMPTY_WORD.
 //
 //	Customer Messages: None
 //	Errors: None
@@ -89,15 +89,15 @@ import (
 // 	if IsMapPopulated(myMap) {
 // 		if AreMapKeysPopulated(myMap) {
 // 			if AreMapValuesPopulated(myMap) {
-// 				finding = rcv.TXT_GOOD
+// 				finding = ctv.TXT_GOOD
 // 			} else {
-// 				finding = rcv.TXT_MISSING_VALUE
+// 				finding = ctv.TXT_MISSING_VALUE
 // 			}
 // 		} else {
-// 			finding = rcv.TXT_MISSING_KEY
+// 			finding = ctv.TXT_MISSING_KEY
 // 		}
 // 	} else {
-// 		finding = rcv.TXT_EMPTY
+// 		finding = ctv.TXT_EMPTY
 // 	}
 //
 // 	return
@@ -115,12 +115,12 @@ func DoesFileExistsAndReadable(filename, fileLabel string) (errorInfo pi.ErrorIn
 		fqn = PrependWorkingDirectory(filename)
 	)
 
-	if fileLabel == rcv.VAL_EMPTY {
-		fileLabel = rcv.TXT_NO_LABEL_PROVIDED
+	if fileLabel == ctv.VAL_EMPTY {
+		fileLabel = ctv.TXT_NO_LABEL_PROVIDED
 	}
 	errorInfo.AdditionalInfo = fmt.Sprintf("File: %v  Config File Label: %v", filename, fileLabel)
 
-	if filename == rcv.VAL_EMPTY {
+	if filename == ctv.VAL_EMPTY {
 		errorInfo = pi.NewErrorInfo(pi.ErrFileMissing, errorInfo.AdditionalInfo)
 		return
 	}
@@ -212,8 +212,8 @@ func IsBase64Encode(base64Value string) bool {
 //	Verifications: None
 func IsDirectoryFullyQualified(directory string) bool {
 
-	if strings.HasPrefix(directory, rcv.FORWARD_SLASH) {
-		if strings.HasSuffix(directory, rcv.FORWARD_SLASH) {
+	if strings.HasPrefix(directory, ctv.FORWARD_SLASH) {
+		if strings.HasSuffix(directory, ctv.FORWARD_SLASH) {
 			return true
 		}
 	}
@@ -229,7 +229,7 @@ func IsDirectoryFullyQualified(directory string) bool {
 //	Verifications: None
 func IsDomainValid(domain string) bool {
 
-	if strings.ToLower(domain) == rcv.LOCAL_HOST {
+	if strings.ToLower(domain) == ctv.LOCAL_HOST {
 		return true
 	} else {
 		regex := regexp.MustCompile(`^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\.[a-zA-Z]{2,3})$`)
@@ -250,9 +250,9 @@ func IsDomainValid(domain string) bool {
 func IsEnvironmentValid(environment string) bool {
 
 	switch environment {
-	case rcv.ENVIRONMENT_LOCAL:
-	case rcv.ENVIRONMENT_DEVELOPMENT:
-	case rcv.ENVIRONMENT_PRODUCTION:
+	case ctv.ENVIRONMENT_LOCAL:
+	case ctv.ENVIRONMENT_DEVELOPMENT:
+	case ctv.ENVIRONMENT_PRODUCTION:
 	default:
 		return false
 	}
@@ -301,8 +301,8 @@ func IsFileReadable(fileName string) bool {
 func IsGinModeValid(mode string) bool {
 
 	switch strings.ToLower(mode) {
-	case rcv.MODE_DEBUG:
-	case rcv.MODE_RELEASE:
+	case ctv.MODE_DEBUG:
+	case ctv.MODE_RELEASE:
 	default:
 		return false
 	}
@@ -321,45 +321,57 @@ func IsPopulated(value interface{}) bool {
 }
 
 // IsIPAddressValid - checks if the data provide is a valid IP address
-// func IsIPAddressValid(ipAddress any) bool {
 //
-// 	// Checking if it is a valid IP addresses
-// 	if IsIPv4Valid(ipAddress.(string)) || IsIPv6Valid(ipAddress.(string)) {
-// 		return true
-// 	}
-//
-// 	return false
-// }
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func IsIPAddressValid(ipAddress any) bool {
+
+	// Checking if it is a valid IP addresses
+	if IsIPv4Valid(ipAddress.(string)) || IsIPv6Valid(ipAddress.(string)) {
+		return true
+	}
+
+	return false
+}
 
 // IsIPv4Valid - checks if the data provide is a valid IPv4 address
-// func IsIPv4Valid(ipAddress any) bool {
 //
-// 	var (
-// 		tIPv4Regex = regexp.MustCompile(`^(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4})`)
-// 	)
-//
-// 	// Checking if it is a valid IPv4 addresses
-// 	if tIPv4Regex.MatchString(ipAddress.(string)) {
-// 		return true
-// 	}
-//
-// 	return false
-// }
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func IsIPv4Valid(ipAddress any) bool {
+
+	var (
+		tIPv4Regex = regexp.MustCompile(`^(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4})`)
+	)
+
+	// Checking if it is a valid IPv4 addresses
+	if tIPv4Regex.MatchString(ipAddress.(string)) {
+		return true
+	}
+
+	return false
+}
 
 // IsIPv6Valid - checks if the data provide is a valid IPv6 address
-// func IsIPv6Valid(ipAddress any) bool {
 //
-// 	var (
-// 		tIPv6Regex = regexp.MustCompile(`^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$`)
-// 	)
-//
-// 	// Checking if it is a valid IPv4 addresses
-// 	if tIPv6Regex.MatchString(ipAddress.(string)) {
-// 		return true
-// 	}
-//
-// 	return false
-// }
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func IsIPv6Valid(ipAddress any) bool {
+
+	var (
+		tIPv6Regex = regexp.MustCompile(`^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$`)
+	)
+
+	// Checking if it is a valid IPv4 addresses
+	if tIPv6Regex.MatchString(ipAddress.(string)) {
+		return true
+	}
+
+	return false
+}
 
 // IsJSONValid - checks if the data provide is valid JSON.
 //
@@ -389,9 +401,9 @@ func IsJSONValid(jsonIn []byte) bool {
 // func IsMessagePrefixValid(messagePrefix string) bool {
 //
 // 	switch strings.ToUpper(messagePrefix) {
-// 	case rcv.MESSAGE_PREFIX_SAVUPPROD:
-// 	case rcv.MESSAGE_PREFIX_SAVUPDEV:
-// 	case rcv.MESSAGE_PREFIX_SAVUPLOCAL:
+// 	case ctv.MESSAGE_PREFIX_SAVUPPROD:
+// 	case ctv.MESSAGE_PREFIX_SAVUPDEV:
+// 	case ctv.MESSAGE_PREFIX_SAVUPLOCAL:
 // 	default:
 // 		return false
 // 	}
@@ -403,9 +415,9 @@ func IsJSONValid(jsonIn []byte) bool {
 // func IsPeriodValid(period string) bool {
 //
 // 	switch strings.ToUpper(period) {
-// 	case rcv.YEAR:
-// 	case rcv.MONTH:
-// 	case rcv.DAY:
+// 	case ctv.YEAR:
+// 	case ctv.MONTH:
+// 	case ctv.DAY:
 // 	default:
 // 		return false
 // 	}
@@ -417,10 +429,10 @@ func IsJSONValid(jsonIn []byte) bool {
 // func IsPostgresSSLModeValid(sslMode string) bool {
 //
 // 	switch sslMode {
-// 	case rcv.POSTGRES_SSL_MODE_ALLOW:
-// 	case rcv.POSTGRES_SSL_MODE_DISABLE:
-// 	case rcv.POSTGRES_SSL_MODE_PREFER:
-// 	case rcv.POSTGRES_SSL_MODE_REQUIRED:
+// 	case ctv.POSTGRES_SSL_MODE_ALLOW:
+// 	case ctv.POSTGRES_SSL_MODE_DISABLE:
+// 	case ctv.POSTGRES_SSL_MODE_PREFER:
+// 	case ctv.POSTGRES_SSL_MODE_REQUIRED:
 // 	default:
 // 		return false
 // 	}
@@ -432,8 +444,8 @@ func IsJSONValid(jsonIn []byte) bool {
 // func IsUserRegisterTypedValid(period string) bool {
 //
 // 	switch strings.ToUpper(period) {
-// 	case rcv.COLLECTION_USER_TO_DO_LIST:
-// 	case rcv.COLLECTION_USER_GOALS:
+// 	case ctv.COLLECTION_USER_TO_DO_LIST:
+// 	case ctv.COLLECTION_USER_GOALS:
 // 	default:
 // 		return false
 // 	}
@@ -469,12 +481,12 @@ func IsJSONValid(jsonIn []byte) bool {
 // 	pi.PrintDebugTrail(tFunctionName)
 //
 // 	switch strings.ToUpper(authenticatorService) {
-// 	case rcv.AUTH_COGNITO:
-// 	case rcv.AUTH_FIREBASE:
+// 	case ctv.AUTH_COGNITO:
+// 	case ctv.AUTH_FIREBASE:
 // 		fallthrough // ToDo This is because AUTH_FIREBASE is not supported right now
 // 	default:
 // 		errorInfo.Error = errors.New(fmt.Sprintf("The supplied authenticator service is not supported! Authenticator Service: %v (Authenticator Service is case insensitive)", authenticatorService))
-// 		if authenticatorService == rcv.VAL_EMPTY {
+// 		if authenticatorService == ctv.VAL_EMPTY {
 // 			errorInfo.AdditionalInfo = "Authenticator Service parameter is empty"
 // 		} else {
 // 			errorInfo.AdditionalInfo = "Authenticator Service: " + authenticatorService
@@ -491,12 +503,12 @@ func IsJSONValid(jsonIn []byte) bool {
 //	Verifications: None
 func ValidateDirectory(directory string) (errorInfo pi.ErrorInfo) {
 
-	if directory == rcv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, rcv.TXT_DIRECTORY_PARAM_EMPTY)
+	if directory == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, ctv.TXT_DIRECTORY_PARAM_EMPTY)
 		return
 	}
 	if DoesDirectoryExist(directory) == false {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", rcv.TXT_DIRECTORY, directory))
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_DIRECTORY, directory))
 	}
 
 	return
@@ -513,13 +525,13 @@ func ValidateDirectory(directory string) (errorInfo pi.ErrorInfo) {
 // 	pi.PrintDebugTrail(tFunctionName)
 //
 // 	switch strings.ToUpper(transferMethod) {
-// 	case rcv.TRANFER_STRIPE:
-// 	case rcv.TRANFER_WIRE:
-// 	case rcv.TRANFER_CHECK:
-// 	case rcv.TRANFER_ZELLE:
+// 	case ctv.TRANFER_STRIPE:
+// 	case ctv.TRANFER_WIRE:
+// 	case ctv.TRANFER_CHECK:
+// 	case ctv.TRANFER_ZELLE:
 // 	default:
 // 		errorInfo.Error = pi.ErrTransferMethodInvalid
-// 		if transferMethod == rcv.VAL_EMPTY {
+// 		if transferMethod == ctv.VAL_EMPTY {
 // 			errorInfo.AdditionalInfo = "Transfer Method parameter is empty"
 // 		} else {
 // 			errorInfo.AdditionalInfo = "Transfer Method: " + transferMethod

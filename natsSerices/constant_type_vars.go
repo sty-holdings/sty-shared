@@ -1,4 +1,4 @@
-// Package sharedServices
+// Package sty_shared
 /*
 General description of the purpose of the go file.
 
@@ -29,9 +29,10 @@ COPYRIGHT:
 	limitations under the License.
 
 */
-package sharedServices
+package sty_shared
 
 import (
+	"github.com/nats-io/nats.go"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 

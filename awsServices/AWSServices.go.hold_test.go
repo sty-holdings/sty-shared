@@ -54,10 +54,10 @@ func TestNewAWSSession(tPtr *testing.T) {
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
-			if _, errorInfo = NewAWSSession(rcv.TEST_AWS_INFORMATION_FQN); errorInfo.Error != nil {
+			if _, errorInfo = NewAWSSession(ctv.TEST_AWS_INFORMATION_FQN); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 			}
-			if _, errorInfo = NewAWSSession(rcv.EMPTY); errorInfo.Error == nil {
+			if _, errorInfo = NewAWSSession(ctv.EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
 		},
@@ -74,14 +74,14 @@ func TestAWSHelper_ConfirmUser(tPtr *testing.T) {
 		tFunctionName     = runtime.FuncForPC(function).Name()
 	)
 
-	tAWSHelper, _ = NewAWSSession(rcv.TEST_AWS_INFORMATION_FQN)
+	tAWSHelper, _ = NewAWSSession(ctv.TEST_AWS_INFORMATION_FQN)
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
-			if errorInfo = tAWSHelper.ConfirmUser(rcv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE); errorInfo.Error != nil {
+			if errorInfo = tAWSHelper.ConfirmUser(ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 			}
-			if errorInfo = tAWSHelper.ConfirmUser(rcv.EMPTY); errorInfo.Error == nil {
+			if errorInfo = tAWSHelper.ConfirmUser(ctv.EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
 		},
@@ -113,7 +113,7 @@ func TestAWSHelper_GetRequestorEmailPhoneFromIdTokenClaims(tPtr *testing.T) {
 			}
 			if _, _, _, errorInfo = myAWS.GetRequestorEmailPhoneFromIdTokenClaims(
 				myFireBase.FirestoreClientPtr,
-				rcv.TEST_TOKEN_INVALID,
+				ctv.TEST_TOKEN_INVALID,
 			); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
@@ -276,7 +276,7 @@ func TestAWSHelper_ParseJWT(tPtr *testing.T) {
 			if _, errorInfo = myAWS.ParseAWSJWT(string(testingAccessTokenValid)); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 			}
-			if _, errorInfo = myAWS.ParseAWSJWT(rcv.EMPTY); errorInfo.Error == nil {
+			if _, errorInfo = myAWS.ParseAWSJWT(ctv.EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
 		},
@@ -301,10 +301,10 @@ func TestAWSHelper_PullCognitoUserInfo(tPtr *testing.T) {
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
-			if _, errorInfo = myAWS.PullCognitoUserInfo(rcv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE); errorInfo.Error != nil {
+			if _, errorInfo = myAWS.PullCognitoUserInfo(ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 			}
-			if _, errorInfo = myAWS.PullCognitoUserInfo(rcv.EMPTY); errorInfo.Error == nil {
+			if _, errorInfo = myAWS.PullCognitoUserInfo(ctv.EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
 		},
@@ -332,14 +332,14 @@ func TestAWSHelper_ResetUserPassword(tPtr *testing.T) {
 
 	tPtr.Run(
 		tFunctionName, func(tPtr *testing.T) {
-			if errorInfo = myAWS.ResetUserPassword(rcv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE, resetByPass); errorInfo.Error != nil {
+			if errorInfo = myAWS.ResetUserPassword(ctv.TEST_USERNAME_SAVUP_TEST_DO_NOT_DELETE, resetByPass); errorInfo.Error != nil {
 				if errorInfo.Error.Error() == pi.ATTEMPTS_EXCEEDED {
 					fmt.Println(pi.ATTEMPTS_EXCEEDED)
 				} else {
 					tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 				}
 			}
-			if errorInfo = myAWS.ResetUserPassword(rcv.EMPTY, resetByPass); errorInfo.Error == nil {
+			if errorInfo = myAWS.ResetUserPassword(ctv.EMPTY, resetByPass); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
 		},
@@ -371,7 +371,7 @@ func TestAWSHelper_UpdateAWSEmailVerifyFlag(tPtr *testing.T) {
 			if errorInfo = myAWS.UpdateAWSEmailVerifyFlag(tUsername); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 			}
-			if errorInfo = myAWS.UpdateAWSEmailVerifyFlag(rcv.EMPTY); errorInfo.Error == nil {
+			if errorInfo = myAWS.UpdateAWSEmailVerifyFlag(ctv.EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
 		},
@@ -477,7 +477,7 @@ func TestGetPublicKeySet(tPtr *testing.T) {
 		errorInfo         pi.ErrorInfo
 		function, _, _, _ = runtime.Caller(0)
 		tFunctionName     = runtime.FuncForPC(function).Name()
-		tKeySetURL        = fmt.Sprintf(rcv.TEST_AWS_KEYSET_URL, ctv.TEST_USER_POOL_ID)
+		tKeySetURL        = fmt.Sprintf(ctv.TEST_AWS_KEYSET_URL, ctv.TEST_USER_POOL_ID)
 	)
 
 	tPtr.Run(
@@ -485,10 +485,10 @@ func TestGetPublicKeySet(tPtr *testing.T) {
 			if _, errorInfo = getPublicKeySet(tKeySetURL); errorInfo.Error != nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, "nil", errorInfo.Error.Error())
 			}
-			if _, errorInfo = getPublicKeySet(rcv.EMPTY); errorInfo.Error == nil {
+			if _, errorInfo = getPublicKeySet(ctv.EMPTY); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, errorInfo.Error.Error(), "nil")
 			}
-			if _, errorInfo = getPublicKeySet(rcv.TEST_URL_INVALID); errorInfo.Error == nil {
+			if _, errorInfo = getPublicKeySet(ctv.TEST_URL_INVALID); errorInfo.Error == nil {
 				tPtr.Errorf("%v Failed: Was expecting an err of %v but got %v.", tFunctionName, `errorInfo.Error.Error()`, "nil")
 			}
 		},
