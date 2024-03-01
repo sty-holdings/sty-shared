@@ -54,13 +54,13 @@ var (
 )
 
 // BuildFirestoreUpdate - while the nameValues is a map[any], the function using a string assertion on the key.
-// func BuildFirestoreUpdate(nameValues map[any]interface{}) (firestoreUpdateFields []firestore.Update, errorInfo pi.ErrorInfo) {
+// func BuildFirestoreUpdate(nameValues map[any]interface{}) (firestoreUpdateFields []firestoreServices.Update, errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFinding           string
 // 		tFunction, _, _, _ = runtime.Caller(0)
 // 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
-// 		tUpdate            firestore.Update
+// 		tUpdate            firestoreServices.Update
 // 	)
 //
 // 	pi.PrintDebugTrail(tFunctionName)
@@ -93,12 +93,12 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 //	Customer Messages: None
 //	Errors: pi.ErrRequiredArgumentMissing, pi.ErrDocumentNotFound, pi.ErrServiceFailedFIRESTORE
 //	Verifications: None
-// func FindDocument(firestoreClientPtr *firestore.Client, datastore string, queryParameters ...NameValueQuery) (found bool, documentSnapshotPtr *firestore.DocumentSnapshot, errorInfo pi.ErrorInfo) {
+// func FindDocument(firestoreClientPtr *firestoreServices.Client, datastore string, queryParameters ...NameValueQuery) (found bool, documentSnapshotPtr *firestoreServices.DocumentSnapshot, errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFunction, _, _, _ = runtime.Caller(0)
 // 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
-// 		tQuery             firestore.Query
+// 		tQuery             firestoreServices.Query
 // 	)
 //
 // 	pi.PrintDebugTrail(tFunctionName)
@@ -154,10 +154,10 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 //	Customer Messages: None
 //	Errors: pi.ErrRequiredArgumentMissing
 //	Verifications: None
-// func GetAllDocuments(firestoreClientPtr *firestore.Client, datastore string) (documents []*firestore.DocumentSnapshot, errorInfo pi.ErrorInfo) {
+// func GetAllDocuments(firestoreClientPtr *firestoreServices.Client, datastore string) (documents []*firestoreServices.DocumentSnapshot, errorInfo pi.ErrorInfo) {
 //
 // 	var (
-// 		tCollectionReferencePtr *firestore.CollectionRef
+// 		tCollectionReferencePtr *firestoreServices.CollectionRef
 // 		tFunction, _, _, _      = runtime.Caller(0)
 // 		tFunctionName           = runtime.FuncForPC(tFunction).Name()
 // 	)
@@ -185,10 +185,10 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 //	Customer Messages: None
 //	Errors: pi.ErrRequiredArgumentMissing, pi.ErrDocumentsNoneFound, pi.ErrServiceFailedFIRESTORE
 //	Verifications: None
-// func GetAllDocumentsWhere(firestoreClientPtr *firestore.Client, datastore, fieldName string, fieldValue interface{}) (documents []*firestore.DocumentSnapshot, errorInfo pi.ErrorInfo) {
+// func GetAllDocumentsWhere(firestoreClientPtr *firestoreServices.Client, datastore, fieldName string, fieldValue interface{}) (documents []*firestoreServices.DocumentSnapshot, errorInfo pi.ErrorInfo) {
 //
 // 	var (
-// 		tQuery             firestore.Query
+// 		tQuery             firestoreServices.Query
 // 		tFunction, _, _, _ = runtime.Caller(0)
 // 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
 // 	)
@@ -223,10 +223,10 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 //	Customer Messages: None
 //	Errors: pi.ErrRequiredArgumentMissing
 //	Verifications: None
-// func GetSomeDocumentsWhere(firestoreClientPtr *firestore.Client, datastore, fieldName string, fieldValue interface{}, offset, recordCount int) (documents []*firestore.DocumentSnapshot, errorInfo pi.ErrorInfo) {
+// func GetSomeDocumentsWhere(firestoreClientPtr *firestoreServices.Client, datastore, fieldName string, fieldValue interface{}, offset, recordCount int) (documents []*firestoreServices.DocumentSnapshot, errorInfo pi.ErrorInfo) {
 //
 // 	var (
-// 		tQuery             firestore.Query
+// 		tQuery             firestoreServices.Query
 // 		tFunction, _, _, _ = runtime.Caller(0)
 // 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
 // 	)
@@ -246,7 +246,7 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // }
 
 // GetDocumentById - will return a non-nil documentSnapshotPtr if the document is found.
-// func GetDocumentById(firestoreClientPtr *firestore.Client, datastore string, documentId string) (documentSnapshotPtr *firestore.DocumentSnapshot, errorInfo pi.ErrorInfo) {
+// func GetDocumentById(firestoreClientPtr *firestoreServices.Client, datastore string, documentId string) (documentSnapshotPtr *firestoreServices.DocumentSnapshot, errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFunction, _, _, _ = runtime.Caller(0)
@@ -270,7 +270,7 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // }
 
 // getDocumentRef
-// func getDocumentRef(firestoreClientPtr *firestore.Client, datastore, documentId string) (documentReferencePtr *firestore.DocumentRef, errorInfo pi.ErrorInfo) {
+// func getDocumentRef(firestoreClientPtr *firestoreServices.Client, datastore, documentId string) (documentReferencePtr *firestoreServices.DocumentRef, errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFunction, _, _, _ = runtime.Caller(0)
@@ -295,11 +295,11 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // }
 
 // GetDocumentIdsWithSubCollections
-// func GetDocumentIdsWithSubCollections(firestoreClientPtr *firestore.Client, datastore, parentDocumentId, subCollectionName string) (documentRefIds []string, errorInfo pi.ErrorInfo) {
+// func GetDocumentIdsWithSubCollections(firestoreClientPtr *firestoreServices.Client, datastore, parentDocumentId, subCollectionName string) (documentRefIds []string, errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tPath              string
-// 		tDocumentPtr       []*firestore.DocumentSnapshot
+// 		tDocumentPtr       []*firestoreServices.DocumentSnapshot
 // 		tFunction, _, _, _ = runtime.Caller(0)
 // 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
 // 	)
@@ -323,11 +323,11 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // GetDocumentFromSubCollectionByDocumentId
 //
 //	If the document is not found, an error will be returned.
-// func GetDocumentFromSubCollectionByDocumentId(firestoreClientPtr *firestore.Client, datastore, parentDocumentId, subCollectionName, documentId string) (data map[string]interface{}, errorInfo pi.ErrorInfo) {
+// func GetDocumentFromSubCollectionByDocumentId(firestoreClientPtr *firestoreServices.Client, datastore, parentDocumentId, subCollectionName, documentId string) (data map[string]interface{}, errorInfo pi.ErrorInfo) {
 //
 // 	var (
-// 		tDocumentRefPtr    *firestore.DocumentRef
-// 		tDocumentPtr       *firestore.DocumentSnapshot
+// 		tDocumentRefPtr    *firestoreServices.DocumentRef
+// 		tDocumentPtr       *firestoreServices.DocumentSnapshot
 // 		tFunction, _, _, _ = runtime.Caller(0)
 // 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
 // 		tPath              string
@@ -351,7 +351,7 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // }
 
 // GetFirestoreClientConnection
-// func GetFirestoreClientConnection(appPtr *firebaseServices.App) (firestoreClientPtr *firestore.Client, errorInfo pi.ErrorInfo) {
+// func GetFirestoreClientConnection(appPtr *firebaseServices.App) (firestoreClientPtr *firestoreServices.Client, errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFunction, _, _, _ = runtime.Caller(0)
@@ -375,13 +375,13 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // }
 
 // RemoveDocument
-// func RemoveDocument(firestoreClientPtr *firestore.Client, datastore string, queryParameters ...NameValueQuery) (errorInfo pi.ErrorInfo) {
+// func RemoveDocument(firestoreClientPtr *firestoreServices.Client, datastore string, queryParameters ...NameValueQuery) (errorInfo pi.ErrorInfo) {
 //
 // 	var (
-// 		tDocument          *firestore.DocumentSnapshot
+// 		tDocument          *firestoreServices.DocumentSnapshot
 // 		tFunction, _, _, _ = runtime.Caller(0)
 // 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
-// 		tQuery             firestore.Query
+// 		tQuery             firestoreServices.Query
 // 	)
 //
 // 	pi.PrintDebugTrail(tFunctionName)
@@ -428,7 +428,7 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // }
 
 // RemoveDocumentById
-// func RemoveDocumentById(firestoreClientPtr *firestore.Client, datastore, documentId string) (errorInfo pi.ErrorInfo) {
+// func RemoveDocumentById(firestoreClientPtr *firestoreServices.Client, datastore, documentId string) (errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFunction, _, _, _ = runtime.Caller(0)
@@ -447,7 +447,7 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // }
 
 // RemoveDocumentFromSubCollectionByDocumentId
-// func RemoveDocumentFromSubCollectionByDocumentId(firestoreClientPtr *firestore.Client, datastore, parentDocumentId, subCollectionName, documentId string) (errorInfo pi.ErrorInfo) {
+// func RemoveDocumentFromSubCollectionByDocumentId(firestoreClientPtr *firestoreServices.Client, datastore, parentDocumentId, subCollectionName, documentId string) (errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFunction, _, _, _ = runtime.Caller(0)
@@ -475,11 +475,11 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 //	Customer Messages: None
 //	Errors: pi.ErrRequiredArgumentMissing
 //	Verification: Check datastore, parentDocumentId, and subCollectionName are populated
-// func RemoveDocumentFromSubCollection(firestoreClientPtr *firestore.Client, datastore, parentDocumentId, subCollectionName string) (errorInfo pi.ErrorInfo) {
+// func RemoveDocumentFromSubCollection(firestoreClientPtr *firestoreServices.Client, datastore, parentDocumentId, subCollectionName string) (errorInfo pi.ErrorInfo) {
 //
 // 	var (
-// 		tDocumentRefIterPtr *firestore.DocumentRefIterator
-// 		tDocumentRefPtr     *firestore.DocumentRef
+// 		tDocumentRefIterPtr *firestoreServices.DocumentRefIterator
+// 		tDocumentRefPtr     *firestoreServices.DocumentRef
 // 		tFunction, _, _, _  = runtime.Caller(0)
 // 		tFunctionName       = runtime.FuncForPC(tFunction).Name()
 // 	)
@@ -511,7 +511,7 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-// func SetDocument(firestoreClientPtr *firestore.Client, datastore, documentId string, nameValues map[any]interface{}) (errorInfo pi.ErrorInfo) {
+// func SetDocument(firestoreClientPtr *firestoreServices.Client, datastore, documentId string, nameValues map[any]interface{}) (errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFinding           string
@@ -541,7 +541,7 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // }
 
 // SetDocumentWithSubCollection - This will create or overwrite the existing record that is in a sub-collection. While nameValues is a map[any], this function will apply a string assertion on the key.
-// func SetDocumentWithSubCollection(firestoreClientPtr *firestore.Client, datastore, parentDocumentId, subCollectionName, documentId string, nameValues map[any]interface{}) (errorInfo pi.ErrorInfo) {
+// func SetDocumentWithSubCollection(firestoreClientPtr *firestoreServices.Client, datastore, parentDocumentId, subCollectionName, documentId string, nameValues map[any]interface{}) (errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFinding           string
@@ -573,13 +573,13 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 // }
 
 // UpdateDocument- will return an error of nil when successful. If the document is not found, shared_services.ErrDocumentNotFound will be returned, otherwise the error from Firestore will be returned.
-// func UpdateDocument(firestoreClientPtr *firestore.Client, datastore, documentId string, nameValues map[any]interface{}) (errorInfo pi.ErrorInfo) {
+// func UpdateDocument(firestoreClientPtr *firestoreServices.Client, datastore, documentId string, nameValues map[any]interface{}) (errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFinding           string
 // 		tFunction, _, _, _ = runtime.Caller(0)
 // 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
-// 		tUpdateFields      []firestore.Update
+// 		tUpdateFields      []firestoreServices.Update
 // 	)
 //
 // 	pi.PrintDebugTrail(tFunctionName)
@@ -611,7 +611,7 @@ func doesDocumentExist(documentReferencePtr *firestore.DocumentRef) bool {
 //	Customer Messages: None
 //	Errors: ErrRequiredArgumentMissing, Any error from Firestore
 //	Verifications: None
-// func UpdateDocumentFromSubCollectionByDocumentId(firestoreClientPtr *firestore.Client, datastore, parentDocumentId, subCollectionName, documentId string, updateFields []firestore.Update) (errorInfo pi.ErrorInfo) {
+// func UpdateDocumentFromSubCollectionByDocumentId(firestoreClientPtr *firestoreServices.Client, datastore, parentDocumentId, subCollectionName, documentId string, updateFields []firestoreServices.Update) (errorInfo pi.ErrorInfo) {
 //
 // 	var (
 // 		tFunction, _, _, _ = runtime.Caller(0)

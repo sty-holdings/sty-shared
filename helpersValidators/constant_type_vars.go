@@ -31,6 +31,12 @@ COPYRIGHT:
 */
 package sty_shared
 
+import (
+	"cloud.google.com/go/firestore"
+	firebase "firebase.google.com/go"
+	"firebase.google.com/go/auth"
+)
+
 //goland:noinspection GoSnakeCaseUsage
 const (
 	TEST_BASE64_STRING          = "VEhpcyBpcyBhIHRlc3Qgc3RyaW5nIDEyMzQxMzQ1MjM1Nl4lKl4mJSYqKCVeKg=="
@@ -52,6 +58,13 @@ const (
 	TEST_FILE_UNREADABLE      = "unreadable_file.txt"
 	TEST_INVALID_DOMAIN       = "tmp"
 )
+
+type FirebaseFirestoreHelper struct {
+	AppPtr              *firebase.App
+	AuthPtr             *auth.Client
+	FirestoreClientPtr  *firestore.Client
+	CredentialsLocation string
+}
 
 var (
 	testValidJson = []byte("{\"name\": \"Test Name\"}")
