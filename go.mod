@@ -1,4 +1,4 @@
-module github.com/sty-holdings/sty-shared
+module github.com/sty-holdings/sty-shared/v2024
 
 go 1.21
 
