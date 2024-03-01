@@ -40,7 +40,7 @@ import (
 	"os"
 	"strings"
 
-	rcv "github.com/sty-holdings/resuable-const-vars/src"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 	hv "github.com/sty-holdings/sty-shared/v2024/helpersValidators"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
