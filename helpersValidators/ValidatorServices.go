@@ -43,7 +43,7 @@ import (
 	"strings"
 
 	rcv "github.com/sty-holdings/resuable-const-vars/src"
-	pi "github.com/sty-holdings/sty-shared/programInfo"
+	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
 // AreMapKeysPopulated - will test to make sure all map keys are set to anything other than nil or empty.

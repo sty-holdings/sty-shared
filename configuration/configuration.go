@@ -41,8 +41,8 @@ import (
 	"strings"
 
 	rcv "github.com/sty-holdings/resuable-const-vars/src"
-	hv "github.com/sty-holdings/sty-shared/helpersValidators"
-	pi "github.com/sty-holdings/sty-shared/programInfo"
+	hv "github.com/sty-holdings/sty-shared/v2024/helpersValidators"
+	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
 // Configuration is a generic config file structure for application servers.

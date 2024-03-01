@@ -41,7 +41,7 @@ import (
 	"testing"
 
 	rcv "github.com/sty-holdings/resuable-const-vars/src"
-	pi "github.com/sty-holdings/sty-shared/programInfo"
+	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
 var (
