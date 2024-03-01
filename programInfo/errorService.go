@@ -40,7 +40,7 @@ import (
 	"log"
 	"runtime"
 
-	rcv "github.com/sty-holdings/resuable-const-vars/src"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 )
 
 type ErrorInfo struct {
