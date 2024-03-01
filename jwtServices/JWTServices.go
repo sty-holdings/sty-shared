@@ -144,7 +144,7 @@ func ParsePrivateKey(tRawPrivateKey []byte) (
 ) {
 
 	if privateKey, errorInfo.Error = jwt2.ParseRSAPrivateKeyFromPEM(tRawPrivateKey); errorInfo.Error != nil {
-		errorInfo.Error = errors.New("Unable to parse the private key referred to in the configServers file.")
+		errorInfo.Error = errors.New("Unable to parse the private key referred to in the configuration file.")
 		log.Println(errorInfo.Error)
 	}
 

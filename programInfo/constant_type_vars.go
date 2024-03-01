@@ -109,7 +109,7 @@ const (
 	REQUIRED_ARGUMENT_MISSING          = "A required argument is empty."
 	REQUIRED_FILE_MISSING              = "A required file is missing."
 	RETRY_LIMIT_HIT                    = "You have tried too many times. Please try again in 15 mins or contact support@sty-holdings.com."
-	SERVER_CONFIGURATION_INVALID       = "The setting in the configServers file are inconsistant."
+	SERVER_CONFIGURATION_INVALID       = "The setting in the configuration file are inconsistant."
 	SERVICE_FAILED_AWS                 = "AWS service has failed. Investigate right away!"
 	SERVICE_FAILED_FIREBASE            = "FIREBASE service has failed. Investigate right away!"
 	SERVICE_FAILED_FIRESTORE           = "FIRESTORE service has failed. Investigate right away!"

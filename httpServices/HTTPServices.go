@@ -119,7 +119,7 @@ func NewHTTP(configFilename string) (
 
 //  Private Functions
 
-// validateConfiguration - checks the NATS service configServers is valid.
+// validateConfiguration - checks the NATS service configuration is valid.
 //
 //	Customer Messages: None
 //	Errors: ErrEnvironmentInvalid, ErrMessageNamespaceInvalid, ErrDomainInvalid, error returned from DoesFileExistsAndReadable, ErrSubjectsMissing
