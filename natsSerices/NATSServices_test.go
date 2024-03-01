@@ -49,7 +49,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 
 	type arguments struct {
 		instanceName string
-		config       ext.ExtensionConfiguration
+		config       NATSConfiguration
 	}
 
 	var (
@@ -68,8 +68,8 @@ func TestGetNATSConnection(tPtr *testing.T) {
 			name: ctv.TEST_POSITIVE_SUCCESS + "Secure connection.",
 			arguments: arguments{
 				instanceName: "scott-test-connection",
-				config: ext.ExtensionConfiguration{
-					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
+				config: NATSConfiguration{
+					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsServices-savup-backend.key",
 					NATSPort:                4222,
 					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
@@ -85,8 +85,8 @@ func TestGetNATSConnection(tPtr *testing.T) {
 			name: ctv.TEST_POSITIVE_SUCCESS + "Secure connection.",
 			arguments: arguments{
 				instanceName: ctv.VAL_EMPTY,
-				config: ext.ExtensionConfiguration{
-					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
+				config: NATSConfiguration{
+					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsServices-savup-backend.key",
 					NATSPort:                4222,
 					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
@@ -102,7 +102,7 @@ func TestGetNATSConnection(tPtr *testing.T) {
 			name: ctv.TEST_NEGATIVE_SUCCESS + "Missing Credential filename.",
 			arguments: arguments{
 				instanceName: "scott-test-connection",
-				config: ext.ExtensionConfiguration{
+				config: NATSConfiguration{
 					NATSCredentialsFilename: ctv.VAL_EMPTY,
 					NATSPort:                4222,
 					NATSTLSInfo: jwts.TLSInfo{
@@ -119,8 +119,8 @@ func TestGetNATSConnection(tPtr *testing.T) {
 			name: ctv.TEST_NEGATIVE_SUCCESS + "Port is zero.",
 			arguments: arguments{
 				instanceName: "scott-test-connection",
-				config: ext.ExtensionConfiguration{
-					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
+				config: NATSConfiguration{
+					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsServices-savup-backend.key",
 					NATSPort:                0,
 					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
@@ -136,8 +136,8 @@ func TestGetNATSConnection(tPtr *testing.T) {
 			name: ctv.TEST_NEGATIVE_SUCCESS + "Missing certificate FQN.",
 			arguments: arguments{
 				instanceName: "scott-test-connection",
-				config: ext.ExtensionConfiguration{
-					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
+				config: NATSConfiguration{
+					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsServices-savup-backend.key",
 					NATSPort:                4222,
 					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       ctv.VAL_EMPTY,
@@ -153,8 +153,8 @@ func TestGetNATSConnection(tPtr *testing.T) {
 			name: ctv.TEST_NEGATIVE_SUCCESS + "Missing private key FQN.",
 			arguments: arguments{
 				instanceName: "scott-test-connection",
-				config: ext.ExtensionConfiguration{
-					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
+				config: NATSConfiguration{
+					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsServices-savup-backend.key",
 					NATSPort:                4222,
 					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
@@ -170,8 +170,8 @@ func TestGetNATSConnection(tPtr *testing.T) {
 			name: ctv.TEST_NEGATIVE_SUCCESS + "Missing CA bundle FQN.",
 			arguments: arguments{
 				instanceName: "scott-test-connection",
-				config: ext.ExtensionConfiguration{
-					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
+				config: NATSConfiguration{
+					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsServices-savup-backend.key",
 					NATSPort:                4222,
 					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",
@@ -187,8 +187,8 @@ func TestGetNATSConnection(tPtr *testing.T) {
 			name: ctv.TEST_NEGATIVE_SUCCESS + "Missing URL.",
 			arguments: arguments{
 				instanceName: "scott-test-connection",
-				config: ext.ExtensionConfiguration{
-					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key",
+				config: NATSConfiguration{
+					NATSCredentialsFilename: "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsServices-savup-backend.key",
 					NATSPort:                4222,
 					NATSTLSInfo: jwts.TLSInfo{
 						TLSCert:       "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/savup/STAR_savup_com/STAR_savup_com.crt",

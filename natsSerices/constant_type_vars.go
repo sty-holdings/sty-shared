@@ -33,6 +33,7 @@ package sty_shared
 
 import (
 	"github.com/nats-io/nats.go"
+	jwts "github.com/sty-holdings/sty-shared/v2024/jwtServices"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
@@ -58,6 +59,20 @@ const (
 
 type MessageHandler struct {
 	Handler nats.MsgHandler
+}
+
+type NATSConfiguration struct {
+	NATSCredentialsFilename string       `json:"nats_credentials_filename"`
+	NATSPort                int          `json:"nats_port"`
+	NATSTLSInfo             jwts.TLSInfo `json:"nats_tls_info"`
+	NATSURL                 string       `json:"nats_url"`
+}
+
+type NATSService struct {
+	ConnPtr        *nats.Conn
+	CredentialsFQN string
+	Secure         bool
+	URL            string
 }
 
 type NATSReply struct {

@@ -47,13 +47,6 @@ import (
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
-type NATSService struct {
-	ConnPtr        *nats.Conn
-	CredentialsFQN string
-	Secure         bool
-	URL            string
-}
-
 // BuildInstanceName - will create the NATS connection name with dashes, underscores between nodes or as provided.
 // The method can be cn.METHOD_DASHES, cn.METHOD_UNDERSCORES, ctv.VAL_EMPTY, "dashes", "underscores" or ""
 //
@@ -90,7 +83,7 @@ func BuildInstanceName(
 //	Verifications: None
 func GetConnection(
 	instanceName string,
-	config ext.ExtensionConfiguration,
+	config NATSConfiguration,
 ) (
 	connPtr *nats.Conn,
 	errorInfo pi.ErrorInfo,
