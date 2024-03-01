@@ -106,7 +106,7 @@ func GenerateConfigFileSkeleton(serverName, SkeletonConfigFQD string) (errorInfo
 	return
 }
 
-// ProcessBaseConfigFile - handles the base configuration file.
+// ProcessBaseConfigFile - handles the base configServers file.
 //
 //	Customer Messages: None
 //	Errors: errors returned from ReadConfigFile, ErrJSONInvalid
@@ -157,9 +157,9 @@ func ReadConfigFile(configFileFQN string) (
 	return
 }
 
-// ValidateConfiguration - checks the values in the configuration file are valid. ValidateConfiguration doesn't
-// test if the configuration file exists, readable, or parsable. Defaults for LogDirectory, MaxThreads, and PIDDirectory
-// are '/var/log/nats-connect', 1, and '/var/run/nats-connect', respectively.
+// ValidateConfiguration - checks the values in the configServers file are valid. ValidateConfiguration doesn't
+// test if the configServers file exists, readable, or parsable. Defaults for LogDirectory, MaxThreads, and PIDDirectory
+// are '/var/log/natsSerices-connect', 1, and '/var/run/natsSerices-connect', respectively.
 //
 //	Customer Messages: None
 //	Errors: ErrEnvironmentInvalid, ErrDirectoryMissing, ErrMaxThreadsInvalid

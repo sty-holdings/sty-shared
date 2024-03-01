@@ -297,7 +297,7 @@ func IsFileReadable(fileName string) bool {
 	return false
 }
 
-// IsGinModeValid validates that the Gin HTTP framework mode is correctly set.
+// IsGinModeValid validates that the Gin httpServices framework mode is correctly set.
 func IsGinModeValid(mode string) bool {
 
 	switch strings.ToLower(mode) {

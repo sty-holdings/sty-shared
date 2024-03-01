@@ -1,4 +1,4 @@
-// Package sty_shared
+// Package coreGCP
 /*
 This is the STY-Holdings shared services
 
@@ -32,18 +32,9 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package sty_shared
+package coreGCP
 
-import (
-	"cloud.google.com/go/firestore"
-	"firebase.google.com/go/auth"
-	firebase "firebaseServices.google.com/go"
+const (
+//
+//goland:noinspection ALL
 )
-
-// This is here because if it were in coreFirebase or coreFirestore a circular reference would occur.
-type FirebaseFirestoreHelper struct {
-	AppPtr              *firebase.App
-	AuthPtr             *auth.Client
-	FirestoreClientPtr  *firestore.Client
-	CredentialsLocation string
-}

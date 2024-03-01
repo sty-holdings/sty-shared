@@ -266,7 +266,7 @@ func FloatToPennies(amount float64) (pennies int64) {
 //	Verification: none
 //	Example: http://localhost:1234, https://localhost:1234, http://api-dev.savup.com:1234, https://api-dev.savup.com:1234
 //
-// ToDo Change the Environment_local domain to local host once we have resolved the handshake issue happening when savup-http is run locally.
+// ToDo Change the Environment_local domain to local host once we have resolved the handshake issue happening when savup-httpServices is run locally.
 // func GenerateURL(environment string, secure bool) (url string) {
 //
 // 	switch fmt.Sprintf("%v,%v", strings.ToUpper(environment), secure) {

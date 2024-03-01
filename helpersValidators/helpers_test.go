@@ -45,7 +45,7 @@ import (
 )
 
 var (
-// TestMsg       nats.Msg
+// TestMsg       natsSerices.Msg
 // TestMsgPtr    = &TestMsg
 // TestValidJson = []byte("{\"name\": \"Test Name\"}")
 )

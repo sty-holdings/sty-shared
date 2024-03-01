@@ -4,7 +4,7 @@ General description of the purpose of the go file.
 
 RESTRICTIONS:
     AWS functions:
-    * Program must have access to a .aws/credentials file in the default location.
+    * Program must have access to a .awsServices/credentials file in the default location.
     * This will only access system parameters that start with '/sote' (ROOTPATH).
     * {Enter other restrictions here for AWS
 
@@ -33,9 +33,9 @@ package sty_shared
 
 //goland:noinspection GoSnakeCaseUsage
 const (
-	DEFAULT_LOG_DIRECTORY                    = "/var/log/nats-connect"
+	DEFAULT_LOG_DIRECTORY                    = "/var/log/natsSerices-connect"
 	DEFAULT_MAX_THREADS                      = 1
-	DEFAULT_PID_DIRECTORY                    = "/var/run/nats-connect"
+	DEFAULT_PID_DIRECTORY                    = "/var/run/natsSerices-connect"
 	DEFAULT_SKELETON_CONFIG_FQD              = "/Users/syacko/workspace/sty-holdings/GriesPikeThomp/shared-services/src/coreConfiguration/"
 	DEFAULT_SKELETON_CONFIG_FILENAME         = "skeleton-config-file.json"
 	DEFAULT_SKELETON_CONFIG_NOTE_FILENAME    = "skeleton-config-file.txt"
