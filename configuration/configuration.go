@@ -119,7 +119,7 @@ func GetConfigFile(
 ) {
 
 	var (
-		tAdditionalInfo = fmt.Sprintf("%v %v", ctv.TXT_FILENAME, configFileFQN)
+		tAdditionalInfo = fmt.Sprintf("%v%v", ctv.TXT_FILENAME, configFileFQN)
 		tConfigData     []byte
 	)
 

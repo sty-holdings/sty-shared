@@ -5,6 +5,7 @@ go 1.21.5
 require (
 	cloud.google.com/go/firestore v1.14.0
 	firebase.google.com/go v3.13.0+incompatible
+	github.com/aws/aws-sdk-go v1.44.203
 	github.com/sty-holdings/resuable-const-vars v2024.13.1+incompatible
 )
 
@@ -27,7 +28,7 @@ require (
 	github.com/nats-io/nats.go v1.33.1 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
-	github.com/sty-holdings/constant-type-vars-go/v2024 v2024.1.2 // indirect
+	github.com/sty-holdings/constant-type-vars-go/v2024 v2024.1.8 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/net v0.22.0 // indirect

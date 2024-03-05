@@ -1,4 +1,4 @@
-// Package coreAWS
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,15 +32,15 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package coreAWS
+package sty_shared
 
 import (
 	"fmt"
 	"runtime"
 	"testing"
 
-	"albert/constants"
 	"albert/core/coreHelpers"
+	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
 // Part of run_AWS_No_Token_Test list

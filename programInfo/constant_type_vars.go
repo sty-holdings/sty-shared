@@ -82,7 +82,8 @@ const (
 	FIRST_LAST_NAME_MISSING            = "Either the first or the last name is missing."
 	GIN_MODE_INVALID                   = "The Gin mode is invalid."
 	GREATER_THAN_ZERO                  = "The value must be greater than zero."
-	HTTP_SECURE_SERVER_FAILED          = "The savup-httpServices secure server failed."
+	HTTP_REQUEST_FALIED                = "The HTTP request failed with a non-200 status code."
+	HTTP_SECURE_SERVER_FAILED          = "The HTTP services secure server failed."
 	JSON_GENERATION_FAILED             = "Failed to generate JSON payload"
 	JSON_INVALID                       = "The JSON provided is invalid"
 	LAST_NAME_MISSING                  = "The last name is empty."
@@ -203,6 +204,7 @@ var (
 	ErrGinModeInvalid                 = errors.New(GIN_MODE_INVALID)
 	ErrGreatThanZero                  = errors.New(GREATER_THAN_ZERO)
 	ErrFirebaseProjectMissing         = errors.New(FIREBASE_GC_PROJECT_ID_MISSING)
+	ErrHTTPRequestFailed              = errors.New(HTTP_REQUEST_FALIED)
 	ErrHTTPSecureServerFailed         = errors.New(HTTP_SECURE_SERVER_FAILED)
 	ErrJSONGenerationFailed           = errors.New(JSON_GENERATION_FAILED)
 	ErrJSONInvalid                    = errors.New(JSON_INVALID)

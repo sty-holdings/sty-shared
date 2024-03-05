@@ -1,4 +1,4 @@
-// Package coreAWS
+// Package sty_shared
 /*
 This is the STY-Holdings shared services
 
@@ -32,7 +32,7 @@ COPYRIGHT & WARRANTY:
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package coreAWS
+package sty_shared
 
 import (
 	"errors"
@@ -42,11 +42,12 @@ import (
 	"strings"
 	"time"
 
-	"albert/constants"
 	"albert/core/coreFirebase"
 	"albert/core/coreFirestore"
 	"albert/core/coreHelpers"
 	"cloud.google.com/go/firestore"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
+	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
 var (
