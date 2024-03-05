@@ -106,13 +106,15 @@ func GenerateConfigFileSkeleton(serverName, SkeletonConfigFQD string) (errorInfo
 	return
 }
 
-// ProcessBaseConfigFile - handles the base configuration file.
+// GetConfigFile - handles any configuration file.
 //
 //	Customer Messages: None
-//	Errors: errors returned from ReadConfigFile, ErrJSONInvalid
+//	Errors: ReadConfigFile returned error, ErrJSONInvalid
 //	Verifications: None
-func ProcessBaseConfigFile(configFileFQN string) (
-	config BaseConfiguration,
+func GetConfigFile(
+	configFileFQN string,
+	configPtr interface{},
+) (
 	errorInfo pi.ErrorInfo,
 ) {
 
@@ -125,8 +127,25 @@ func ProcessBaseConfigFile(configFileFQN string) (
 		return
 	}
 
-	if errorInfo.Error = json.Unmarshal(tConfigData, &config); errorInfo.Error != nil {
+	if errorInfo.Error = json.Unmarshal(tConfigData, &configPtr); errorInfo.Error != nil {
 		errorInfo = pi.NewErrorInfo(errorInfo.Error, tAdditionalInfo)
+		return
+	}
+
+	return
+}
+
+// ProcessBaseConfigFile - handles the base configuration file.
+//
+//	Customer Messages: None
+//	Errors: errors returned from ReadConfigFile, ErrJSONInvalid
+//	Verifications: None
+func ProcessBaseConfigFile(configFileFQN string) (
+	config BaseConfiguration,
+	errorInfo pi.ErrorInfo,
+) {
+
+	if errorInfo = GetConfigFile(configFileFQN, &config); errorInfo.Error != nil {
 		return
 	}
 
@@ -189,3 +208,5 @@ func ValidateConfiguration(config BaseConfiguration) (errorInfo pi.ErrorInfo) {
 
 	return
 }
+
+// Private function go below here
