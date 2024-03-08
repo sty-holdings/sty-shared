@@ -142,7 +142,7 @@ func (csrp *CognitoLogin) GetSecretHash2(username string) (
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) PasswordVerifierChallenge2(
+func (csrp *CognitoLogin) PasswordVerifierChallenge(
 	challengeParams map[string]string,
 	ts time.Time,
 ) (

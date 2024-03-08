@@ -26,7 +26,7 @@ func NewCognitoLogin(
 	clientSecret *string,
 ) (
 	*CognitoLogin,
-	error,
+	pi.ErrorInfo,
 ) {
 	c := &CognitoLogin{
 		username:     username,
@@ -37,7 +37,7 @@ func NewCognitoLogin(
 	}
 
 	if !strings.Contains(userPoolId, "_") {
-		return nil, fmt.Errorf("invalid Cognito User Pool ID (%s), must be in format: '<region>_<pool name>'", userPoolId)
+		return nil, pi.NewErrorInfo(pi.ErrCognitoUserpoolIdInvalid, userPoolId)
 	}
 	c.userPoolName = strings.Split(userPoolId, "_")[1]
 
@@ -47,7 +47,7 @@ func NewCognitoLogin(
 	c.a = c.generateRandomSmallA()
 	c.bigA = c.calculateA()
 
-	return c, nil
+	return c, pi.ErrorInfo{}
 }
 
 // GetUsername - returns the configured Cognito user username
@@ -93,13 +93,14 @@ func (csrp *CognitoLogin) GetUserPoolName() string {
 //	Errors: None
 //	Verifications: None
 func (csrp *CognitoLogin) GetAuthParams() map[string]string {
+
 	params := map[string]string{
 		"USERNAME": csrp.username,
 		"PASSWORD": csrp.password,
 		"SRP_A":    bigToHex(csrp.bigA),
 	}
 
-	if secret, err := csrp.GetSecretHash(csrp.username); err == nil {
+	if secret, errorInfo := csrp.GetSecretHash(csrp.username); errorInfo.Error == nil {
 		params["SECRET_HASH"] = secret
 	}
 
@@ -114,10 +115,12 @@ func (csrp *CognitoLogin) GetAuthParams() map[string]string {
 //	Verifications: None
 func (csrp *CognitoLogin) GetSecretHash(username string) (
 	string,
-	error,
+	pi.ErrorInfo,
 ) {
+
+	// ToDo add support to output the error
 	if csrp.clientSecret == nil {
-		return "", fmt.Errorf("unable to create secret hash as client secret has not been configured")
+		return ctv.VAL_EMPTY, pi.NewErrorInfo(pi.ErrClientSecretMissing, ctv.VAL_EMPTY)
 	}
 
 	var (
@@ -130,7 +133,7 @@ func (csrp *CognitoLogin) GetSecretHash(username string) (
 
 	sh := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
-	return sh, nil
+	return sh, pi.ErrorInfo{}
 }
 
 // PasswordVerifierChallenge - returns the ChallengeResponses map to be used
@@ -145,7 +148,7 @@ func (csrp *CognitoLogin) PasswordVerifierChallenge(
 	ts time.Time,
 ) (
 	map[string]string,
-	error,
+	pi.ErrorInfo,
 ) {
 	var (
 		internalUsername = challengeParms["USERNAME"]
@@ -160,7 +163,7 @@ func (csrp *CognitoLogin) PasswordVerifierChallenge(
 
 	secretBlockBytes, err := base64.StdEncoding.DecodeString(secretBlockB64)
 	if err != nil {
-		return nil, fmt.Errorf("unable to decode challenge parameter 'SECRET_BLOCK', %s", err.Error())
+		return nil, pi.NewErrorInfo(pi.ErrClientSecretBlockInvalid, ctv.VAL_EMPTY)
 	}
 
 	msg := csrp.userPoolName + userId + string(secretBlockBytes) + timestamp
@@ -174,11 +177,13 @@ func (csrp *CognitoLogin) PasswordVerifierChallenge(
 		"PASSWORD_CLAIM_SECRET_BLOCK": secretBlockB64,
 		"PASSWORD_CLAIM_SIGNATURE":    signature,
 	}
-	if secret, err := csrp.GetSecretHash(internalUsername); err == nil {
+
+	// ToDo add support to output the error
+	if secret, errorInfo := csrp.GetSecretHash(internalUsername); errorInfo.Error == nil {
 		response["SECRET_HASH"] = secret
 	}
 
-	return response, nil
+	return response, pi.ErrorInfo{}
 }
 
 // generateRandomSmallA - creates the smallA needed for cryptographic security.
