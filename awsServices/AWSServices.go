@@ -35,41 +35,128 @@ COPYRIGHT & WARRANTY:
 package sty_shared
 
 import (
+	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
+	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	awsSession "github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awsConfig "github.com/aws/aws-sdk-go-v2/config"
+	awsCIP "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
+	awsCT "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
-// NewAWSSession
+// NewAWSConfig - reads the SDKs default external configurations, and populates an AWS Config with the values from the external configurations.
 //
 //	Customer Messages: None
-//	Errors:
+//	Errors: ErrEnvironmentInvalid, anything awsConfig.LoadDefaultConfig or getPublicKeySet returns,
 //	Verifications: None
-func NewAWSSession() (
-	awsHelper AWSHelper,
+func NewAWSConfig(environment string) (
+	session AWSSession,
 	errorInfo pi.ErrorInfo,
 ) {
 
-	if awsHelper.SessionPtr, errorInfo.Error = awsSession.NewSessionWithOptions(
-		awsSession.Options{
-			Config: aws.Config{
-				Region: aws.String(awsConfig.Region),
-			},
-		},
-	); errorInfo.Error != nil {
+	switch strings.ToLower(strings.Trim(environment, ctv.SPACES_ONE)) {
+	case ctv.ENVIRONMENT_PRODUCTION:
+		session.STYConfig = styConfig
+	case ctv.ENVIRONMENT_DEVELOPMENT:
+		session.STYConfig = styConfigDevelopment
+	case ctv.ENVIRONMENT_LOCAL:
+		session.STYConfig = styConfigLocal
+	default:
+		errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, environment))
+	}
+
+	if session.BaseConfig, errorInfo.Error = awsConfig.LoadDefaultConfig(awsCTX, awsConfig.WithRegion(session.STYConfig.Region)); errorInfo.
+		Error != nil {
+		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, "Failed to create an AWS Session.")
 		return
 	}
 
-	awsHelper.KeySetURL = fmt.Sprintf(
-		"https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", awsConfig.Region, awsConfig.UserPoolId,
+	session.KeySetURL = fmt.Sprintf(
+		"https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", session.STYConfig.Region, session.STYConfig.UserPoolId,
 	)
-	awsHelper.KeySet, errorInfo = getPublicKeySet(awsHelper.KeySetURL)
+	session.KeySet, errorInfo = getPublicKeySet(session.KeySetURL)
+
+	return
+}
+
+func Login(
+	loginType, username, password string,
+	session AWSSession,
+) (
+	isAuthorized bool,
+	errorInfo pi.ErrorInfo,
+) {
+
+	if loginType == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_LOGIN_TYPE, loginType))
+		return
+	}
+	if username == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERNAME, username))
+		return
+	}
+	if loginType == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_PASSWORD, ctv.TXT_PROTECTED))
+		return
+	}
+
+	csrp, _ := NewCognitoLogin(username, password, session.STYConfig.UserPoolId, session.STYConfig.ClientId, nil)
+
+	svc := awsCIP.NewFromConfig(session.BaseConfig)
+
+	// initiate auth
+	resp, err := svc.InitiateAuth(
+		context.Background(), &awsCIP.InitiateAuthInput{
+			AuthFlow:       awsCT.AuthFlowType(loginType),
+			ClientId:       aws.String(csrp.GetClientId()),
+			AuthParameters: csrp.GetAuthParams(),
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+	if loginType == string(awsCT.AuthFlowTypeUserPasswordAuth) {
+		fmt.Printf("Access Token: %s\n", *resp.AuthenticationResult.AccessToken)
+		fmt.Printf("ID Token: %s\n", *resp.AuthenticationResult.IdToken)
+		fmt.Printf("Refresh Token: %s\n", *resp.AuthenticationResult.RefreshToken)
+		isAuthorized = true
+		return
+	}
+
+	// respond to password verifier challenge
+	if resp.ChallengeName == awsCT.ChallengeNameTypePasswordVerifier {
+		challengeResponses, _ := csrp.PasswordVerifierChallenge(resp.ChallengeParameters, time.Now())
+
+		x, err := svc.RespondToAuthChallenge(
+			context.Background(), &awsCIP.RespondToAuthChallengeInput{
+				ChallengeName:      awsCT.ChallengeNameTypePasswordVerifier,
+				ChallengeResponses: challengeResponses,
+				ClientId:           aws.String(csrp.GetClientId()),
+			},
+		)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("Access Token: %s\n", *x.AuthenticationResult.AccessToken)
+		fmt.Printf("ID Token: %s\n", *x.AuthenticationResult.IdToken)
+		fmt.Printf("Refresh Token: %s\n", *x.AuthenticationResult.RefreshToken)
+		isAuthorized = true
+	} else {
+		// other challenges await...
+	}
+
+	fmt.Println(isAuthorized)
+	// print the tokens
 
 	return
 }
@@ -79,7 +166,7 @@ func NewAWSSession() (
 //
 // 	var (
 // 		tAdminConfirmSignUpInput    cognito.AdminConfirmSignUpInput
-// 		tCognitoIdentityProviderPtr *cognito.CognitoIdentityProvider
+// 		tawsCIPPtr *cognito.awsCIP
 // 		tFunction, _, _, _          = runtime.Caller(0)
 // 		tFunctionName               = runtime.FuncForPC(tFunction).Name()
 // 	)
@@ -88,10 +175,10 @@ func NewAWSSession() (
 // 		errorInfo.Error = pi.ErrRequiredArgumentMissing
 // 		log.Println(errorInfo.Error)
 // 	} else {
-// 		tCognitoIdentityProviderPtr = cognito.New(a.SessionPtr)
+// 		tawsCIPPtr = cognito.New(a.SessionPtr)
 // 		tAdminConfirmSignUpInput.Username = &userName
 // 		tAdminConfirmSignUpInput.UserPoolId = &a.AWSConfig.UserPoolId
-// 		if _, errorInfo.Error = tCognitoIdentityProviderPtr.AdminConfirmSignUp(&tAdminConfirmSignUpInput); errorInfo.Error != nil {
+// 		if _, errorInfo.Error = tawsCIPPtr.AdminConfirmSignUp(&tAdminConfirmSignUpInput); errorInfo.Error != nil {
 // 			// If the user is already confirmed, AWS will return an error, and do not care about this error.
 // 			if strings.Contains(errorInfo.Error.Error(), ctv.STATUS_CONFIRMED) {
 // 				errorInfo.Error = nil
@@ -264,7 +351,7 @@ func NewAWSSession() (
 // 	var (
 // 		tAdminGetUserInput          cognito.AdminGetUserInput
 // 		tAdminGetUserOutputPtr      *cognito.AdminGetUserOutput
-// 		tCognitoIdentityProviderPtr *cognito.CognitoIdentityProvider
+// 		tawsCIPPtr *cognito.awsCIP
 // 		tFunction, _, _, _          = runtime.Caller(0)
 // 		tFunctionName               = runtime.FuncForPC(tFunction).Name()
 // 	)
@@ -275,8 +362,8 @@ func NewAWSSession() (
 // 		errorInfo.Error = pi.ErrRequiredArgumentMissing
 // 		pi.PrintError(errorInfo)
 // 	} else {
-// 		tCognitoIdentityProviderPtr = cognito.New(a.SessionPtr)
-// 		if tCognitoIdentityProviderPtr == nil {
+// 		tawsCIPPtr = cognito.New(a.SessionPtr)
+// 		if tawsCIPPtr == nil {
 // 			errorInfo.FileName, errorInfo.ErrorLineNumber = pi.GetFileLineNumber()
 // 			errorInfo.Error = pi.ErrServiceFailedAWS
 // 			pi.PrintError(errorInfo)
@@ -285,7 +372,7 @@ func NewAWSSession() (
 // 			tAdminGetUserInput.UserPoolId = &a.AWSConfig.UserPoolId
 // 			tAdminGetUserInput.Username = &username
 // 			// Make the request to get the user
-// 			if tAdminGetUserOutputPtr, errorInfo.Error = tCognitoIdentityProviderPtr.AdminGetUser(&tAdminGetUserInput); errorInfo.Error == nil {
+// 			if tAdminGetUserOutputPtr, errorInfo.Error = tawsCIPPtr.AdminGetUser(&tAdminGetUserInput); errorInfo.Error == nil {
 // 				userData = make(map[string]interface{})
 // 				for _, attr := range tAdminGetUserOutputPtr.UserAttributes {
 // 					userData[*attr.Name] = *attr.Value
@@ -334,7 +421,7 @@ func NewAWSSession() (
 // 		tAdminUpdateUserAttributesInput cognito.AdminUpdateUserAttributesInput
 // 		tAttributeType                  cognito.AttributeType
 // 		tAttributeTypePtrs              []*cognito.AttributeType
-// 		tCognitoIdentityProviderPtr     *cognito.CognitoIdentityProvider
+// 		tawsCIPPtr     *cognito.awsCIP
 // 		tFunction, _, _, _              = runtime.Caller(0)
 // 		tFunctionName                   = runtime.FuncForPC(tFunction).Name()
 // 		tName                           string
@@ -345,7 +432,7 @@ func NewAWSSession() (
 // 	if username == ctv.EMPTY {
 // 		errorInfo.Error = pi.ErrRequiredArgumentMissing
 // 	} else {
-// 		tCognitoIdentityProviderPtr = cognito.New(a.SessionPtr)
+// 		tawsCIPPtr = cognito.New(a.SessionPtr)
 // 		tName = ctv.FN_EMAIL_VERIFIED // This is required because go doesn't support pointers to ctv.
 // 		tAttributeType = cognito.AttributeType{
 // 			Name:  &tName,
@@ -355,7 +442,7 @@ func NewAWSSession() (
 // 		tAdminUpdateUserAttributesInput.UserAttributes = tAttributeTypePtrs
 // 		tAdminUpdateUserAttributesInput.Username = &username
 // 		tAdminUpdateUserAttributesInput.UserPoolId = &a.AWSConfig.UserPoolId
-// 		req, _ := tCognitoIdentityProviderPtr.AdminUpdateUserAttributesRequest(&tAdminUpdateUserAttributesInput)
+// 		req, _ := tawsCIPPtr.AdminUpdateUserAttributesRequest(&tAdminUpdateUserAttributesInput)
 // 		errorInfo.Error = req.Send()
 // 	}
 //
@@ -370,7 +457,7 @@ func NewAWSSession() (
 //
 // 	var (
 // 		tAdminResetUserPasswordInput cognito.AdminResetUserPasswordInput
-// 		tCognitoIdentityProviderPtr  *cognito.CognitoIdentityProvider
+// 		tawsCIPPtr  *cognito.awsCIP
 // 		tFunction, _, _, _           = runtime.Caller(0)
 // 		tFunctionName                = runtime.FuncForPC(tFunction).Name()
 // 		req                          *request.Request
@@ -382,17 +469,19 @@ func NewAWSSession() (
 // 		errorInfo.Error = errors.New(fmt.Sprintf("Require information is missing! AWS User Name: '%v'", userName))
 // 		log.Println(errorInfo.Error)
 // 	} else {
-// 		tCognitoIdentityProviderPtr = cognito.New(a.SessionPtr)
+// 		tawsCIPPtr = cognito.New(a.SessionPtr)
 // 		tAdminResetUserPasswordInput.Username = &userName
 // 		tAdminResetUserPasswordInput.UserPoolId = &a.AWSConfig.UserPoolId
 // 		if test == false {
-// 			req, _ = tCognitoIdentityProviderPtr.AdminResetUserPasswordRequest(&tAdminResetUserPasswordInput)
+// 			req, _ = tawsCIPPtr.AdminResetUserPasswordRequest(&tAdminResetUserPasswordInput)
 // 			errorInfo.Error = req.Send()
 // 		}
 // 	}
 //
 // 	return
 // }
+
+// Private functions below here
 
 // areAWSClaimsValid - Checks if email is verified and token is either an Id or Access token.
 // func areAWSClaimsValid(
@@ -440,6 +529,21 @@ func NewAWSSession() (
 // 	return false
 // }
 
+// convertSignature - calculates the HMAC digest of the signature
+//
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func convertSignature(
+	hkdf []byte,
+	data []byte,
+) []byte {
+
+	mac := hmac.New(sha256.New, hkdf)
+	mac.Write(data)
+	return mac.Sum(nil)
+}
+
 // convertKey - does not follow the errorInfo format because it is called by a function that only allows error to be returned
 // func convertKey(rawE, rawN string) (
 // 	publicKey *rsa.PublicKey,
@@ -471,6 +575,26 @@ func NewAWSSession() (
 //
 // 	return
 // }
+
+func generateSignature(
+	timestamp, userPoolId, userIdForSRP, secretBlock string,
+	hkdf []byte,
+) (signature string) {
+
+	var (
+		tSignatureData []byte
+	)
+
+	tSignatureData = append(tSignatureData, []byte(strings.Split(userPoolId, "_")[1])...)
+	tSignatureData = append(tSignatureData, []byte(userIdForSRP)...)
+	tSignatureData = append(tSignatureData, secretBlock...)
+	tSignatureData = append(tSignatureData, timestamp...)
+
+	dig := convertSignature(hkdf, tSignatureData)
+	signature = base64.StdEncoding.EncodeToString(dig)
+
+	return
+}
 
 // getPublicKeySet - gets the public key for AWS JWTs
 //
@@ -518,6 +642,17 @@ func getPublicKeySet(keySetURL string) (
 	return
 }
 
+// func getTokenClaims(
+// 	a *AWSHelper,
+// 	tokenType, token string,
+// ) (
+// 	claimsPtr *Claims,
+// 	errorInfo pi.ErrorInfo,
+// ) {
+//
+// 	return a.ParseAWSJWTWithClaims(tokenType, token)
+// }
+
 // func isTokenValid(
 // 	firestoreClientPtr *firestore.Client,
 // 	a *AWSHelper,
@@ -547,15 +682,4 @@ func getPublicKeySet(keySetURL string) (
 // 	}
 //
 // 	return false
-// }
-
-// func getTokenClaims(
-// 	a *AWSHelper,
-// 	tokenType, token string,
-// ) (
-// 	claimsPtr *Claims,
-// 	errorInfo pi.ErrorInfo,
-// ) {
-//
-// 	return a.ParseAWSJWTWithClaims(tokenType, token)
 // }

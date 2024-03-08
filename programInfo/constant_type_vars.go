@@ -62,8 +62,12 @@ const (
 	BUFFER_EMPTY                       = "The buffer is empty"
 	BUNDLE_ALREADY_EXISTS              = "Bundle already exists in the SavUp system."
 	BUNDLE_MISSING                     = "Bundle is not in the SavUp system."
+	CLIENT_SECRET_MISSING              = "The client secret has not been provided.)"
+	COGNITO_SECRET_BLOCK_INVALID       = "Unable to decode challenge parameter 'SECRET_BLOCK'."
 	COGNITO_USER_NAME_MISSING          = "Username is not in the Cognito user pool."
+	COGNITO_USERPOOL_ID_INVALID        = "User Pool ID must be in format: '<region>_<pool name>'"
 	CONFIG_FILE_MISSING                = "Not able to read the supplied config file. "
+	DECODE_STRING_FAILED               = "Unable to decode the string."
 	DIRECTORY_MISSING                  = "The directory does not exist."
 	DIRECTORY_NOT_FULLY_QUALIFIED      = "The directory doesn't start and end with slash."
 	DOCUMENT_NOT_FOUND                 = "The document was not found."
@@ -86,7 +90,9 @@ const (
 	HTTP_SECURE_SERVER_FAILED          = "The HTTP services secure server failed."
 	JSON_GENERATION_FAILED             = "Failed to generate JSON payload"
 	JSON_INVALID                       = "The JSON provided is invalid"
+	JWT_MISSING                        = "JWT token is missing."
 	LAST_NAME_MISSING                  = "The last name is empty."
+	LESS_THAN_ZERO                     = "The value must be less than zero."
 	MAP_IS_EMPTY                       = "Provided map is not populated."
 	MAP_MISSING_KEY                    = "Provided map has a nil or empty key."
 	MAP_MISSING_VALUE                  = "Provided map has a nil or empty value."
@@ -96,7 +102,9 @@ const (
 	MESSAGE_NAMESPACE_INVALID          = "The Message namespace value is invalid."
 	MISSING_SERVER_NAME                = "The server name in main.go is empty."
 	NATS_URL_INVALID                   = "The NATS URL value is invalid."
-	NATS_CONNECTION_FAILED             = "Connecting to NATS server failed"
+	NATS_CONNECTION_FAILED             = "Connecting to NATS server failed."
+	NOT_DIVISIBLE_N                    = "Calculate value must not be divisable by N."
+	PARSE_BIG_INT_FAILED               = "Unable to parse the value provided."
 	PID_FILE_EXISTS                    = "A PID file already exists. Delete the 'server.pid' file in '.run' directory and start the server again."
 	PLAID_INVALID_PUBLIC_TOKEN         = "INVALID_PUBLIC_TOKEN" // DO NOT change this, it is used to test a condition
 	POINTER_MISSING                    = "You must pass a pointer. Nil is not valid!"
@@ -112,15 +120,19 @@ const (
 	RETRY_LIMIT_HIT                    = "You have tried too many times. Please try again in 15 mins or contact support@sty-holdings.com."
 	SERVER_CONFIGURATION_INVALID       = "The setting in the configuration file are inconsistant."
 	SERVICE_FAILED_AWS                 = "AWS service has failed. Investigate right away!"
+	SERVICE_FAILED_COGNITO             = "Cognito service has failed. Investigate right away!"
 	SERVICE_FAILED_FIREBASE            = "FIREBASE service has failed. Investigate right away!"
 	SERVICE_FAILED_FIRESTORE           = "FIRESTORE service has failed. Investigate right away!"
 	SERVICE_FAILED_PLAID               = "PLAID service has failed. Investigate right away!"
 	SERVICE_FAILED_POSTGRES            = "POSTGRES service has failed. Investigate right away!"
 	SERVICE_FAILED_SENDGRID            = "SENDGRID service has failed. Investigate right away!"
 	SERVICE_FAILED_STRIPE              = "STRIPE service has failed. Investigate right away!"
+	SET_STRING_FAILED                  = "Unable to process value using SetString."
 	SHORT_URL_ALREADY_EXISTS           = "Short URL already exists in the SavUp system."
 	SHORT_URL_MISSING                  = "Short URL is not in the SavUp system."
 	SIGNAL_UNKNOWN                     = "Unknown signal was caught and ignored."
+	SRP_A_MOD_N_ZERO                   = "A mod N cannot be 0"
+	SRP_B_MOD_N_ZERO                   = "B mod N cannot be 0"
 	STRIPE_AMOUNT_INVALID              = "The amount must be a positive number. See https://docs.stripe.com/api/payment_intents."
 	STRIPE_CURRENCY_INVALID            = "The curreny type is not supported. See https://docs.stripe.com/api/payment_intents."
 	STRIPE_CUSTOMER_FAILED             = "Creating a Stripe customer failed."
@@ -161,6 +173,7 @@ const (
 	USER_MISSING                       = "User is not in the SavUp system."
 	VERSION_INVALID                    = "The software version is invalid. Use @env GOOS=linux GOARCH=amd64 go build -ldflags \"-X main.version=$(" +
 		"VERSION)\" -o ${ROOT_DIRECTORY}/servers/${SERVER_NAME}/bin/${SERVER_NAME} ${ROOT_DIRECTORY}/servers/${SERVER_NAME}/main.go"
+	ZERO_INVALID = "A value of zero is invalid."
 	//
 	// String that are used to determine third party error messages
 	USER_DOES_NOT_EXIST = "User does not exist."
@@ -184,8 +197,12 @@ var (
 	ErrBufferEmpty                    = errors.New(BUFFER_EMPTY)
 	ErrBundleAlreadyExists            = errors.New(BUNDLE_ALREADY_EXISTS)
 	ErrBundleMissing                  = errors.New(BUNDLE_MISSING)
+	ErrClientSecretMissing            = errors.New(CLIENT_SECRET_MISSING)
+	ErrClientSecretBlockInvalid       = errors.New(COGNITO_SECRET_BLOCK_INVALID)
 	ErrCognitoUsernameMissing         = errors.New(COGNITO_USER_NAME_MISSING)
+	ErrCognitoUserpoolIdInvalid       = errors.New(COGNITO_USERPOOL_ID_INVALID)
 	ErrConfigFileMissing              = errors.New(CONFIG_FILE_MISSING)
+	ErrDecodeStringFailed             = errors.New(DECODE_STRING_FAILED)
 	ErrDirectoryMissing               = errors.New(DIRECTORY_MISSING)
 	ErrDirectoryNotFullyQualified     = errors.New(DIRECTORY_NOT_FULLY_QUALIFIED)
 	ErrDocumentNotFound               = errors.New(DOCUMENT_NOT_FOUND)
@@ -208,7 +225,9 @@ var (
 	ErrHTTPSecureServerFailed         = errors.New(HTTP_SECURE_SERVER_FAILED)
 	ErrJSONGenerationFailed           = errors.New(JSON_GENERATION_FAILED)
 	ErrJSONInvalid                    = errors.New(JSON_INVALID)
+	ErrJWTMissing                     = errors.New(JWT_MISSING)
 	ErrLastNameMissing                = errors.New(LAST_NAME_MISSING)
+	ErrLessThanEqualZero              = errors.New(LESS_THAN_ZERO)
 	ErrMapIsEmpty                     = errors.New(MAP_IS_EMPTY)
 	ErrMapIsMissingKey                = errors.New(MAP_MISSING_KEY)
 	ErrMapIsMissingValue              = errors.New(MAP_MISSING_VALUE)
@@ -219,6 +238,8 @@ var (
 	ErrMissingServerName              = errors.New(MISSING_SERVER_NAME)
 	ErrNATSURLInvalid                 = errors.New(NATS_URL_INVALID)
 	ErrNATSConnectionFailed           = errors.New(NATS_CONNECTION_FAILED)
+	ErrNotDivisibleN                  = errors.New(NOT_DIVISIBLE_N)
+	ErrParseBigIntFailed              = errors.New(PARSE_BIG_INT_FAILED)
 	ErrPIDFileExists                  = errors.New(PID_FILE_EXISTS)
 	ErrPlaidInvalidPublicToken        = errors.New(PLAID_INVALID_PUBLIC_TOKEN)
 	ErrPointerMissing                 = errors.New(POINTER_MISSING)
@@ -234,14 +255,18 @@ var (
 	ErrRetryLimitHit                  = errors.New(RETRY_LIMIT_HIT)
 	ErrServerConfigurationInvalid     = errors.New(SERVER_CONFIGURATION_INVALID)
 	ErrServiceFailedAWS               = errors.New(SERVICE_FAILED_AWS)
+	ErrServiceFailedCognito           = errors.New(SERVICE_FAILED_COGNITO)
 	ErrServiceFailedFIREBASE          = errors.New(SERVICE_FAILED_FIREBASE)
 	ErrServiceFailedFIRESTORE         = errors.New(SERVICE_FAILED_FIRESTORE)
 	ErrServiceFailedPLAID             = errors.New(SERVICE_FAILED_PLAID)
 	ErrServiceFailedPOSTGRES          = errors.New(SERVICE_FAILED_POSTGRES)
 	ErrServiceFailedSendGrid          = errors.New(SERVICE_FAILED_SENDGRID)
 	ErrServiceFailedSTRIPE            = errors.New(SERVICE_FAILED_STRIPE)
+	ErrSetStringFailed                = errors.New(SET_STRING_FAILED)
 	ErrShortURLMissing                = errors.New(SHORT_URL_MISSING)
 	ErrSignalUnknown                  = errors.New(SIGNAL_UNKNOWN)
+	ErrSRPAModNZero                   = errors.New(SRP_A_MOD_N_ZERO)
+	ErrSRPBModNZero                   = errors.New(SRP_B_MOD_N_ZERO)
 	ErrStripeAmountInvalid            = errors.New(STRIPE_AMOUNT_INVALID)
 	ErrStripeCreateCustomerFailed     = errors.New(STRIPE_CUSTOMER_FAILED)
 	ErrStripeCurrencyInvalid          = errors.New(STRIPE_CURRENCY_INVALID)
@@ -281,4 +306,5 @@ var (
 	ErrUserBundleMissing              = errors.New(BUNDLE_MISSING)
 	ErrUserMissing                    = errors.New(USER_MISSING)
 	ErrVersionInvalid                 = errors.New(VERSION_INVALID)
+	ErrZeroInvalid                    = errors.New(ZERO_INVALID)
 )

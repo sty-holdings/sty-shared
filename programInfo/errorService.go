@@ -67,6 +67,7 @@ func NewErrorInfo(
 	} else {
 		errorInfo = newError(myError)
 	}
+
 	if additionalInfo == ctv.VAL_EMPTY {
 		errorInfo.AdditionalInfo = ctv.TXT_EMPTY
 	} else {

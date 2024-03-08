@@ -348,6 +348,46 @@ func FloatToPennies(amount float64) (pennies int64) {
 // 	return time.Now().Format("2006-01-02")
 // }
 
+// GetUnixTimestamp - gets date/time in unix format (Mon Jan _2 15:04:05 MST 2006)
+//
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func GetUnixTimestamp() (timestamp string) {
+
+	return time.Now().Local().Format(time.UnixDate)
+}
+
+// GetAWSTimestamp - gets date/time in AWS format (Mon Jan _2 15:04:05 MST 2006)
+//
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func GetAWSTimestamp() (timestamp string) {
+
+	x := time.Now().Local()
+	weekday := x.Format("Mon")
+	day := x.Format("2")
+	month := x.Format("Jan")
+	year := x.Year()
+	hour := x.Hour()
+	minutes := x.Minute()
+	seconds := x.Second()
+	timezone := x.Format("MST")
+
+	return fmt.Sprintf("%v %v %v %v:%v:%v %v %v", weekday, month, day, hour, minutes, seconds, timezone, year)
+}
+
+// GetUnixTimestampByte - gets date/time in unix format (Mon Jan _2 15:04:05 MST 2006) as []byte
+//
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func GetUnixTimestampByte() (timestamp []byte) {
+
+	return []byte(time.Now().Local().Format(time.UnixDate))
+}
+
 // GetTime - return the current time in HH-mm-ss.00000 format, where hour is in military time.
 //
 //	Customer Message: None
