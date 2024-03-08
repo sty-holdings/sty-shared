@@ -105,18 +105,17 @@ func TestLogin(tPtr *testing.T) {
 	type arguments struct {
 		getSecret          bool
 		loginType          string
-		password           string
+		password           *string
 		shouldBeAuthorized bool
 		username           string
 	}
 
 	var (
-		environment  = ctv.ENVIRONMENT_PRODUCTION
-		errorInfo    pi.ErrorInfo
-		gotError     bool
-		isAuthorized bool
-		password     = "Yidiao09#1"
-		session      AWSSession
+		environment = ctv.ENVIRONMENT_PRODUCTION
+		errorInfo   pi.ErrorInfo
+		gotError    bool
+		password    = "Yidiao09#1"
+		session     AWSSession
 	)
 
 	tests := []struct {
@@ -129,7 +128,7 @@ func TestLogin(tPtr *testing.T) {
 			arguments: arguments{
 				getSecret:          false,
 				loginType:          ctv.AUTH_USER_PASSWORD_AUTH,
-				password:           password,
+				password:           &password,
 				shouldBeAuthorized: true,
 				username:           "scott@yackofamily.com",
 			},
@@ -140,7 +139,7 @@ func TestLogin(tPtr *testing.T) {
 			arguments: arguments{
 				getSecret:          false,
 				loginType:          ctv.AUTH_USER_SRP,
-				password:           password,
+				password:           &password,
 				shouldBeAuthorized: true,
 				username:           "scott@yackofamily.com",
 			},
@@ -176,13 +175,10 @@ func TestLogin(tPtr *testing.T) {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
 				session, errorInfo = NewAWSConfig(environment)
-				if isAuthorized, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, session); errorInfo.Error != nil {
+				if _, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, session); errorInfo.Error != nil {
 					gotError = true
 				} else {
 					gotError = false
-				}
-				if isAuthorized != ts.arguments.shouldBeAuthorized {
-					gotError = true
 				}
 				if gotError != ts.wantError {
 					tPtr.Error(errorInfo.Error.Error())

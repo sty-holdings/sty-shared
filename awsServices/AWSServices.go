@@ -36,12 +36,14 @@ package sty_shared
 
 import (
 	"context"
-	"crypto/hmac"
-	"crypto/sha256"
+	"crypto/rsa"
 	"encoding/base64"
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
+	"math/big"
 	"net/http"
 	"strings"
 	"time"
@@ -50,6 +52,7 @@ import (
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
 	awsCIP "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	awsCT "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
+	"github.com/golang-jwt/jwt/v5"
 	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
@@ -90,10 +93,11 @@ func NewAWSConfig(environment string) (
 }
 
 func Login(
-	loginType, username, password string,
+	loginType, username string,
+	password *string,
 	session AWSSession,
 ) (
-	isAuthorized bool,
+	tokens CognitoTokens,
 	errorInfo pi.ErrorInfo,
 ) {
 
@@ -110,7 +114,7 @@ func Login(
 		return
 	}
 
-	csrp, _ := NewCognitoLogin(username, password, session.STYConfig.UserPoolId, session.STYConfig.ClientId, nil)
+	csrp, _ := NewCognitoLogin(username, session.STYConfig.UserPoolId, session.STYConfig.ClientId, password, nil)
 
 	svc := awsCIP.NewFromConfig(session.BaseConfig)
 
@@ -126,10 +130,9 @@ func Login(
 		panic(err)
 	}
 	if loginType == string(awsCT.AuthFlowTypeUserPasswordAuth) {
-		fmt.Printf("Access Token: %s\n", *resp.AuthenticationResult.AccessToken)
-		fmt.Printf("ID Token: %s\n", *resp.AuthenticationResult.IdToken)
-		fmt.Printf("Refresh Token: %s\n", *resp.AuthenticationResult.RefreshToken)
-		isAuthorized = true
+		tokens.access = *resp.AuthenticationResult.AccessToken
+		tokens.id = *resp.AuthenticationResult.IdToken
+		tokens.refresh = *resp.AuthenticationResult.RefreshToken
 		return
 	}
 
@@ -147,16 +150,10 @@ func Login(
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("Access Token: %s\n", *x.AuthenticationResult.AccessToken)
-		fmt.Printf("ID Token: %s\n", *x.AuthenticationResult.IdToken)
-		fmt.Printf("Refresh Token: %s\n", *x.AuthenticationResult.RefreshToken)
-		isAuthorized = true
-	} else {
-		// other challenges await...
+		tokens.access = *x.AuthenticationResult.AccessToken
+		tokens.id = *x.AuthenticationResult.IdToken
+		tokens.refresh = *x.AuthenticationResult.RefreshToken
 	}
-
-	fmt.Println(isAuthorized)
-	// print the tokens
 
 	return
 }
@@ -251,7 +248,7 @@ func Login(
 // 	if token == ctv.TEST_STRING {
 // 		requestorId = ctv.TEST_USERNAME_SAVUP_REQUESTOR_ID
 // 	} else {
-// 		if token == ctv.EMPTY {
+// 		if token == ctv.VAL_EMPTY {
 // 			errorInfo.Error = errors.New(fmt.Sprintf("Require information is missing! Token: '%v'", token))
 // 			log.Println(errorInfo.Error)
 // 		} else {
@@ -270,45 +267,51 @@ func Login(
 // }
 
 // ParseAWSJWTWithClaims - will return an err if the AWS JWT is invalid.
-// func (a *AWSHelper) ParseAWSJWTWithClaims(tokenType, tokenString string) (
-// 	claimsPtr *Claims,
-// 	errorInfo pi.ErrorInfo,
-// ) {
 //
-// 	var (
-// 		tFunction, _, _, _ = runtime.Caller(0)
-// 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
-// 	)
-//
-// 	pi.PrintDebugTrail(tFunctionName)
-//
-// 	if tokenString == ctv.EMPTY {
-// 		errorInfo.Error = errors.New(fmt.Sprintf("Require information is missing! Token: '%v'", tokenString))
-// 		log.Println(errorInfo.Error)
-// 	} else {
-// 		if _, errorInfo.Error = jwt.ParseWithClaims(
-// 			tokenString,
-// 			&Claims{},
-// 			func(token *jwt.Token) (
-// 				key interface{},
-// 				err error,
-// 			) {
-// 				switch strings.ToUpper(tokenType) {
-// 				case ctv.TOKEN_TYPE_ID:
-// 					key, err = convertKey(a.KeySet.Keys[0].E, a.KeySet.Keys[0].N)
-// 				case ctv.TOKEN_TYPE_ACCESS:
-// 					key, err = convertKey(a.KeySet.Keys[1].E, a.KeySet.Keys[1].N)
-// 				}
-// 				claimsPtr = token.Claims.(*Claims)
-// 				return
-// 			},
-// 		); errorInfo.Error != nil {
-// 			log.Println(errorInfo.Error)
-// 		}
-// 	}
-//
-// 	return
-// }
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func ParseAWSJWTWithClaims(
+	session AWSSession,
+	tokenType, tokenString string,
+) (
+	claims jwt.Claims,
+	errorInfo pi.ErrorInfo,
+) {
+
+	if len(session.KeySet.Keys) == ctv.VAL_ZERO {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, ctv.TXT_KEY_SET_MISSING)
+		return
+	}
+	if tokenType == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_TOKEN_TYPE, tokenType))
+		return
+	}
+	if tokenString == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_TOKEN, tokenType))
+		return
+	}
+
+	if _, errorInfo.Error = jwt.ParseWithClaims(
+		tokenString, jwt.MapClaims{}, func(token *jwt.Token) (
+			key interface{},
+			err error,
+		) {
+			switch strings.ToUpper(tokenType) {
+			case ctv.TOKEN_TYPE_IN:
+				key, err = convertKey(session.KeySet.Keys[0].E, session.KeySet.Keys[0].N)
+			case ctv.TOKEN_TYPE_ACCESS:
+				key, err = convertKey(session.KeySet.Keys[1].E, session.KeySet.Keys[1].N)
+			}
+			claims = token.Claims
+			return
+		},
+	); errorInfo.Error != nil {
+		log.Println(errorInfo.Error)
+	}
+
+	return
+}
 
 // ParseAWSJWT - will return an err if the AWS JWT is invalid.
 // func (a *AWSHelper) ParseAWSJWT(tokenString string) (
@@ -323,7 +326,7 @@ func Login(
 //
 // 	pi.PrintDebugTrail(tFunctionName)
 //
-// 	if tokenString == ctv.EMPTY {
+// 	if tokenString == ctv.VAL_EMPTY {
 // 		errorInfo.Error = errors.New(fmt.Sprintf("Require information is missing! Token: '%v'", tokenString))
 // 		fmt.Println(errorInfo.Error)
 // 	} else {
@@ -358,7 +361,7 @@ func Login(
 //
 // 	pi.PrintDebugTrail(tFunctionName)
 //
-// 	if username == ctv.EMPTY {
+// 	if username == ctv.VAL_EMPTY {
 // 		errorInfo.Error = pi.ErrRequiredArgumentMissing
 // 		pi.PrintError(errorInfo)
 // 	} else {
@@ -404,7 +407,7 @@ func Login(
 //
 // 	pi.PrintDebugTrail(tFunctionName)
 //
-// 	if token == ctv.EMPTY {
+// 	if token == ctv.VAL_EMPTY {
 // 		errorInfo.Error = errors.New(fmt.Sprintf("Require information is missing! Token: '%v'", token))
 // 		log.Println(errorInfo.Error)
 // 	} else {
@@ -429,7 +432,7 @@ func Login(
 //
 // 	pi.PrintDebugTrail(tFunctionName)
 //
-// 	if username == ctv.EMPTY {
+// 	if username == ctv.VAL_EMPTY {
 // 		errorInfo.Error = pi.ErrRequiredArgumentMissing
 // 	} else {
 // 		tawsCIPPtr = cognito.New(a.SessionPtr)
@@ -465,7 +468,7 @@ func Login(
 //
 // 	pi.PrintDebugTrail(tFunctionName)
 //
-// 	if userName == ctv.EMPTY {
+// 	if userName == ctv.VAL_EMPTY {
 // 		errorInfo.Error = errors.New(fmt.Sprintf("Require information is missing! AWS User Name: '%v'", userName))
 // 		log.Println(errorInfo.Error)
 // 	} else {
@@ -529,69 +532,38 @@ func Login(
 // 	return false
 // }
 
-// convertSignature - calculates the HMAC digest of the signature
+// convertKey - decodes, processes, and returns the public key.
+// NOTE: does not follow the errorInfo format because it is called by a function
+// that only allows error to be returned.
 //
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func convertSignature(
-	hkdf []byte,
-	data []byte,
-) []byte {
-
-	mac := hmac.New(sha256.New, hkdf)
-	mac.Write(data)
-	return mac.Sum(nil)
-}
-
-// convertKey - does not follow the errorInfo format because it is called by a function that only allows error to be returned
-// func convertKey(rawE, rawN string) (
-// 	publicKey *rsa.PublicKey,
-// 	err error,
-// ) {
-//
-// 	var (
-// 		decodedN      []byte
-// 		decodedBase64 []byte
-// 		ndata         []byte
-// 	)
-//
-// 	decodedBase64, err = base64.RawURLEncoding.DecodeString(rawE)
-//
-// 	if err == nil {
-// 		if len(decodedBase64) < 4 {
-// 			ndata = make([]byte, 4)
-// 			copy(ndata[4-len(decodedBase64):], decodedBase64)
-// 			decodedBase64 = ndata
-// 		}
-// 		publicKey = &rsa.PublicKey{
-// 			N: &big.Int{},
-// 			E: int(binary.BigEndian.Uint32(decodedBase64[:])),
-// 		}
-// 		if decodedN, err = base64.RawURLEncoding.DecodeString(rawN); err == nil {
-// 			publicKey.N.SetBytes(decodedN)
-// 		}
-// 	}
-//
-// 	return
-// }
-
-func generateSignature(
-	timestamp, userPoolId, userIdForSRP, secretBlock string,
-	hkdf []byte,
-) (signature string) {
+func convertKey(rawE, rawN string) (
+	publicKey *rsa.PublicKey,
+	err error,
+) {
 
 	var (
-		tSignatureData []byte
+		decodedN      []byte
+		decodedBase64 []byte
+		ndata         []byte
 	)
 
-	tSignatureData = append(tSignatureData, []byte(strings.Split(userPoolId, "_")[1])...)
-	tSignatureData = append(tSignatureData, []byte(userIdForSRP)...)
-	tSignatureData = append(tSignatureData, secretBlock...)
-	tSignatureData = append(tSignatureData, timestamp...)
-
-	dig := convertSignature(hkdf, tSignatureData)
-	signature = base64.StdEncoding.EncodeToString(dig)
+	if decodedBase64, err = base64.RawURLEncoding.DecodeString(rawE); err == nil {
+		if len(decodedBase64) < 4 {
+			ndata = make([]byte, 4)
+			copy(ndata[4-len(decodedBase64):], decodedBase64)
+			decodedBase64 = ndata
+		}
+		publicKey = &rsa.PublicKey{
+			N: &big.Int{},
+			E: int(binary.BigEndian.Uint32(decodedBase64[:])),
+		}
+		if decodedN, err = base64.RawURLEncoding.DecodeString(rawN); err == nil {
+			publicKey.N.SetBytes(decodedN)
+		}
+	}
 
 	return
 }
@@ -677,7 +649,7 @@ func getPublicKeySet(keySetURL string) (
 // 				tClaimsPtr.EmailVerified,
 // 			)
 // 		case ctv.TOKEN_TYPE_ACCESS:
-// 			return areAWSClaimsValid(firestoreClientPtr, tClaimsPtr.Subject, ctv.EMPTY, tClaimsPtr.UserName, tClaimsPtr.TokenUse, true)
+// 			return areAWSClaimsValid(firestoreClientPtr, tClaimsPtr.Subject, ctv.VAL_EMPTY, tClaimsPtr.UserName, tClaimsPtr.TokenUse, true)
 // 		}
 // 	}
 //

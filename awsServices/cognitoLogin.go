@@ -22,7 +22,8 @@ import (
 //	Errors: None
 //	Verifications: None
 func NewCognitoLogin(
-	username, password, userPoolId, clientId string,
+	username, userPoolId, clientId string,
+	password *string,
 	clientSecret *string,
 ) (
 	*CognitoLogin,
@@ -96,7 +97,7 @@ func (csrp *CognitoLogin) GetAuthParams() map[string]string {
 
 	params := map[string]string{
 		"USERNAME": csrp.username,
-		"PASSWORD": csrp.password,
+		"PASSWORD": *csrp.password,
 		"SRP_A":    bigToHex(csrp.bigA),
 	}
 
@@ -219,12 +220,13 @@ func (csrp *CognitoLogin) calculateA() *big.Int {
 //	Errors: None
 //	Verifications: None
 func (csrp *CognitoLogin) getPasswordAuthenticationKey(
-	username, password string,
+	username string,
+	password *string,
 	bigB, salt *big.Int,
 ) []byte {
 
 	var (
-		userPass     = fmt.Sprintf("%s%s:%s", csrp.userPoolName, username, password)
+		userPass     = fmt.Sprintf("%s%s:%s", csrp.userPoolName, username, *password)
 		userPassHash = hashSha256([]byte(userPass))
 
 		uVal      = calculateU(csrp.bigA, bigB)
