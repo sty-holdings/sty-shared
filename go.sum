@@ -28,6 +28,8 @@ github.com/aws/aws-sdk-go v1.44.203 h1:pcsP805b9acL3wUqa4JR2vg1k2wnItkDYNvfmcy6F
 github.com/aws/aws-sdk-go v1.44.203/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
 github.com/aws/aws-sdk-go-v2 v1.25.2 h1:/uiG1avJRgLGiQM9X3qJM8+Qa6KRGK5rRPuXE0HUM+w=
 github.com/aws/aws-sdk-go-v2 v1.25.2/go.mod h1:Evoc5AsmtveRt1komDwIsjHFyrP5tDuF1D1U+6z6pNo=
+github.com/aws/aws-sdk-go-v2 v1.25.3 h1:xYiLpZTQs1mzvz5PaI6uR0Wh57ippuEthxS4iK5v0n0=
+github.com/aws/aws-sdk-go-v2 v1.25.3/go.mod h1:35hUlJVYd+M++iLI3ALmVwMOyRYMmRqUXpTtRGW+K9I=
 github.com/aws/aws-sdk-go-v2/config v1.27.6 h1:WmoH1aPrxwcqAZTTnETjKr+fuvqzKd4hRrKxQUiuKP4=
 github.com/aws/aws-sdk-go-v2/config v1.27.6/go.mod h1:W9RZFF2pL+OhnUSZsQS/eDMWD8v+R+yWgjj3nSlrXVU=
 github.com/aws/aws-sdk-go-v2/credentials v1.17.6 h1:akhj/nSC6SEx3OmiYGG/7mAyXMem9ZNVVf+DXkikcTk=
@@ -36,8 +38,12 @@ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.15.2 h1:AK0J8iYBFeUk2Ax7O8YpLtF
 github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.15.2/go.mod h1:iRlGzMix0SExQEviAyptRWRGdYNo3+ufW/lCzvKVTUc=
 github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.2 h1:bNo4LagzUKbjdxE0tIcR9pMzLR2U/Tgie1Hq1HQ3iH8=
 github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.2/go.mod h1:wRQv0nN6v9wDXuWThpovGQjqF1HFdcgWjporw14lS8k=
+github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.3 h1:ifbIbHZyGl1alsAhPIYsHOg5MuApgqOvVeI8wIugXfs=
+github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.3/go.mod h1:oQZXg3c6SNeY6OZrDY+xHcF4VGIEoNotX2B4PrDeoJI=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.2 h1:EtOU5jsPdIQNP+6Q2C5e3d65NKT1PeCiQk+9OdzO12Q=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.2/go.mod h1:tyF5sKccmDz0Bv4NrstEr+/9YkSPJHrcO7UsUKf7pWM=
+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.3 h1:Qvodo9gHG9F3E8SfYOspPeBt0bjSbsevK8WhRAUHcoY=
+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.3/go.mod h1:vCKrdLXtybdf/uQd/YfVR2r5pcbNuEYKzMQpcxmeSJw=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.8.0 h1:hT8rVHwugYE2lEfdFE0QWVo81lF7jMrYJVDWI+f+VxU=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.8.0/go.mod h1:8tu/lYfQfFe6IGnaOdrpVgEL2IrrDOf6/m9RQum4NkY=
 github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.35.1 h1:/2fRBLrZ73vB4gpKLSST5ImkgBtRU8AE54pn+uDLKSs=
@@ -46,6 +52,8 @@ github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.1 h1:EyBZibR
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.1/go.mod h1:JKpmtYhhPs7D97NL/ltqz7yCkERFW5dOlHyVl66ZYF8=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.4 h1:jRiWxyuVO8PlkN72wDMVn/haVH4SDCBkUt0Lf/dxd7s=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.4/go.mod h1:Ru7vg1iQ7cR4i7SZ/JTLYN9kaXtbL69UdgG0OQWQxW0=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.49.2 h1:JcvYXGYiu7ME17irbW6kvWno2LG5i29Ci0UZyWX0IOs=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.49.2/go.mod h1:loBAHYxz7JyucJvq4xuW9vunu8iCzjNYfSrQg2QEczA=
 github.com/aws/aws-sdk-go-v2/service/sso v1.20.1 h1:utEGkfdQ4L6YW/ietH7111ZYglLJvS+sLriHJ1NBJEQ=
 github.com/aws/aws-sdk-go-v2/service/sso v1.20.1/go.mod h1:RsYqzYr2F2oPDdpy+PdhephuZxTfjHQe7SOBcZGoAU8=
 github.com/aws/aws-sdk-go-v2/service/ssooidc v1.23.1 h1:9/GylMS45hGGFCcMrUZDVayQE1jYSIN6da9jo7RAYIw=
@@ -173,6 +181,12 @@ github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.15 h1:fmbe9yxE5Jro5e
 github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.15/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
 github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.16 h1:V+GALKY4rrUuvqmj2sD2Xv86mM0dNw0nKM4F+NBzqFk=
 github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.16/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.17 h1:n9ZyiM8tLH12c5B7Fz08MZE8Lo6rLHZ8zWUhxcgCbPw=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.17/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.18 h1:bpPWxzwoAvswn5e8QnoSV2BE+Za2YmwouYz6yQg5TXU=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.18/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.20 h1:s4qgPrXA6bQGFs6WxfOvXJiJpURrXMkA+eMj4JTym4M=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.20/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
 github.com/sty-holdings/resuable-const-vars v2024.13.1+incompatible h1:+V0XkyYlRBikJMQ0aqDyohvHFt5QrTnCFdOxDBwAc/4=
 github.com/sty-holdings/resuable-const-vars v2024.13.1+incompatible/go.mod h1:ieMXr9HLd8zX6BiJlvlFOwG2m5JbtWyK7UrKRDzyLqA=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=

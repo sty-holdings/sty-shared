@@ -137,5 +137,7 @@ var (
 )
 
 var (
-	awsCTX = context.TODO()
+	awsCTX     = context.TODO()
+	awsTrue    = true
+	awsTruePtr = &awsTrue
 )

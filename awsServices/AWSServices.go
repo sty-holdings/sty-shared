@@ -50,6 +50,7 @@ import (
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
 	awsCIP "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	awsCT "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
+	awsSSM "github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/golang-jwt/jwt/v5"
 	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
@@ -90,75 +91,49 @@ func NewAWSConfig(environment string) (
 	return
 }
 
-// GetParameters - will return System Manager parameters
+// GetParameters - will return System Manager parameters. WithDecryption is assumed.
 //
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
 func GetParameters(
-	loginType, username string,
-	password *string,
 	session AWSSession,
+	ssmParameters ...string,
 ) (
-	tokens map[string]string,
+	parametersOutput awsSSM.GetParametersOutput,
 	errorInfo pi.ErrorInfo,
 ) {
 
-	if loginType == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_LOGIN_TYPE, loginType))
-		return
-	}
-	if username == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERNAME, username))
-		return
-	}
-	if loginType == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_PASSWORD, ctv.TXT_PROTECTED))
-		return
-	}
-
-	csrp, _ := NewCognitoLogin(username, session.STYConfig.UserPoolId, session.STYConfig.ClientId, password, nil)
-
-	svc := awsCIP.NewFromConfig(session.BaseConfig)
-
-	// initiate auth
-	resp, err := svc.InitiateAuth(
-		context.Background(), &awsCIP.InitiateAuthInput{
-			AuthFlow:       awsCT.AuthFlowType(loginType),
-			ClientId:       aws.String(csrp.GetClientId()),
-			AuthParameters: csrp.GetAuthParams(),
-		},
+	var (
+		tClientPtr           *awsSSM.Client
+		tParametersOutputPtr *awsSSM.GetParametersOutput
 	)
-	if err != nil {
-		panic(err)
-	}
 
-	tokens = make(map[string]string) // This is used for either awsCT.AuthFlowTypeUserPasswordAuth or awsCT.AuthFlowTypeUserSrpAuth
-	if loginType == string(awsCT.AuthFlowTypeUserPasswordAuth) {
-		tokens["access"] = *resp.AuthenticationResult.AccessToken
-		tokens["id"] = *resp.AuthenticationResult.IdToken
-		tokens["refresh"] = *resp.AuthenticationResult.RefreshToken
+	if session.STYConfig.UserPoolId == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, session.STYConfig.UserPoolId))
 		return
 	}
 
-	// respond to password verifier challenge
-	if resp.ChallengeName == awsCT.ChallengeNameTypePasswordVerifier {
-		challengeResponses, _ := csrp.PasswordVerifierChallenge(resp.ChallengeParameters, time.Now())
-
-		x, err := svc.RespondToAuthChallenge(
-			context.Background(), &awsCIP.RespondToAuthChallengeInput{
-				ChallengeName:      awsCT.ChallengeNameTypePasswordVerifier,
-				ChallengeResponses: challengeResponses,
-				ClientId:           aws.String(csrp.GetClientId()),
-			},
-		)
-		if err != nil {
-			panic(err)
-		}
-		tokens["access"] = *x.AuthenticationResult.AccessToken
-		tokens["id"] = *x.AuthenticationResult.IdToken
-		tokens["refresh"] = *x.AuthenticationResult.RefreshToken
+	if len(ssmParameters) == ctv.VAL_ZERO {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ssmParameters))
+		return
 	}
+
+	if tClientPtr := awsSSM.NewFromConfig(session.BaseConfig); tClientPtr == nil {
+		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_SYSTEM_MANAGER))
+	}
+
+	if tParametersOutputPtr, errorInfo.Error = tClientPtr.GetParameters(
+		awsCTX, &awsSSM.GetParametersInput{
+			Names:          ssmParameters,
+			WithDecryption: awsTruePtr,
+		},
+	); errorInfo.Error != nil {
+		errorInfo = pi.NewErrorInfo(errorInfo.Error, ctv.VAL_EMPTY)
+		return
+	}
+
+	parametersOutput = *tParametersOutputPtr
 
 	return
 }
@@ -177,6 +152,10 @@ func Login(
 	errorInfo pi.ErrorInfo,
 ) {
 
+	var (
+		tClientPtr *awsCIP.Client
+	)
+
 	if loginType == ctv.VAL_EMPTY {
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_LOGIN_TYPE, loginType))
 		return
@@ -185,21 +164,27 @@ func Login(
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERNAME, username))
 		return
 	}
-	if loginType == ctv.VAL_EMPTY {
+	if password == nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_PASSWORD, ctv.TXT_PROTECTED))
 		return
 	}
+	if session.STYConfig.UserPoolId == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, session.STYConfig.UserPoolId))
+		return
+	}
 
-	cognitoLogin, _ := NewCognitoLogin(username, session.STYConfig.UserPoolId, session.STYConfig.ClientId, password, nil)
+	cognitoLoginPtr, _ := NewCognitoLogin(username, session.STYConfig.UserPoolId, session.STYConfig.ClientId, password, nil)
 
-	service := awsCIP.NewFromConfig(session.BaseConfig)
+	if tClientPtr = awsCIP.NewFromConfig(session.BaseConfig); tClientPtr == nil {
+		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_COGNITO))
+	}
 
 	// initiate auth
-	resp, err := service.InitiateAuth(
+	resp, err := tClientPtr.InitiateAuth(
 		context.Background(), &awsCIP.InitiateAuthInput{
 			AuthFlow:       awsCT.AuthFlowType(loginType),
-			ClientId:       aws.String(cognitoLogin.GetClientId()),
-			AuthParameters: cognitoLogin.GetAuthParams(),
+			ClientId:       aws.String(cognitoLoginPtr.GetClientId()),
+			AuthParameters: cognitoLoginPtr.GetAuthParams(),
 		},
 	)
 	if err != nil {
@@ -216,13 +201,13 @@ func Login(
 
 	// respond to password verifier challenge
 	if resp.ChallengeName == awsCT.ChallengeNameTypePasswordVerifier {
-		challengeResponses, _ := cognitoLogin.PasswordVerifierChallenge(resp.ChallengeParameters, time.Now())
+		challengeResponses, _ := cognitoLoginPtr.PasswordVerifierChallenge(resp.ChallengeParameters, time.Now())
 
-		x, err := service.RespondToAuthChallenge(
+		x, err := tClientPtr.RespondToAuthChallenge(
 			context.Background(), &awsCIP.RespondToAuthChallengeInput{
 				ChallengeName:      awsCT.ChallengeNameTypePasswordVerifier,
 				ChallengeResponses: challengeResponses,
-				ClientId:           aws.String(cognitoLogin.GetClientId()),
+				ClientId:           aws.String(cognitoLoginPtr.GetClientId()),
 			},
 		)
 		if err != nil {
