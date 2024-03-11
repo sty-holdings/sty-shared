@@ -90,7 +90,12 @@ func NewAWSConfig(environment string) (
 	return
 }
 
-func Login(
+// GetParameters - will return System Manager parameters
+//
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func GetParameters(
 	loginType, username string,
 	password *string,
 	session AWSSession,
@@ -145,6 +150,79 @@ func Login(
 				ChallengeName:      awsCT.ChallengeNameTypePasswordVerifier,
 				ChallengeResponses: challengeResponses,
 				ClientId:           aws.String(csrp.GetClientId()),
+			},
+		)
+		if err != nil {
+			panic(err)
+		}
+		tokens["access"] = *x.AuthenticationResult.AccessToken
+		tokens["id"] = *x.AuthenticationResult.IdToken
+		tokens["refresh"] = *x.AuthenticationResult.RefreshToken
+	}
+
+	return
+}
+
+// Login - will validate and return tokens, if the login is successful.
+//
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func Login(
+	loginType, username string,
+	password *string,
+	session AWSSession,
+) (
+	tokens map[string]string,
+	errorInfo pi.ErrorInfo,
+) {
+
+	if loginType == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_LOGIN_TYPE, loginType))
+		return
+	}
+	if username == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERNAME, username))
+		return
+	}
+	if loginType == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_PASSWORD, ctv.TXT_PROTECTED))
+		return
+	}
+
+	cognitoLogin, _ := NewCognitoLogin(username, session.STYConfig.UserPoolId, session.STYConfig.ClientId, password, nil)
+
+	service := awsCIP.NewFromConfig(session.BaseConfig)
+
+	// initiate auth
+	resp, err := service.InitiateAuth(
+		context.Background(), &awsCIP.InitiateAuthInput{
+			AuthFlow:       awsCT.AuthFlowType(loginType),
+			ClientId:       aws.String(cognitoLogin.GetClientId()),
+			AuthParameters: cognitoLogin.GetAuthParams(),
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	tokens = make(map[string]string) // This is used for either awsCT.AuthFlowTypeUserPasswordAuth or awsCT.AuthFlowTypeUserSrpAuth
+	if loginType == string(awsCT.AuthFlowTypeUserPasswordAuth) {
+		tokens["access"] = *resp.AuthenticationResult.AccessToken
+		tokens["id"] = *resp.AuthenticationResult.IdToken
+		tokens["refresh"] = *resp.AuthenticationResult.RefreshToken
+		return
+	}
+
+	// respond to password verifier challenge
+	if resp.ChallengeName == awsCT.ChallengeNameTypePasswordVerifier {
+		challengeResponses, _ := cognitoLogin.PasswordVerifierChallenge(resp.ChallengeParameters, time.Now())
+
+		x, err := service.RespondToAuthChallenge(
+			context.Background(), &awsCIP.RespondToAuthChallengeInput{
+				ChallengeName:      awsCT.ChallengeNameTypePasswordVerifier,
+				ChallengeResponses: challengeResponses,
+				ClientId:           aws.String(cognitoLogin.GetClientId()),
 			},
 		)
 		if err != nil {
