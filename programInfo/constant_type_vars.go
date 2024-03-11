@@ -111,6 +111,7 @@ const (
 	POSTGRES_SSL_MODE                  = "Only disable, allow, prefer and required are supported."
 	POSTGRES_CONN_FALIED               = "No database connection has been established"
 	POSTGRES_CONN_EMPTY                = "Database connection is empty"
+	EXTRACT_KEY_FAILED                 = "Extracting the key has failed."
 	REDIRECT_MODE_MISSING              = "The redirect mode is missing."
 	REDIRECT_MODE_INVALID              = "The redirect mode is invalid."
 	REFRESH_TOO_SOON                   = "Too soon to refresh balances."
@@ -176,9 +177,10 @@ const (
 	ZERO_INVALID = "A value of zero is invalid."
 	//
 	// String that are used to determine third party error messages
-	USER_DOES_NOT_EXIST = "User does not exist."
-	NOT_FOUND           = "not found"
-	UNKNOWN             = "UNKNOWN"
+	USER_DOES_NOT_EXIST         = "User does not exist."
+	NOT_FOUND                   = "not found"
+	UNKNOWN                     = "UNKNOWN"
+	JWT_TOKEN_SIGNATURE_INVALID = "token signature is invalid: crypto/rsa: verification error"
 	//
 	// Testing Strings
 	TEST_STRING = "TEST STRING"
@@ -226,6 +228,7 @@ var (
 	ErrJSONGenerationFailed           = errors.New(JSON_GENERATION_FAILED)
 	ErrJSONInvalid                    = errors.New(JSON_INVALID)
 	ErrJWTMissing                     = errors.New(JWT_MISSING)
+	ErrJWTTokenSignatureInvalid       = errors.New(JWT_TOKEN_SIGNATURE_INVALID)
 	ErrLastNameMissing                = errors.New(LAST_NAME_MISSING)
 	ErrLessThanEqualZero              = errors.New(LESS_THAN_ZERO)
 	ErrMapIsEmpty                     = errors.New(MAP_IS_EMPTY)
@@ -246,6 +249,7 @@ var (
 	ErrPostgresSSLMode                = errors.New(POSTGRES_SSL_MODE)
 	ErrPostgresConnFailed             = errors.New(POSTGRES_CONN_FALIED)
 	ErrPostgresConnEmpty              = errors.New(POSTGRES_CONN_EMPTY)
+	ErrExtractKeysFailure             = errors.New(EXTRACT_KEY_FAILED)
 	ErrRedirectModeMissing            = errors.New(REDIRECT_MODE_MISSING)
 	ErrRedirectModeInvalid            = errors.New(REDIRECT_MODE_INVALID)
 	ErrRefreshTooSoon                 = errors.New(REFRESH_TOO_SOON)

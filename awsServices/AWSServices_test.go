@@ -103,7 +103,6 @@ func TestNewAWSSession(tPtr *testing.T) {
 func TestLogin(tPtr *testing.T) {
 
 	type arguments struct {
-		getSecret          bool
 		loginType          string
 		password           *string
 		shouldBeAuthorized bool
@@ -126,7 +125,6 @@ func TestLogin(tPtr *testing.T) {
 		{
 			name: ctv.TEST_POSITIVE_SUCCESS + "login with username/password",
 			arguments: arguments{
-				getSecret:          false,
 				loginType:          ctv.AUTH_USER_PASSWORD_AUTH,
 				password:           &password,
 				shouldBeAuthorized: true,
@@ -137,7 +135,6 @@ func TestLogin(tPtr *testing.T) {
 		{
 			name: ctv.TEST_POSITIVE_SUCCESS + "login with SRP",
 			arguments: arguments{
-				getSecret:          false,
 				loginType:          ctv.AUTH_USER_SRP,
 				password:           &password,
 				shouldBeAuthorized: true,
@@ -285,101 +282,74 @@ func TestLogin(tPtr *testing.T) {
 // 	StopTest(myFireBase)
 // }
 
-// Requires updated access token. You can use Cognito > User pools > App integration > App clients and analytics > {app name} > Hosted UI > View Hosted UI
-// to login. This will output an access and id token for the user.
-// func TestAWSHelper_ParseAWSJWTWithClaims(tPtr *testing.T) {
-//
-// 	type arguments struct {
-// 		tokenType string
-// 		token     string
-// 	}
-//
-// 	var (
-// 		errorInfo          pi.ErrorInfo
-// 		gotError           bool
-// 		myAWS              AWSHelper
-// 		myFireBase         coreHelpers.FirebaseFirestoreHelper
-// 		tFunction, _, _, _ = runtime.Caller(0)
-// 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
-// 		tToken             string
-// 	)
-//
-// 	tests := []struct {
-// 		name      string
-// 		arguments arguments
-// 		wantError bool
-// 	}{
-// 		{
-// 			name: "Positive Case: Successful id token!",
-// 			arguments: arguments{
-// 				tokenType: ctv.TOKEN_TYPE_ID,
-// 				token:     "valid",
-// 			},
-// 			wantError: false,
-// 		},
-// 		{
-// 			name: "Positive Case: Successful access token!",
-// 			arguments: arguments{
-// 				tokenType: ctv.TOKEN_TYPE_ACCESS,
-// 				token:     "valid",
-// 			},
-// 			wantError: false,
-// 		},
-// 		{
-// 			name: "Negative Case: Missing token type!",
-// 			arguments: arguments{
-// 				tokenType: ctv.EMPTY,
-// 				token:     "valid",
-// 			},
-// 			wantError: true,
-// 		},
-// 		{
-// 			name: "Negative Case: Missing token!",
-// 			arguments: arguments{
-// 				tokenType: ctv.TOKEN_TYPE_ACCESS,
-// 				token:     ctv.EMPTY,
-// 			},
-// 			wantError: true,
-// 		},
-// 		{
-// 			name: "Negative Case: Invalid id token!",
-// 			arguments: arguments{
-// 				tokenType: ctv.TOKEN_TYPE_ID,
-// 				token:     "invalid",
-// 			},
-// 			wantError: true,
-// 		},
-// 		{
-// 			name: "Negative Case: Invalid access token!",
-// 			arguments: arguments{
-// 				tokenType: ctv.TOKEN_TYPE_ACCESS,
-// 				token:     "invalid",
-// 			},
-// 			wantError: true,
-// 		},
-// 	}
-//
-// 	myAWS, myFireBase = StartTest()
-//
-// 	for _, ts := range tests {
-// 		tPtr.Run(
-// 			tFunctionName, func(t *testing.T) {
-// 				tToken = getToken(ts.arguments.tokenType, ts.arguments.token)
-// 				if _, errorInfo = myAWS.ParseAWSJWTWithClaims(ts.arguments.tokenType, tToken); errorInfo.Error != nil {
-// 					gotError = true
-// 				} else {
-// 					gotError = false
-// 				}
-// 				if gotError != ts.wantError {
-// 					tPtr.Error(ts.name)
-// 					tPtr.Error(errorInfo)
-// 				}
-// 			},
-// 		)
-// 	}
-//
-// 	StopTest(myFireBase)
-// }
+// Requires a JWT. You can get a token two ways:
+// 1) You can use Cognito > User pools > App integration > App clients and analytics > {app name} > Hosted UI > View
+// Hosted UI to login. This will output an access and id token for the user.
+// 2) Call the AWSServices Login function before each test needing a token
+func TestParseAWSJWTWithClaims(tPtr *testing.T) {
+
+	type arguments struct {
+		loginType          string
+		password           *string
+		shouldBeAuthorized bool
+		username           string
+	}
+
+	var (
+		environment = ctv.ENVIRONMENT_PRODUCTION
+		errorInfo   pi.ErrorInfo
+		gotError    bool
+		password    = "Yidiao09#1"
+		session     AWSSession
+		tokens      = make(map[string]string)
+	)
+
+	tests := []struct {
+		name      string
+		arguments arguments
+		wantError bool
+	}{
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with username/password",
+			arguments: arguments{
+				loginType:          ctv.AUTH_USER_PASSWORD_AUTH,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
+			},
+			wantError: false,
+		},
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with SRP",
+			arguments: arguments{
+				loginType:          ctv.AUTH_USER_SRP,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
+			},
+			wantError: false,
+		},
+	}
+
+	for _, ts := range tests {
+		tPtr.Run(
+			ts.name, func(t *testing.T) {
+				session, errorInfo = NewAWSConfig(environment)
+				tokens, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, session)
+				for tokenType, token := range tokens {
+					if ParseAWSJWT(session, tokenType, token); errorInfo.Error != nil {
+						gotError = true
+					} else {
+						gotError = false
+					}
+					if gotError != ts.wantError {
+						tPtr.Error(errorInfo.Error.Error())
+					}
+				}
+			},
+		)
+	}
+}
 
 // Requires updated access token. You can use Cognito > User pools > App integration > App clients and analytics > {app name} > Hosted UI > View Hosted UI
 // to login. This will output an access and id token for the user.

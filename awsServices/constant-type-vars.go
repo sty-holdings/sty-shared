@@ -79,18 +79,17 @@ type AWSConfig struct {
 
 // CognitoLogin handles SRP authentication with AWS Cognito
 type CognitoLogin struct {
-	username      string
-	password      *string
-	userPoolId    string
-	userPoolName  string
-	clientId      string
-	clientSecret  *string
-	cognitoTokens *CognitoTokens
-	bigN          *big.Int
-	g             *big.Int
-	k             *big.Int
-	a             *big.Int
-	bigA          *big.Int
+	username     string
+	password     *string
+	userPoolId   string
+	userPoolName string
+	clientId     string
+	clientSecret *string
+	bigN         *big.Int
+	g            *big.Int
+	k            *big.Int
+	a            *big.Int
+	bigA         *big.Int
 }
 
 // ToDo Is this needed
@@ -107,20 +106,16 @@ type CognitoClaims struct {
 	jwt.RegisteredClaims
 }
 
-type CognitoTokens struct {
-	access  string
-	id      string
-	refresh string
+type KeySet struct {
+	Keys []Key `json:"keys"`
 }
 
-type KeySet struct {
-	Keys []struct {
-		Alg string `json:"alg"`
-		E   string `json:"e"`
-		Kid string `json:"kid"`
-		Kty string `json:"kty"`
-		N   string `json:"n"`
-	} `json:"keys"`
+type Key struct {
+	Alg string `json:"alg"`
+	E   string `json:"e"`
+	Kid string `json:"kid"`
+	Kty string `json:"kty"`
+	N   string `json:"n"`
 }
 
 var (

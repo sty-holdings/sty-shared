@@ -41,8 +41,6 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"io"
-	"log"
 	"math/big"
 	"net/http"
 	"strings"
@@ -97,7 +95,7 @@ func Login(
 	password *string,
 	session AWSSession,
 ) (
-	tokens CognitoTokens,
+	tokens map[string]string,
 	errorInfo pi.ErrorInfo,
 ) {
 
@@ -129,10 +127,12 @@ func Login(
 	if err != nil {
 		panic(err)
 	}
+
+	tokens = make(map[string]string) // This is used for either awsCT.AuthFlowTypeUserPasswordAuth or awsCT.AuthFlowTypeUserSrpAuth
 	if loginType == string(awsCT.AuthFlowTypeUserPasswordAuth) {
-		tokens.access = *resp.AuthenticationResult.AccessToken
-		tokens.id = *resp.AuthenticationResult.IdToken
-		tokens.refresh = *resp.AuthenticationResult.RefreshToken
+		tokens["access"] = *resp.AuthenticationResult.AccessToken
+		tokens["id"] = *resp.AuthenticationResult.IdToken
+		tokens["refresh"] = *resp.AuthenticationResult.RefreshToken
 		return
 	}
 
@@ -150,9 +150,9 @@ func Login(
 		if err != nil {
 			panic(err)
 		}
-		tokens.access = *x.AuthenticationResult.AccessToken
-		tokens.id = *x.AuthenticationResult.IdToken
-		tokens.refresh = *x.AuthenticationResult.RefreshToken
+		tokens["access"] = *x.AuthenticationResult.AccessToken
+		tokens["id"] = *x.AuthenticationResult.IdToken
+		tokens["refresh"] = *x.AuthenticationResult.RefreshToken
 	}
 
 	return
@@ -266,16 +266,18 @@ func Login(
 // 	return
 // }
 
-// ParseAWSJWTWithClaims - will return an err if the AWS JWT is invalid.
+// ParseAWSJWT - will return the claims, if any, or an err if the AWS JWT is invalid.
+// This will parse ID and Access tokens. Refresh token are not support and nothing is returned.
 //
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func ParseAWSJWTWithClaims(
+func ParseAWSJWT(
 	session AWSSession,
-	tokenType, tokenString string,
+	tokenType, token string,
 ) (
 	claims jwt.Claims,
+	tokenValuePtr *jwt.Token,
 	errorInfo pi.ErrorInfo,
 ) {
 
@@ -283,67 +285,40 @@ func ParseAWSJWTWithClaims(
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, ctv.TXT_KEY_SET_MISSING)
 		return
 	}
-	if tokenType == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_TOKEN_TYPE, tokenType))
-		return
-	}
-	if tokenString == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_TOKEN, tokenType))
+	if token == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_TOKEN, ctv.TXT_PROTECTED))
 		return
 	}
 
-	if _, errorInfo.Error = jwt.ParseWithClaims(
-		tokenString, jwt.MapClaims{}, func(token *jwt.Token) (
-			key interface{},
-			err error,
-		) {
-			switch strings.ToUpper(tokenType) {
-			case ctv.TOKEN_TYPE_IN:
-				key, err = convertKey(session.KeySet.Keys[0].E, session.KeySet.Keys[0].N)
-			case ctv.TOKEN_TYPE_ACCESS:
-				key, err = convertKey(session.KeySet.Keys[1].E, session.KeySet.Keys[1].N)
-			}
-			claims = token.Claims
-			return
-		},
-	); errorInfo.Error != nil {
-		log.Println(errorInfo.Error)
+	if tokenType == ctv.TOKEN_TYPE_REFRESH {
+		return
 	}
+
+	for i := 0; i < len(session.KeySet.Keys); i++ {
+		if tokenValuePtr, errorInfo.Error = jwt.ParseWithClaims(
+			token, jwt.MapClaims{}, func(token *jwt.Token) (
+				key interface{},
+				err error,
+			) {
+				key, err = convertKey(session.KeySet.Keys[i].E, session.KeySet.Keys[i].N) // ID
+				claims = token.Claims
+				return
+			},
+		); errorInfo.Error != nil {
+			fmt.Println(errorInfo.Error)
+			if errorInfo.Error.Error() == pi.ErrJWTTokenSignatureInvalid.Error() {
+				continue
+			} else {
+				break
+			}
+		}
+		return // No errors returned from called function
+	}
+
+	errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_TOKEN, ctv.TXT_PROTECTED))
 
 	return
 }
-
-// ParseAWSJWT - will return an err if the AWS JWT is invalid.
-// func (a *AWSHelper) ParseAWSJWT(tokenString string) (
-// 	tTokenPtr *jwt.Token,
-// 	errorInfo pi.ErrorInfo,
-// ) {
-//
-// 	var (
-// 		tFunction, _, _, _ = runtime.Caller(0)
-// 		tFunctionName      = runtime.FuncForPC(tFunction).Name()
-// 	)
-//
-// 	pi.PrintDebugTrail(tFunctionName)
-//
-// 	if tokenString == ctv.VAL_EMPTY {
-// 		errorInfo.Error = errors.New(fmt.Sprintf("Require information is missing! Token: '%v'", tokenString))
-// 		fmt.Println(errorInfo.Error)
-// 	} else {
-// 		tTokenPtr, errorInfo.Error = jwt.Parse(
-// 			tokenString,
-// 			func(token *jwt.Token) (
-// 				key interface{},
-// 				err error,
-// 			) {
-// 				key, err = convertKey(a.KeySet.Keys[1].E, a.KeySet.Keys[1].N)
-// 				return
-// 			},
-// 		)
-// 	}
-//
-// 	return
-// }
 
 // PullCognitoUserInfo - pull user information from the Cognito user pool.
 // func (a *AWSHelper) PullCognitoUserInfo(username string) (
@@ -568,7 +543,7 @@ func convertKey(rawE, rawN string) (
 	return
 }
 
-// getPublicKeySet - gets the public key for AWS JWTs
+// getPublicKeySet - gets the public keys for AWS JWTs
 //
 //	Customer Messages: None
 //	Errors: ErrRequiredArgumentMissing, ErrHTTPRequestFailed, http.Get or io.ReadAll or json.Unmarshal returned error
@@ -579,8 +554,10 @@ func getPublicKeySet(keySetURL string) (
 ) {
 
 	var (
-		tBody      []byte
-		tKeySetPtr *http.Response
+		tJWKS              map[string]interface{}
+		tKey               Key
+		tKeySetResponsePtr *http.Response
+		tKeyData           []byte
 	)
 
 	if keySetURL == ctv.VAL_EMPTY {
@@ -588,28 +565,39 @@ func getPublicKeySet(keySetURL string) (
 		return
 	}
 
-	if tKeySetPtr, errorInfo.Error = http.Get(keySetURL); errorInfo.Error != nil {
+	if tKeySetResponsePtr, errorInfo.Error = http.Get(keySetURL); errorInfo.Error != nil {
 		errorInfo = pi.NewErrorInfo(errorInfo.Error, ctv.VAL_EMPTY)
 		return
 	}
+	defer tKeySetResponsePtr.Body.Close()
 
-	if tKeySetPtr.StatusCode != ctv.HTTP_STATUS_200 {
+	if tKeySetResponsePtr.StatusCode != ctv.HTTP_STATUS_200 {
 		errorInfo = pi.NewErrorInfo(
 			pi.ErrHTTPRequestFailed,
-			fmt.Sprintf("%v%v - %v%v", ctv.TXT_HTTP_STATUS, tKeySetPtr.StatusCode, ctv.FN_URL, keySetURL),
+			fmt.Sprintf("%v%v - %v%v", ctv.TXT_HTTP_STATUS, tKeySetResponsePtr.StatusCode, ctv.FN_URL, keySetURL),
 		)
 		return
 	}
 
-	if tBody, errorInfo.Error = io.ReadAll(tKeySetPtr.Body); errorInfo.Error != nil {
-		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_HTTP_BODY, tKeySetPtr.Body))
+	if errorInfo.Error = json.NewDecoder(tKeySetResponsePtr.Body).Decode(&tJWKS); errorInfo.Error != nil {
+		return
+	}
+	if keys, ok := tJWKS["keys"].([]interface{}); ok {
+		for _, key := range keys {
+			if tKeyData, errorInfo.Error = json.Marshal(key); errorInfo.Error != nil {
+				errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_PUBLIC_KEY, key))
+				return
+			}
+			if errorInfo.Error = json.Unmarshal(tKeyData, &tKey); errorInfo.Error != nil {
+				errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_PUBLIC_KEY, tKeyData))
+				return
+			}
+			keySet.Keys = append(keySet.Keys, tKey) // Assuming "kid" is the key ID and "n" is the public key value
+		}
 		return
 	}
 
-	if errorInfo.Error = json.Unmarshal(tBody, &keySet); errorInfo.Error != nil {
-		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_HTTP_BODY, tKeySetPtr.Body))
-		return
-	}
+	errorInfo = pi.NewErrorInfo(pi.ErrExtractKeysFailure, fmt.Sprintf("%v%v", ctv.TXT_PUBLIC_KEY, keySetURL))
 
 	return
 }
