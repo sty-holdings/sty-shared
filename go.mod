@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/firestore v1.14.0
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/golang-jwt/jwt/v5 v5.2.0
-	github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.20
+	github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.21
 	github.com/sty-holdings/resuable-const-vars v2024.13.1+incompatible
 )
 

@@ -100,6 +100,93 @@ func TestNewAWSSession(tPtr *testing.T) {
 	}
 }
 
+func TestGetParameters(tPtr *testing.T) {
+
+	type arguments struct {
+		loginType          string
+		password           *string
+		shouldBeAuthorized bool
+		username           string
+	}
+
+	var (
+		environment = ctv.ENVIRONMENT_PRODUCTION
+		errorInfo   pi.ErrorInfo
+		gotError    bool
+		password    = "Yidiao09#1"
+		session     AWSSession
+		tokens      map[string]string
+	)
+
+	tests := []struct {
+		name      string
+		arguments arguments
+		wantError bool
+	}{
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with username/password",
+			arguments: arguments{
+				loginType:          ctv.AUTH_USER_PASSWORD_AUTH,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
+			},
+			wantError: false,
+		},
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with SRP",
+			arguments: arguments{
+				loginType:          ctv.AUTH_USER_SRP,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
+			},
+			wantError: false,
+		},
+		// {
+		// 	name: ctv.TEST_NEGATIVE_SUCCESS + "No passowrd",
+		// 	arguments: arguments{
+		// 		username: "scott@yackofamily.com",
+		// 		password: ctv.VAL_EMPTY,
+		// 	},
+		// 	wantError: true,
+		// },
+		// {
+		// 	name: ctv.TEST_NEGATIVE_SUCCESS + "No username",
+		// 	arguments: arguments{
+		// 		username: ctv.VAL_EMPTY,
+		// 		password: password,
+		// 	},
+		// 	wantError: true,
+		// },
+		// {
+		// 	name: ctv.TEST_NEGATIVE_SUCCESS + "Wrong password",
+		// 	arguments: arguments{
+		// 		username: "scott@yackofamily.com",
+		// 		password: password + "1234",
+		// 	},
+		// 	wantError: true,
+		// },
+	}
+
+	for _, ts := range tests {
+		tPtr.Run(
+			ts.name, func(t *testing.T) {
+				session, errorInfo = NewAWSConfig(environment)
+				tokens, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, session)
+				if _, errorInfo = GetParameters(session, tokens[ctv.TOKEN_TYPE_ID], "ai2-development-nats-token"); errorInfo.Error != nil {
+					gotError = true
+				} else {
+					gotError = false
+				}
+				if gotError != ts.wantError {
+					tPtr.Error(errorInfo.Error.Error())
+				}
+			},
+		)
+	}
+}
+
 func TestLogin(tPtr *testing.T) {
 
 	type arguments struct {
@@ -286,7 +373,7 @@ func TestLogin(tPtr *testing.T) {
 // 1) You can use Cognito > User pools > App integration > App clients and analytics > {app name} > Hosted UI > View
 // Hosted UI to login. This will output an access and id token for the user.
 // 2) Call the AWSServices Login function before each test needing a token
-func TestParseAWSJWTWithClaims(tPtr *testing.T) {
+func TestParseAWSJWT(tPtr *testing.T) {
 
 	type arguments struct {
 		loginType          string

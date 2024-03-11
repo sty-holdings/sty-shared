@@ -63,12 +63,13 @@ const (
 )
 
 type AWSSession struct {
-	AccessToken string
-	BaseConfig  aws.Config
-	IDToken     string
-	KeySet      KeySet
-	KeySetURL   string
-	STYConfig   AWSConfig
+	AccessToken  string
+	BaseConfig   aws.Config
+	IDToken      string
+	KeySet       KeySet
+	KeySetURL    string
+	RefreshToken string
+	STYConfig    AWSConfig
 }
 
 type AWSConfig struct {

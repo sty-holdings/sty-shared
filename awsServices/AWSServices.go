@@ -98,6 +98,7 @@ func NewAWSConfig(environment string) (
 //	Verifications: None
 func GetParameters(
 	session AWSSession,
+	idToken string,
 	ssmParameters ...string,
 ) (
 	parametersOutput awsSSM.GetParametersOutput,
@@ -119,7 +120,7 @@ func GetParameters(
 		return
 	}
 
-	if tClientPtr := awsSSM.NewFromConfig(session.BaseConfig); tClientPtr == nil {
+	if tClientPtr = awsSSM.NewFromConfig(session.BaseConfig); tClientPtr == nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_SYSTEM_MANAGER))
 	}
 
@@ -153,7 +154,10 @@ func Login(
 ) {
 
 	var (
-		tClientPtr *awsCIP.Client
+		tClientPtr                    *awsCIP.Client
+		cognitoLoginPtr               *CognitoLogin
+		tInitiateAuthOutputPtr        *awsCIP.InitiateAuthOutput
+		tRespondToAuthChallengeOutput *awsCIP.RespondToAuthChallengeOutput
 	)
 
 	if loginType == ctv.VAL_EMPTY {
@@ -173,50 +177,54 @@ func Login(
 		return
 	}
 
-	cognitoLoginPtr, _ := NewCognitoLogin(username, session.STYConfig.UserPoolId, session.STYConfig.ClientId, password, nil)
+	if cognitoLoginPtr, errorInfo = NewCognitoLogin(username, session.STYConfig.UserPoolId, session.STYConfig.ClientId, password, nil); errorInfo.Error != nil {
+		pi.PrintErrorInfo(errorInfo)
+	}
 
 	if tClientPtr = awsCIP.NewFromConfig(session.BaseConfig); tClientPtr == nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_COGNITO))
 	}
 
 	// initiate auth
-	resp, err := tClientPtr.InitiateAuth(
+	if tInitiateAuthOutputPtr, errorInfo.Error = tClientPtr.InitiateAuth(
 		context.Background(), &awsCIP.InitiateAuthInput{
 			AuthFlow:       awsCT.AuthFlowType(loginType),
 			ClientId:       aws.String(cognitoLoginPtr.GetClientId()),
 			AuthParameters: cognitoLoginPtr.GetAuthParams(),
 		},
-	)
-	if err != nil {
-		panic(err)
+	); errorInfo.Error != nil {
+		errorInfo = pi.NewErrorInfo(errorInfo.Error, ctv.VAL_EMPTY)
+		return
 	}
 
 	tokens = make(map[string]string) // This is used for either awsCT.AuthFlowTypeUserPasswordAuth or awsCT.AuthFlowTypeUserSrpAuth
 	if loginType == string(awsCT.AuthFlowTypeUserPasswordAuth) {
-		tokens["access"] = *resp.AuthenticationResult.AccessToken
-		tokens["id"] = *resp.AuthenticationResult.IdToken
-		tokens["refresh"] = *resp.AuthenticationResult.RefreshToken
-		return
+		tokens["access"] = *tInitiateAuthOutputPtr.AuthenticationResult.AccessToken
+		tokens["id"] = *tInitiateAuthOutputPtr.AuthenticationResult.IdToken
+		tokens["refresh"] = *tInitiateAuthOutputPtr.AuthenticationResult.RefreshToken
 	}
 
 	// respond to password verifier challenge
-	if resp.ChallengeName == awsCT.ChallengeNameTypePasswordVerifier {
-		challengeResponses, _ := cognitoLoginPtr.PasswordVerifierChallenge(resp.ChallengeParameters, time.Now())
-
-		x, err := tClientPtr.RespondToAuthChallenge(
+	if tInitiateAuthOutputPtr.ChallengeName == awsCT.ChallengeNameTypePasswordVerifier {
+		challengeResponses, _ := cognitoLoginPtr.PasswordVerifierChallenge(tInitiateAuthOutputPtr.ChallengeParameters, time.Now())
+		if tRespondToAuthChallengeOutput, errorInfo.Error = tClientPtr.RespondToAuthChallenge(
 			context.Background(), &awsCIP.RespondToAuthChallengeInput{
 				ChallengeName:      awsCT.ChallengeNameTypePasswordVerifier,
 				ChallengeResponses: challengeResponses,
 				ClientId:           aws.String(cognitoLoginPtr.GetClientId()),
 			},
-		)
-		if err != nil {
-			panic(err)
+		); errorInfo.Error != nil {
+			errorInfo = pi.NewErrorInfo(errorInfo.Error, ctv.VAL_EMPTY)
+			return
 		}
-		tokens["access"] = *x.AuthenticationResult.AccessToken
-		tokens["id"] = *x.AuthenticationResult.IdToken
-		tokens["refresh"] = *x.AuthenticationResult.RefreshToken
+		tokens["access"] = *tRespondToAuthChallengeOutput.AuthenticationResult.AccessToken
+		tokens["id"] = *tRespondToAuthChallengeOutput.AuthenticationResult.IdToken
+		tokens["refresh"] = *tRespondToAuthChallengeOutput.AuthenticationResult.RefreshToken
 	}
+
+	session.AccessToken = tokens["access"]
+	session.IDToken = tokens["id"]
+	session.RefreshToken = tokens["refresh"]
 
 	return
 }
