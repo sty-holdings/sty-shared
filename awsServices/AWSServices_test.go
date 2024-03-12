@@ -41,16 +41,21 @@ import (
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
-func TestNewAWSSession(tPtr *testing.T) {
+func TestAssumeRole(tPtr *testing.T) {
 
 	type arguments struct {
-		config      AWSConfig
-		environment string
+		loginType          string
+		password           *string
+		shouldBeAuthorized bool
+		username           string
 	}
 
 	var (
-		errorInfo pi.ErrorInfo
-		gotError  bool
+		environment = ctv.ENVIRONMENT_PRODUCTION
+		errorInfo   pi.ErrorInfo
+		gotError    bool
+		password    = "Yidiao09#1"
+		sessionPtr  *AWSSession
 	)
 
 	tests := []struct {
@@ -59,26 +64,22 @@ func TestNewAWSSession(tPtr *testing.T) {
 		wantError bool
 	}{
 		{
-			name: ctv.TEST_POSITIVE_SUCCESS + "local config",
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with username/password",
 			arguments: arguments{
-				config:      styConfigLocal,
-				environment: ctv.ENVIRONMENT_LOCAL,
+				loginType:          ctv.AUTH_USER_PASSWORD_AUTH,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
 			},
 			wantError: false,
 		},
 		{
-			name: ctv.TEST_POSITIVE_SUCCESS + "development config",
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with SRP",
 			arguments: arguments{
-				config:      styConfigDevelopment,
-				environment: ctv.ENVIRONMENT_DEVELOPMENT,
-			},
-			wantError: false,
-		},
-		{
-			name: ctv.TEST_POSITIVE_SUCCESS + "production config",
-			arguments: arguments{
-				config:      styConfig,
-				environment: ctv.ENVIRONMENT_PRODUCTION,
+				loginType:          ctv.AUTH_USER_SRP,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
 			},
 			wantError: false,
 		},
@@ -87,7 +88,134 @@ func TestNewAWSSession(tPtr *testing.T) {
 	for _, ts := range tests {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
-				if _, errorInfo = NewAWSConfig(ts.arguments.environment); errorInfo.Error != nil {
+				sessionPtr, errorInfo = NewAWSConfig(environment)
+				_, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
+				if _, errorInfo = AssumeRole(sessionPtr, ctv.VAL_EMPTY); errorInfo.Error != nil {
+					gotError = true
+				} else {
+					gotError = false
+				}
+				if gotError != ts.wantError {
+					tPtr.Error(errorInfo.Error.Error())
+				}
+			},
+		)
+	}
+}
+
+func TestGetIdentityCredentials(tPtr *testing.T) {
+
+	type arguments struct {
+		loginType          string
+		password           *string
+		shouldBeAuthorized bool
+		username           string
+	}
+
+	var (
+		environment = ctv.ENVIRONMENT_PRODUCTION
+		errorInfo   pi.ErrorInfo
+		gotError    bool
+		password    = "Yidiao09#1"
+		sessionPtr  *AWSSession
+	)
+
+	tests := []struct {
+		name      string
+		arguments arguments
+		wantError bool
+	}{
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with username/password",
+			arguments: arguments{
+				loginType:          ctv.AUTH_USER_PASSWORD_AUTH,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
+			},
+			wantError: false,
+		},
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with SRP",
+			arguments: arguments{
+				loginType:          ctv.AUTH_USER_SRP,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
+			},
+			wantError: false,
+		},
+	}
+
+	for _, ts := range tests {
+		tPtr.Run(
+			ts.name, func(t *testing.T) {
+				sessionPtr, errorInfo = NewAWSConfig(environment)
+				_, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
+				_, errorInfo = GetId(sessionPtr, ctv.VAL_EMPTY, ctv.VAL_EMPTY)
+				if _, errorInfo = GetIdentityCredentials(sessionPtr, ctv.VAL_EMPTY); errorInfo.Error != nil {
+					gotError = true
+				} else {
+					gotError = false
+				}
+				if gotError != ts.wantError {
+					tPtr.Error(errorInfo.Error.Error())
+				}
+			},
+		)
+	}
+}
+
+func TestGetId(tPtr *testing.T) {
+
+	type arguments struct {
+		loginType          string
+		password           *string
+		shouldBeAuthorized bool
+		username           string
+	}
+
+	var (
+		environment = ctv.ENVIRONMENT_PRODUCTION
+		errorInfo   pi.ErrorInfo
+		gotError    bool
+		password    = "Yidiao09#1"
+		sessionPtr  *AWSSession
+	)
+
+	tests := []struct {
+		name      string
+		arguments arguments
+		wantError bool
+	}{
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with username/password",
+			arguments: arguments{
+				loginType:          ctv.AUTH_USER_PASSWORD_AUTH,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
+			},
+			wantError: false,
+		},
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "login with SRP",
+			arguments: arguments{
+				loginType:          ctv.AUTH_USER_SRP,
+				password:           &password,
+				shouldBeAuthorized: true,
+				username:           "scott@yackofamily.com",
+			},
+			wantError: false,
+		},
+	}
+
+	for _, ts := range tests {
+		tPtr.Run(
+			ts.name, func(t *testing.T) {
+				sessionPtr, errorInfo = NewAWSConfig(environment)
+				_, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
+				if _, errorInfo = GetId(sessionPtr, ctv.VAL_EMPTY, ctv.VAL_EMPTY); errorInfo.Error != nil {
 					gotError = true
 				} else {
 					gotError = false
@@ -114,7 +242,7 @@ func TestGetParameters(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		session     AWSSession
+		sessionPtr  *AWSSession
 		tokens      map[string]string
 	)
 
@@ -143,38 +271,14 @@ func TestGetParameters(tPtr *testing.T) {
 			},
 			wantError: false,
 		},
-		// {
-		// 	name: ctv.TEST_NEGATIVE_SUCCESS + "No passowrd",
-		// 	arguments: arguments{
-		// 		username: "scott@yackofamily.com",
-		// 		password: ctv.VAL_EMPTY,
-		// 	},
-		// 	wantError: true,
-		// },
-		// {
-		// 	name: ctv.TEST_NEGATIVE_SUCCESS + "No username",
-		// 	arguments: arguments{
-		// 		username: ctv.VAL_EMPTY,
-		// 		password: password,
-		// 	},
-		// 	wantError: true,
-		// },
-		// {
-		// 	name: ctv.TEST_NEGATIVE_SUCCESS + "Wrong password",
-		// 	arguments: arguments{
-		// 		username: "scott@yackofamily.com",
-		// 		password: password + "1234",
-		// 	},
-		// 	wantError: true,
-		// },
 	}
 
 	for _, ts := range tests {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
-				session, errorInfo = NewAWSConfig(environment)
-				tokens, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, session)
-				if _, errorInfo = GetParameters(session, tokens[ctv.TOKEN_TYPE_ID], "ai2-development-nats-token"); errorInfo.Error != nil {
+				sessionPtr, errorInfo = NewAWSConfig(environment)
+				tokens, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
+				if _, errorInfo = GetParameters(sessionPtr, tokens[ctv.TOKEN_TYPE_ID], "ai2-development-nats-token"); errorInfo.Error != nil {
 					gotError = true
 				} else {
 					gotError = false
@@ -201,7 +305,7 @@ func TestLogin(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		session     AWSSession
+		sessionPtr  *AWSSession
 	)
 
 	tests := []struct {
@@ -229,37 +333,13 @@ func TestLogin(tPtr *testing.T) {
 			},
 			wantError: false,
 		},
-		// {
-		// 	name: ctv.TEST_NEGATIVE_SUCCESS + "No passowrd",
-		// 	arguments: arguments{
-		// 		username: "scott@yackofamily.com",
-		// 		password: ctv.VAL_EMPTY,
-		// 	},
-		// 	wantError: true,
-		// },
-		// {
-		// 	name: ctv.TEST_NEGATIVE_SUCCESS + "No username",
-		// 	arguments: arguments{
-		// 		username: ctv.VAL_EMPTY,
-		// 		password: password,
-		// 	},
-		// 	wantError: true,
-		// },
-		// {
-		// 	name: ctv.TEST_NEGATIVE_SUCCESS + "Wrong password",
-		// 	arguments: arguments{
-		// 		username: "scott@yackofamily.com",
-		// 		password: password + "1234",
-		// 	},
-		// 	wantError: true,
-		// },
 	}
 
 	for _, ts := range tests {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
-				session, errorInfo = NewAWSConfig(environment)
-				if _, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, session); errorInfo.Error != nil {
+				sessionPtr, errorInfo = NewAWSConfig(environment)
+				if _, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr); errorInfo.Error != nil {
 					gotError = true
 				} else {
 					gotError = false
@@ -369,6 +449,65 @@ func TestLogin(tPtr *testing.T) {
 // 	StopTest(myFireBase)
 // }
 
+func TestNewAWSSession(tPtr *testing.T) {
+
+	type arguments struct {
+		config      AWSConfig
+		environment string
+	}
+
+	var (
+		errorInfo pi.ErrorInfo
+		gotError  bool
+	)
+
+	tests := []struct {
+		name      string
+		arguments arguments
+		wantError bool
+	}{
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "local config",
+			arguments: arguments{
+				config:      styConfigLocal,
+				environment: ctv.ENVIRONMENT_LOCAL,
+			},
+			wantError: false,
+		},
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "development config",
+			arguments: arguments{
+				config:      styConfigDevelopment,
+				environment: ctv.ENVIRONMENT_DEVELOPMENT,
+			},
+			wantError: false,
+		},
+		{
+			name: ctv.TEST_POSITIVE_SUCCESS + "production config",
+			arguments: arguments{
+				config:      styConfig,
+				environment: ctv.ENVIRONMENT_PRODUCTION,
+			},
+			wantError: false,
+		},
+	}
+
+	for _, ts := range tests {
+		tPtr.Run(
+			ts.name, func(t *testing.T) {
+				if _, errorInfo = NewAWSConfig(ts.arguments.environment); errorInfo.Error != nil {
+					gotError = true
+				} else {
+					gotError = false
+				}
+				if gotError != ts.wantError {
+					tPtr.Error(errorInfo.Error.Error())
+				}
+			},
+		)
+	}
+}
+
 // Requires a JWT. You can get a token two ways:
 // 1) You can use Cognito > User pools > App integration > App clients and analytics > {app name} > Hosted UI > View
 // Hosted UI to login. This will output an access and id token for the user.
@@ -387,7 +526,7 @@ func TestParseAWSJWT(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		session     AWSSession
+		sessionPtr  *AWSSession
 		tokens      = make(map[string]string)
 	)
 
@@ -421,10 +560,10 @@ func TestParseAWSJWT(tPtr *testing.T) {
 	for _, ts := range tests {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
-				session, errorInfo = NewAWSConfig(environment)
-				tokens, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, session)
+				sessionPtr, errorInfo = NewAWSConfig(environment)
+				tokens, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
 				for tokenType, token := range tokens {
-					if ParseAWSJWT(session, tokenType, token); errorInfo.Error != nil {
+					if ParseAWSJWT(sessionPtr, tokenType, token); errorInfo.Error != nil {
 						gotError = true
 					} else {
 						gotError = false

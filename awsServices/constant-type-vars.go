@@ -36,6 +36,7 @@ import (
 	"math/big"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	awsCI "github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -63,19 +64,24 @@ const (
 )
 
 type AWSSession struct {
-	AccessToken  string
-	BaseConfig   aws.Config
-	IDToken      string
-	KeySet       KeySet
-	KeySetURL    string
-	RefreshToken string
-	STYConfig    AWSConfig
+	AccessToken           string
+	BaseConfig            aws.Config
+	IdentityId            string
+	IDToken               string
+	IdentityIdCredentials awsCI.GetCredentialsForIdentityOutput
+	KeySet                KeySet
+	KeySetURL             string
+	RefreshToken          string
+	STYConfig             AWSConfig
+	Username              string
 }
 
 type AWSConfig struct {
-	ClientId   string
-	Region     string
-	UserPoolId string
+	ClientId         string
+	IdentityPoolId   string
+	IdentityPoolRole string
+	Region           string
+	UserPoolId       string
 }
 
 // CognitoLogin handles SRP authentication with AWS Cognito
@@ -121,19 +127,25 @@ type Key struct {
 
 var (
 	styConfigLocal = AWSConfig{
-		ClientId:   "677jaef1i0cri2hpbtvfce4152",
-		Region:     "us-west-2",
-		UserPoolId: "us-west-2_lvAuSOXGf",
+		ClientId:         "677jaef1i0cri2hpbtvfce4152",
+		IdentityPoolId:   "",
+		IdentityPoolRole: "",
+		Region:           "us-west-2",
+		UserPoolId:       "us-west-2_lvAuSOXGf",
 	}
 	styConfigDevelopment = AWSConfig{
-		ClientId:   "5nfnlbaoiprg5q5n7jvd2lvm0d",
-		Region:     "us-west-2",
-		UserPoolId: "us-west-2_d0U66vAT1",
+		ClientId:         "5nfnlbaoiprg5q5n7jvd2lvm0d",
+		IdentityPoolId:   "",
+		IdentityPoolRole: "",
+		Region:           "us-west-2",
+		UserPoolId:       "us-west-2_d0U66vAT1",
 	}
 	styConfig = AWSConfig{
-		ClientId:   "4i4onptb55891872nfc00bk30a",
-		Region:     "us-west-2",
-		UserPoolId: "us-west-2_lvAuSOXGf",
+		ClientId:         "4i4onptb55891872nfc00bk30a",
+		IdentityPoolId:   "us-west-2:973d66b8-dece-4315-8ab3-58ad924b357b",
+		IdentityPoolRole: "arn:aws:iam::229762305118:role/service-role/ai2-production-ssmGetParameters",
+		Region:           "us-west-2",
+		UserPoolId:       "us-west-2_lvAuSOXGf",
 	}
 )
 
