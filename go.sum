@@ -189,6 +189,12 @@ github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.20 h1:s4qgPrXA6bQGFs
 github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.20/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
 github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.21 h1:x02dA19vWPfNh+tIRozxohnoJlOqqQ/7nhCONbkirnc=
 github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.21/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.22 h1:yjYoUwKwyN9sRehO4cEiN9J3q9EYO2HNpfps4uVedgg=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.22/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.23 h1:d7zgq1GpWBT7SIFKUX8MhJEzcn3rjtijgfi4DeO5Oek=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.23/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.24 h1:2U0+0gZHpzzuJlZEnaBoFWXuuhsOmLXee1Nd4kQ0N2s=
+github.com/sty-holdings/constant-type-vars-go/v2024 v2024.4.24/go.mod h1:Jz0ZqiDnCx+0M+LFtoQUQUdX7lZbaWT1cFmotivbCxQ=
 github.com/sty-holdings/resuable-const-vars v2024.13.1+incompatible h1:+V0XkyYlRBikJMQ0aqDyohvHFt5QrTnCFdOxDBwAc/4=
 github.com/sty-holdings/resuable-const-vars v2024.13.1+incompatible/go.mod h1:ieMXr9HLd8zX6BiJlvlFOwG2m5JbtWyK7UrKRDzyLqA=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=

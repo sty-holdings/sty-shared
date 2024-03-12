@@ -56,37 +56,49 @@ import (
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
-// NewAWSConfig - reads the SDKs default external configurations, and populates an AWS Config with the values from the external configurations.
+// GetParameters - will return System Manager parameters. WithDecryption is assumed.
 //
 //	Customer Messages: None
-//	Errors: ErrEnvironmentInvalid, anything awsConfig.LoadDefaultConfig or getPublicKeySet returns,
+//	Errors: None
 //	Verifications: None
-func NewAWSConfig(environment string) (
+func AssumeRole(
 	session AWSSession,
+	idToken string,
+) (
+	parametersOutput awsSSM.GetParametersOutput,
 	errorInfo pi.ErrorInfo,
 ) {
 
-	switch strings.ToLower(strings.Trim(environment, ctv.SPACES_ONE)) {
-	case ctv.ENVIRONMENT_PRODUCTION:
-		session.STYConfig = styConfig
-	case ctv.ENVIRONMENT_DEVELOPMENT:
-		session.STYConfig = styConfigDevelopment
-	case ctv.ENVIRONMENT_LOCAL:
-		session.STYConfig = styConfigLocal
-	default:
-		errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, environment))
-	}
+	var (
+		tClientPtr           *awsSSM.Client
+		tParametersOutputPtr *awsSSM.GetParametersOutput
+	)
 
-	if session.BaseConfig, errorInfo.Error = awsConfig.LoadDefaultConfig(awsCTX, awsConfig.WithRegion(session.STYConfig.Region)); errorInfo.
-		Error != nil {
-		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, "Failed to create an AWS Session.")
+	if session.STYConfig.UserPoolId == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, session.STYConfig.UserPoolId))
 		return
 	}
 
-	session.KeySetURL = fmt.Sprintf(
-		"https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", session.STYConfig.Region, session.STYConfig.UserPoolId,
-	)
-	session.KeySet, errorInfo = getPublicKeySet(session.KeySetURL)
+	if idToken == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.fn_ID_TOKEN)
+		return
+	}
+
+	if tClientPtr = awsSSM.NewFromConfig(session.BaseConfig); tClientPtr == nil {
+		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_SYSTEM_MANAGER))
+	}
+
+	if tParametersOutputPtr, errorInfo.Error = tClientPtr.GetParameters(
+		awsCTX, &awsSSM.GetParametersInput{
+			Names:          ssmParameters,
+			WithDecryption: awsTruePtr,
+		},
+	); errorInfo.Error != nil {
+		errorInfo = pi.NewErrorInfo(errorInfo.Error, ctv.VAL_EMPTY)
+		return
+	}
+
+	parametersOutput = *tParametersOutputPtr
 
 	return
 }
@@ -337,6 +349,41 @@ func Login(
 // 	return
 // }
 
+// NewAWSConfig - reads the SDKs default external configurations, and populates an AWS Config with the values from the external configurations.
+//
+//	Customer Messages: None
+//	Errors: ErrEnvironmentInvalid, anything awsConfig.LoadDefaultConfig or getPublicKeySet returns,
+//	Verifications: None
+func NewAWSConfig(environment string) (
+	session AWSSession,
+	errorInfo pi.ErrorInfo,
+) {
+
+	switch strings.ToLower(strings.Trim(environment, ctv.SPACES_ONE)) {
+	case ctv.ENVIRONMENT_PRODUCTION:
+		session.STYConfig = styConfig
+	case ctv.ENVIRONMENT_DEVELOPMENT:
+		session.STYConfig = styConfigDevelopment
+	case ctv.ENVIRONMENT_LOCAL:
+		session.STYConfig = styConfigLocal
+	default:
+		errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, environment))
+	}
+
+	if session.BaseConfig, errorInfo.Error = awsConfig.LoadDefaultConfig(awsCTX, awsConfig.WithRegion(session.STYConfig.Region)); errorInfo.
+		Error != nil {
+		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, "Failed to create an AWS Session.")
+		return
+	}
+
+	session.KeySetURL = fmt.Sprintf(
+		"https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", session.STYConfig.Region, session.STYConfig.UserPoolId,
+	)
+	session.KeySet, errorInfo = getPublicKeySet(session.KeySetURL)
+
+	return
+}
+
 // ParseAWSJWT - will return the claims, if any, or an err if the AWS JWT is invalid.
 // This will parse ID and Access tokens. Refresh token are not support and nothing is returned.
 //
@@ -356,8 +403,12 @@ func ParseAWSJWT(
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, ctv.TXT_KEY_SET_MISSING)
 		return
 	}
+	if tokenType == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_TOKEN_TYPE, ctv.FN_TOKEN_TYPE))
+		return
+	}
 	if token == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_TOKEN, ctv.TXT_PROTECTED))
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_TOKEN, ctv.FN_TOKEN))
 		return
 	}
 
@@ -386,7 +437,7 @@ func ParseAWSJWT(
 		return // No errors returned from called function
 	}
 
-	errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_TOKEN, ctv.TXT_PROTECTED))
+	errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_TOKEN, ctv.FN_TOKEN))
 
 	return
 }
@@ -645,7 +696,7 @@ func getPublicKeySet(keySetURL string) (
 	if tKeySetResponsePtr.StatusCode != ctv.HTTP_STATUS_200 {
 		errorInfo = pi.NewErrorInfo(
 			pi.ErrHTTPRequestFailed,
-			fmt.Sprintf("%v%v - %v%v", ctv.TXT_HTTP_STATUS, tKeySetResponsePtr.StatusCode, ctv.FN_URL, keySetURL),
+			fmt.Sprintf("%v%v - %v%v", ctv.TXT_HTTP_STATUS, tKeySetResponsePtr.StatusCode, ctv.FN_KEYSET_URL, keySetURL),
 		)
 		return
 	}
