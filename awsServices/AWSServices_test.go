@@ -41,68 +41,6 @@ import (
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
-func TestAssumeRole(tPtr *testing.T) {
-
-	type arguments struct {
-		loginType          string
-		password           *string
-		shouldBeAuthorized bool
-		username           string
-	}
-
-	var (
-		environment = ctv.ENVIRONMENT_PRODUCTION
-		errorInfo   pi.ErrorInfo
-		gotError    bool
-		password    = "Yidiao09#1"
-		sessionPtr  *AWSSession
-	)
-
-	tests := []struct {
-		name      string
-		arguments arguments
-		wantError bool
-	}{
-		{
-			name: ctv.TEST_POSITIVE_SUCCESS + "login with username/password",
-			arguments: arguments{
-				loginType:          ctv.AUTH_USER_PASSWORD_AUTH,
-				password:           &password,
-				shouldBeAuthorized: true,
-				username:           "scott@yackofamily.com",
-			},
-			wantError: false,
-		},
-		{
-			name: ctv.TEST_POSITIVE_SUCCESS + "login with SRP",
-			arguments: arguments{
-				loginType:          ctv.AUTH_USER_SRP,
-				password:           &password,
-				shouldBeAuthorized: true,
-				username:           "scott@yackofamily.com",
-			},
-			wantError: false,
-		},
-	}
-
-	for _, ts := range tests {
-		tPtr.Run(
-			ts.name, func(t *testing.T) {
-				sessionPtr, errorInfo = NewAWSConfig(environment)
-				_, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
-				if _, errorInfo = AssumeRole(sessionPtr, ctv.VAL_EMPTY); errorInfo.Error != nil {
-					gotError = true
-				} else {
-					gotError = false
-				}
-				if gotError != ts.wantError {
-					tPtr.Error(errorInfo.Error.Error())
-				}
-			},
-		)
-	}
-}
-
 func TestGetIdentityCredentials(tPtr *testing.T) {
 
 	type arguments struct {
@@ -117,7 +55,7 @@ func TestGetIdentityCredentials(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *AWSSession
+		sessionPtr  *awsSession
 	)
 
 	tests := []struct {
@@ -180,7 +118,7 @@ func TestGetId(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *AWSSession
+		sessionPtr  *awsSession
 	)
 
 	tests := []struct {
@@ -242,8 +180,7 @@ func TestGetParameters(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *AWSSession
-		tokens      map[string]string
+		sessionPtr  *awsSession
 	)
 
 	tests := []struct {
@@ -277,8 +214,10 @@ func TestGetParameters(tPtr *testing.T) {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
 				sessionPtr, errorInfo = NewAWSConfig(environment)
-				tokens, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
-				if _, errorInfo = GetParameters(sessionPtr, tokens[ctv.TOKEN_TYPE_ID], "ai2-development-nats-token"); errorInfo.Error != nil {
+				_, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
+				_, errorInfo = GetId(sessionPtr, ctv.VAL_EMPTY, ctv.VAL_EMPTY)
+				_, errorInfo = GetIdentityCredentials(sessionPtr, ctv.VAL_EMPTY)
+				if _, errorInfo = GetParameters(sessionPtr, "ai2-production-nats-token"); errorInfo.Error != nil {
 					gotError = true
 				} else {
 					gotError = false
@@ -305,7 +244,7 @@ func TestLogin(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *AWSSession
+		sessionPtr  *awsSession
 	)
 
 	tests := []struct {
@@ -452,7 +391,7 @@ func TestLogin(tPtr *testing.T) {
 func TestNewAWSSession(tPtr *testing.T) {
 
 	type arguments struct {
-		config      AWSConfig
+		config      awsConfig
 		environment string
 	}
 
@@ -485,7 +424,7 @@ func TestNewAWSSession(tPtr *testing.T) {
 		{
 			name: ctv.TEST_POSITIVE_SUCCESS + "production config",
 			arguments: arguments{
-				config:      styConfig,
+				config:      styConfigProduction,
 				environment: ctv.ENVIRONMENT_PRODUCTION,
 			},
 			wantError: false,
@@ -526,7 +465,7 @@ func TestParseAWSJWT(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *AWSSession
+		sessionPtr  *awsSession
 		tokens      = make(map[string]string)
 	)
 

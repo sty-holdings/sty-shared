@@ -36,7 +36,6 @@ import (
 	"math/big"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	awsCI "github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -63,29 +62,48 @@ const (
 	infoBits = "Caldera Derived Key"
 )
 
-type AWSSession struct {
-	AccessToken           string
-	BaseConfig            aws.Config
-	IdentityId            string
-	IDToken               string
-	IdentityIdCredentials awsCI.GetCredentialsForIdentityOutput
-	KeySet                KeySet
-	KeySetURL             string
-	RefreshToken          string
-	STYConfig             AWSConfig
-	Username              string
+type awsSession struct {
+	tokens           cognitoTokens
+	baseConfig       aws.Config
+	identityPoolInfo cognitoIdentityInfo
+	keyInfo          cognitoKeyInfo
+	styBaseConfig    awsConfig
+	username         string
 }
 
-type AWSConfig struct {
-	ClientId         string
-	IdentityPoolId   string
-	IdentityPoolRole string
-	Region           string
-	UserPoolId       string
+type awsConfig struct {
+	ClientId       string
+	IdentityPoolId string
+	Region         string
+	UserPoolId     string
+}
+
+// ToDo Is this needed
+type cognitoClaims struct {
+	AtHash              string `json:"at_hash"`
+	AuthTime            int    `json:"auth_time"`
+	CognitoUsername     string `json:"cognito:username"`
+	Email               string `json:"email"`
+	EmailVerified       bool   `json:"email_verified"`
+	PhoneNumber         string `json:"phone_number"`
+	PhoneNumberVerified bool   `json:"phone_number_verified"`
+	TokenUse            string `json:"token_use"`
+	UserName            string `json:"username"`
+	jwt.RegisteredClaims
+}
+
+type cognitoIdentityInfo struct {
+	credentials aws.Credentials
+	IdentityId  string
+}
+
+type cognitoKeyInfo struct {
+	keySet    keySet
+	keySetURL string
 }
 
 // CognitoLogin handles SRP authentication with AWS Cognito
-type CognitoLogin struct {
+type cognitoLogin struct {
 	username     string
 	password     *string
 	userPoolId   string
@@ -99,25 +117,17 @@ type CognitoLogin struct {
 	bigA         *big.Int
 }
 
-// ToDo Is this needed
-type CognitoClaims struct {
-	AtHash              string `json:"at_hash"`
-	AuthTime            int    `json:"auth_time"`
-	CognitoUsername     string `json:"cognito:username"`
-	Email               string `json:"email"`
-	EmailVerified       bool   `json:"email_verified"`
-	PhoneNumber         string `json:"phone_number"`
-	PhoneNumberVerified bool   `json:"phone_number_verified"`
-	TokenUse            string `json:"token_use"`
-	UserName            string `json:"username"`
-	jwt.RegisteredClaims
+type cognitoTokens struct {
+	access  string
+	id      string
+	refresh string
 }
 
-type KeySet struct {
-	Keys []Key `json:"keys"`
+type keySet struct {
+	Keys []key `json:"keys"`
 }
 
-type Key struct {
+type key struct {
 	Alg string `json:"alg"`
 	E   string `json:"e"`
 	Kid string `json:"kid"`
@@ -126,31 +136,29 @@ type Key struct {
 }
 
 var (
-	styConfigLocal = AWSConfig{
-		ClientId:         "677jaef1i0cri2hpbtvfce4152",
-		IdentityPoolId:   "",
-		IdentityPoolRole: "",
-		Region:           "us-west-2",
-		UserPoolId:       "us-west-2_lvAuSOXGf",
+	styConfigLocal = awsConfig{
+		ClientId:       "677jaef1i0cri2hpbtvfce4152",
+		IdentityPoolId: "",
+		Region:         "us-west-2",
+		UserPoolId:     "us-west-2_lvAuSOXGf",
 	}
-	styConfigDevelopment = AWSConfig{
-		ClientId:         "5nfnlbaoiprg5q5n7jvd2lvm0d",
-		IdentityPoolId:   "",
-		IdentityPoolRole: "",
-		Region:           "us-west-2",
-		UserPoolId:       "us-west-2_d0U66vAT1",
+	styConfigDevelopment = awsConfig{
+		ClientId:       "5nfnlbaoiprg5q5n7jvd2lvm0d",
+		IdentityPoolId: "",
+		Region:         "us-west-2",
+		UserPoolId:     "us-west-2_d0U66vAT1",
 	}
-	styConfig = AWSConfig{
-		ClientId:         "4i4onptb55891872nfc00bk30a",
-		IdentityPoolId:   "us-west-2:973d66b8-dece-4315-8ab3-58ad924b357b",
-		IdentityPoolRole: "arn:aws:iam::229762305118:role/service-role/ai2-production-ssmGetParameters",
-		Region:           "us-west-2",
-		UserPoolId:       "us-west-2_lvAuSOXGf",
+	styConfigProduction = awsConfig{
+		ClientId:       "4i4onptb55891872nfc00bk30a",
+		IdentityPoolId: "us-west-2:973d66b8-dece-4315-8ab3-58ad924b357b",
+		Region:         "us-west-2",
+		UserPoolId:     "us-west-2_lvAuSOXGf",
 	}
 )
 
 var (
-	awsCTX     = context.TODO()
-	awsTrue    = true
-	awsTruePtr = &awsTrue
+	awsCTXToDo       = context.TODO()
+	awsCTXBackground = context.Background()
+	awsTrue          = true
+	awsTruePtr       = &awsTrue
 )

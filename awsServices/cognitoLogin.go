@@ -26,10 +26,10 @@ func NewCognitoLogin(
 	password *string,
 	clientSecret *string,
 ) (
-	*CognitoLogin,
+	*cognitoLogin,
 	pi.ErrorInfo,
 ) {
-	c := &CognitoLogin{
+	c := &cognitoLogin{
 		username:     username,
 		password:     password,
 		userPoolId:   userPoolId,
@@ -56,7 +56,7 @@ func NewCognitoLogin(
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) GetUsername() string {
+func (csrp *cognitoLogin) GetUsername() string {
 	return csrp.username
 }
 
@@ -65,7 +65,7 @@ func (csrp *CognitoLogin) GetUsername() string {
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) GetClientId() string {
+func (csrp *cognitoLogin) GetClientId() string {
 	return csrp.clientId
 }
 
@@ -74,7 +74,7 @@ func (csrp *CognitoLogin) GetClientId() string {
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) GetUserPoolId() string {
+func (csrp *cognitoLogin) GetUserPoolId() string {
 	return csrp.userPoolId
 }
 
@@ -83,7 +83,7 @@ func (csrp *CognitoLogin) GetUserPoolId() string {
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) GetUserPoolName() string {
+func (csrp *cognitoLogin) GetUserPoolName() string {
 	return csrp.userPoolName
 }
 
@@ -93,7 +93,7 @@ func (csrp *CognitoLogin) GetUserPoolName() string {
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) GetAuthParams() map[string]string {
+func (csrp *cognitoLogin) GetAuthParams() map[string]string {
 
 	params := map[string]string{
 		"USERNAME": csrp.username,
@@ -114,7 +114,7 @@ func (csrp *CognitoLogin) GetAuthParams() map[string]string {
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) GetSecretHash(username string) (
+func (csrp *cognitoLogin) GetSecretHash(username string) (
 	string,
 	pi.ErrorInfo,
 ) {
@@ -144,7 +144,7 @@ func (csrp *CognitoLogin) GetSecretHash(username string) (
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) PasswordVerifierChallenge(
+func (csrp *cognitoLogin) PasswordVerifierChallenge(
 	challengeParms map[string]string,
 	ts time.Time,
 ) (
@@ -192,7 +192,7 @@ func (csrp *CognitoLogin) PasswordVerifierChallenge(
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) generateRandomSmallA() *big.Int {
+func (csrp *cognitoLogin) generateRandomSmallA() *big.Int {
 
 	return big.NewInt(0).Mod(getRandom(128), csrp.bigN)
 }
@@ -204,7 +204,7 @@ func (csrp *CognitoLogin) generateRandomSmallA() *big.Int {
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) calculateA() *big.Int {
+func (csrp *cognitoLogin) calculateA() *big.Int {
 
 	bigA := big.NewInt(0).Exp(csrp.g, csrp.a, csrp.bigN)
 	if big.NewInt(0).Mod(bigA, csrp.bigN).Cmp(big.NewInt(0)) == 0 {
@@ -219,7 +219,7 @@ func (csrp *CognitoLogin) calculateA() *big.Int {
 //	Customer Messages: None
 //	Errors: None
 //	Verifications: None
-func (csrp *CognitoLogin) getPasswordAuthenticationKey(
+func (csrp *cognitoLogin) getPasswordAuthenticationKey(
 	username string,
 	password *string,
 	bigB, salt *big.Int,

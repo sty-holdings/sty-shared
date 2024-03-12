@@ -47,66 +47,16 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	awsConfig "github.com/aws/aws-sdk-go-v2/config"
+	awsCfg "github.com/aws/aws-sdk-go-v2/config"
+	awsCred "github.com/aws/aws-sdk-go-v2/credentials"
 	awsCI "github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
 	awsCIP "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	awsCT "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	awsSSM "github.com/aws/aws-sdk-go-v2/service/ssm"
-	awsSTS "github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/golang-jwt/jwt/v5"
 	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
-
-// AssumeRole - allows an authenticated user to assume the role provided.
-//
-//	Customer Messages: None
-//	Errors: None
-//	Verifications: None
-func AssumeRole(
-	sessionPtr *AWSSession,
-	idToken string,
-) (
-	parametersOutput awsSSM.GetParametersOutput,
-	errorInfo pi.ErrorInfo,
-) {
-
-	var (
-		tAssumeRoleOutputPtr *awsSTS.AssumeRoleWithWebIdentityOutput
-		tClientPtr           *awsSTS.Client
-		tToken               string
-	)
-
-	if sessionPtr.AccessToken == ctv.VAL_EMPTY {
-		if idToken == ctv.VAL_EMPTY {
-			errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v or AWSSession Access Token", ctv.TXT_MISSING_PARAMETER, ctv.FN_TOKEN_ID))
-			return
-		}
-		tToken = idToken
-	} else {
-		tToken = sessionPtr.IDToken
-	}
-
-	if tClientPtr = awsSTS.NewFromConfig(sessionPtr.BaseConfig); tClientPtr == nil {
-		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_STS))
-		return
-	}
-
-	if tAssumeRoleOutputPtr, errorInfo.Error = tClientPtr.AssumeRoleWithWebIdentity(
-		context.Background(), &awsSTS.AssumeRoleWithWebIdentityInput{
-			RoleArn:          aws.String(sessionPtr.STYConfig.IdentityPoolRole),
-			RoleSessionName:  aws.String(sessionPtr.Username),
-			WebIdentityToken: aws.String(tToken),
-		},
-	); errorInfo.Error != nil {
-		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v %v", ctv.TXT_SERVICE, ctv.TXT_AWS_STS, errorInfo))
-		return
-	}
-
-	fmt.Println(tAssumeRoleOutputPtr)
-
-	return
-}
 
 // GetIdentityCredentials - will return AWS temporary credentials.
 //
@@ -114,11 +64,11 @@ func AssumeRole(
 //	Errors: None
 //	Verifications: None
 func GetIdentityCredentials(
-	sessionPtr *AWSSession,
+	sessionPtr *awsSession,
 	identityId string,
 
 ) (
-	identityIdCredentials awsCI.GetCredentialsForIdentityOutput,
+	identityIdCredentials aws.Credentials,
 	errorInfo pi.ErrorInfo,
 ) {
 
@@ -129,35 +79,38 @@ func GetIdentityCredentials(
 		tLogins                    = make(map[string]string)
 	)
 
-	if sessionPtr.IdentityId == ctv.VAL_EMPTY {
+	if sessionPtr.identityPoolInfo.IdentityId == ctv.VAL_EMPTY {
 		if identityId == ctv.VAL_EMPTY {
 			errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v or AWSSession Access Token", ctv.TXT_MISSING_PARAMETER, ctv.FN_AWS_IDENTITY_ID))
 			return
 		}
 		tIdentityId = identityId
 	} else {
-		tIdentityId = sessionPtr.IdentityId
+		tIdentityId = sessionPtr.identityPoolInfo.IdentityId
 	}
 
-	if tClientPtr = awsCI.NewFromConfig(sessionPtr.BaseConfig); tClientPtr == nil {
+	if tClientPtr = awsCI.NewFromConfig(sessionPtr.baseConfig); tClientPtr == nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_STS))
 		return
 	}
 
-	tLogins[fmt.Sprintf("cognito-idp.%v.amazonaws.com/%v", sessionPtr.STYConfig.Region, sessionPtr.STYConfig.UserPoolId)] = sessionPtr.IDToken
+	tLogins[fmt.Sprintf("cognito-idp.%v.amazonaws.com/%v", sessionPtr.styBaseConfig.Region, sessionPtr.styBaseConfig.UserPoolId)] = sessionPtr.tokens.id
 	if tGetIdentityCredentialsPtr, errorInfo.Error = tClientPtr.GetCredentialsForIdentity(
-		awsCTX, &awsCI.GetCredentialsForIdentityInput{
+		awsCTXToDo, &awsCI.GetCredentialsForIdentityInput{
 			IdentityId: aws.String(tIdentityId),
-			// CustomRoleArn: nil,
-			Logins: tLogins,
+			Logins:     tLogins,
 		},
 	); errorInfo.Error != nil {
 		errorInfo = pi.NewErrorInfo(errorInfo.Error, ctv.VAL_EMPTY)
 		return
 	}
 
-	sessionPtr.IdentityIdCredentials = *tGetIdentityCredentialsPtr
-	identityIdCredentials = sessionPtr.IdentityIdCredentials
+	sessionPtr.identityPoolInfo.IdentityId = *tGetIdentityCredentialsPtr.IdentityId
+	sessionPtr.identityPoolInfo.credentials.AccessKeyID = *tGetIdentityCredentialsPtr.Credentials.AccessKeyId
+	sessionPtr.identityPoolInfo.credentials.SessionToken = *tGetIdentityCredentialsPtr.Credentials.SessionToken
+	sessionPtr.identityPoolInfo.credentials.SecretAccessKey = *tGetIdentityCredentialsPtr.Credentials.SecretKey
+	sessionPtr.identityPoolInfo.credentials.Expires = *tGetIdentityCredentialsPtr.Credentials.Expiration
+	identityIdCredentials = sessionPtr.identityPoolInfo.credentials
 
 	return
 }
@@ -168,7 +121,7 @@ func GetIdentityCredentials(
 //	Errors: None
 //	Verifications: None
 func GetId(
-	sessionPtr *AWSSession,
+	sessionPtr *awsSession,
 	region, userPoolId string,
 ) (
 	identityId string,
@@ -183,33 +136,33 @@ func GetId(
 		tUserPoolId     string
 	)
 
-	if sessionPtr.STYConfig.Region == ctv.VAL_EMPTY {
+	if sessionPtr.styBaseConfig.Region == ctv.VAL_EMPTY {
 		if userPoolId == ctv.VAL_EMPTY {
 			errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v or AWSSession Access Token", ctv.TXT_MISSING_PARAMETER, ctv.FN_AWS_REGION))
 			return
 		}
 		tRegion = region
 	} else {
-		tRegion = sessionPtr.STYConfig.Region
+		tRegion = sessionPtr.styBaseConfig.Region
 	}
-	if sessionPtr.STYConfig.UserPoolId == ctv.VAL_EMPTY {
+	if sessionPtr.styBaseConfig.UserPoolId == ctv.VAL_EMPTY {
 		if userPoolId == ctv.VAL_EMPTY {
 			errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v or AWSSession Access Token", ctv.TXT_MISSING_PARAMETER, ctv.FN_USERPOOL_ID))
 			return
 		}
 		tUserPoolId = userPoolId
 	} else {
-		tUserPoolId = sessionPtr.STYConfig.UserPoolId
+		tUserPoolId = sessionPtr.styBaseConfig.UserPoolId
 	}
 
-	if tClientPtr = awsCI.NewFromConfig(sessionPtr.BaseConfig); tClientPtr == nil {
+	if tClientPtr = awsCI.NewFromConfig(sessionPtr.baseConfig); tClientPtr == nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_COGNITO))
 	}
 
-	tLogins[fmt.Sprintf("cognito-idp.%v.amazonaws.com/%v", tRegion, tUserPoolId)] = sessionPtr.IDToken
+	tLogins[fmt.Sprintf("cognito-idp.%v.amazonaws.com/%v", tRegion, tUserPoolId)] = sessionPtr.tokens.id
 	if tGetIdOutputPtr, errorInfo.Error = tClientPtr.GetId(
-		awsCTX, &awsCI.GetIdInput{
-			IdentityPoolId: aws.String(sessionPtr.STYConfig.IdentityPoolId),
+		awsCTXToDo, &awsCI.GetIdInput{
+			IdentityPoolId: aws.String(sessionPtr.styBaseConfig.IdentityPoolId),
 			Logins:         tLogins,
 		},
 	); errorInfo.Error != nil {
@@ -217,8 +170,8 @@ func GetId(
 		return
 	}
 
-	sessionPtr.IdentityId = *tGetIdOutputPtr.IdentityId
-	identityId = sessionPtr.IdentityId
+	sessionPtr.identityPoolInfo.IdentityId = *tGetIdOutputPtr.IdentityId
+	identityId = sessionPtr.identityPoolInfo.IdentityId
 
 	return
 }
@@ -229,8 +182,7 @@ func GetId(
 //	Errors: None
 //	Verifications: None
 func GetParameters(
-	sessionPtr *AWSSession,
-	idToken string,
+	sessionPtr *awsSession,
 	ssmParameters ...string,
 ) (
 	parametersOutput awsSSM.GetParametersOutput,
@@ -242,8 +194,8 @@ func GetParameters(
 		tParametersOutputPtr *awsSSM.GetParametersOutput
 	)
 
-	if sessionPtr.STYConfig.UserPoolId == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, sessionPtr.STYConfig.UserPoolId))
+	if sessionPtr.styBaseConfig.UserPoolId == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, sessionPtr.styBaseConfig.UserPoolId))
 		return
 	}
 
@@ -252,12 +204,21 @@ func GetParameters(
 		return
 	}
 
-	if tClientPtr = awsSSM.NewFromConfig(sessionPtr.BaseConfig); tClientPtr == nil {
+	sessionPtr.baseConfig.Credentials = awsCred.StaticCredentialsProvider{Value: aws.Credentials{
+		AccessKeyID:     sessionPtr.identityPoolInfo.credentials.AccessKeyID,
+		SecretAccessKey: sessionPtr.identityPoolInfo.credentials.SecretAccessKey,
+		SessionToken:    sessionPtr.identityPoolInfo.credentials.SessionToken,
+		Source:          "",
+		CanExpire:       false,
+		Expires:         time.Time{},
+	}}
+
+	if tClientPtr = awsSSM.NewFromConfig(sessionPtr.baseConfig); tClientPtr == nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_SYSTEM_MANAGER))
 	}
 
 	if tParametersOutputPtr, errorInfo.Error = tClientPtr.GetParameters(
-		awsCTX, &awsSSM.GetParametersInput{
+		awsCTXToDo, &awsSSM.GetParametersInput{
 			Names:          ssmParameters,
 			WithDecryption: awsTruePtr,
 		},
@@ -279,7 +240,7 @@ func GetParameters(
 func Login(
 	loginType, username string,
 	password *string,
-	sessionPtr *AWSSession,
+	sessionPtr *awsSession,
 ) (
 	tokens map[string]string,
 	errorInfo pi.ErrorInfo,
@@ -287,7 +248,7 @@ func Login(
 
 	var (
 		tClientPtr                    *awsCIP.Client
-		cognitoLoginPtr               *CognitoLogin
+		cognitoLoginPtr               *cognitoLogin
 		tInitiateAuthOutputPtr        *awsCIP.InitiateAuthOutput
 		tRespondToAuthChallengeOutput *awsCIP.RespondToAuthChallengeOutput
 	)
@@ -304,16 +265,16 @@ func Login(
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_PASSWORD, ctv.TXT_PROTECTED))
 		return
 	}
-	if sessionPtr.STYConfig.UserPoolId == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, sessionPtr.STYConfig.UserPoolId))
+	if sessionPtr.styBaseConfig.UserPoolId == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, sessionPtr.styBaseConfig.UserPoolId))
 		return
 	}
 
-	if cognitoLoginPtr, errorInfo = NewCognitoLogin(username, sessionPtr.STYConfig.UserPoolId, sessionPtr.STYConfig.ClientId, password, nil); errorInfo.Error != nil {
+	if cognitoLoginPtr, errorInfo = NewCognitoLogin(username, sessionPtr.styBaseConfig.UserPoolId, sessionPtr.styBaseConfig.ClientId, password, nil); errorInfo.Error != nil {
 		pi.PrintErrorInfo(errorInfo)
 	}
 
-	if tClientPtr = awsCIP.NewFromConfig(sessionPtr.BaseConfig); tClientPtr == nil {
+	if tClientPtr = awsCIP.NewFromConfig(sessionPtr.baseConfig); tClientPtr == nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_COGNITO))
 	}
 
@@ -354,10 +315,10 @@ func Login(
 		tokens["refresh"] = *tRespondToAuthChallengeOutput.AuthenticationResult.RefreshToken
 	}
 
-	sessionPtr.Username = username
-	sessionPtr.AccessToken = tokens["access"]
-	sessionPtr.IDToken = tokens["id"]
-	sessionPtr.RefreshToken = tokens["refresh"]
+	sessionPtr.username = username
+	sessionPtr.tokens.access = tokens["access"]
+	sessionPtr.tokens.id = tokens["id"]
+	sessionPtr.tokens.refresh = tokens["refresh"]
 
 	return
 }
@@ -378,7 +339,7 @@ func Login(
 // 	} else {
 // 		tawsCIPPtr = cognito.New(a.SessionPtr)
 // 		tAdminConfirmSignUpInput.Username = &userName
-// 		tAdminConfirmSignUpInput.UserPoolId = &a.AWSConfig.UserPoolId
+// 		tAdminConfirmSignUpInput.UserPoolId = &a.awsCfg.UserPoolId
 // 		if _, errorInfo.Error = tawsCIPPtr.AdminConfirmSignUp(&tAdminConfirmSignUpInput); errorInfo.Error != nil {
 // 			// If the user is already confirmed, AWS will return an error, and do not care about this error.
 // 			if strings.Contains(errorInfo.Error.Error(), ctv.STATUS_CONFIRMED) {
@@ -476,37 +437,37 @@ func Login(
 //	Errors: ErrEnvironmentInvalid, anything awsConfig.LoadDefaultConfig or getPublicKeySet returns,
 //	Verifications: None
 func NewAWSConfig(environment string) (
-	sessionPtr *AWSSession,
+	sessionPtr *awsSession,
 	errorInfo pi.ErrorInfo,
 ) {
 
 	var (
-		session AWSSession
+		session awsSession
 	)
 
 	sessionPtr = &session // Initialize session
 
 	switch strings.ToLower(strings.Trim(environment, ctv.SPACES_ONE)) {
 	case ctv.ENVIRONMENT_PRODUCTION:
-		sessionPtr.STYConfig = styConfig
+		sessionPtr.styBaseConfig = styConfigProduction
 	case ctv.ENVIRONMENT_DEVELOPMENT:
-		sessionPtr.STYConfig = styConfigDevelopment
+		sessionPtr.styBaseConfig = styConfigDevelopment
 	case ctv.ENVIRONMENT_LOCAL:
-		sessionPtr.STYConfig = styConfigLocal
+		sessionPtr.styBaseConfig = styConfigLocal
 	default:
 		errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, environment))
 	}
 
-	if sessionPtr.BaseConfig, errorInfo.Error = awsConfig.LoadDefaultConfig(awsCTX, awsConfig.WithRegion(sessionPtr.STYConfig.Region)); errorInfo.
+	if sessionPtr.baseConfig, errorInfo.Error = awsCfg.LoadDefaultConfig(awsCTXToDo, awsCfg.WithRegion(sessionPtr.styBaseConfig.Region)); errorInfo.
 		Error != nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, "Failed to create an AWS Session.")
 		return
 	}
 
-	sessionPtr.KeySetURL = fmt.Sprintf(
-		"https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", sessionPtr.STYConfig.Region, sessionPtr.STYConfig.UserPoolId,
+	sessionPtr.keyInfo.keySetURL = fmt.Sprintf(
+		"https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", sessionPtr.styBaseConfig.Region, sessionPtr.styBaseConfig.UserPoolId,
 	)
-	sessionPtr.KeySet, errorInfo = getPublicKeySet(sessionPtr.KeySetURL)
+	sessionPtr.keyInfo.keySet, errorInfo = getPublicKeySet(sessionPtr.keyInfo.keySetURL)
 
 	return
 }
@@ -518,7 +479,7 @@ func NewAWSConfig(environment string) (
 //	Errors: None
 //	Verifications: None
 func ParseAWSJWT(
-	sessionPtr *AWSSession,
+	sessionPtr *awsSession,
 	tokenType, token string,
 ) (
 	claims jwt.Claims,
@@ -526,7 +487,7 @@ func ParseAWSJWT(
 	errorInfo pi.ErrorInfo,
 ) {
 
-	if len(sessionPtr.KeySet.Keys) == ctv.VAL_ZERO {
+	if len(sessionPtr.keyInfo.keySet.Keys) == ctv.VAL_ZERO {
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, ctv.TXT_KEY_SET_MISSING)
 		return
 	}
@@ -543,13 +504,13 @@ func ParseAWSJWT(
 		return
 	}
 
-	for i := 0; i < len(sessionPtr.KeySet.Keys); i++ {
+	for i := 0; i < len(sessionPtr.keyInfo.keySet.Keys); i++ {
 		if tokenValuePtr, errorInfo.Error = jwt.ParseWithClaims(
 			token, jwt.MapClaims{}, func(token *jwt.Token) (
 				key interface{},
 				err error,
 			) {
-				key, err = convertKey(sessionPtr.KeySet.Keys[i].E, sessionPtr.KeySet.Keys[i].N) // ID
+				key, err = convertKey(sessionPtr.keyInfo.keySet.Keys[i].E, sessionPtr.keyInfo.keySet.Keys[i].N) // ID
 				claims = token.Claims
 				return
 			},
@@ -798,13 +759,13 @@ func convertKey(rawE, rawN string) (
 //	Errors: ErrRequiredArgumentMissing, ErrHTTPRequestFailed, http.Get or io.ReadAll or json.Unmarshal returned error
 //	Verifications: None
 func getPublicKeySet(keySetURL string) (
-	keySet KeySet,
+	keySet keySet,
 	errorInfo pi.ErrorInfo,
 ) {
 
 	var (
 		tJWKS              map[string]interface{}
-		tKey               Key
+		tKey               key
 		tKeySetResponsePtr *http.Response
 		tKeyData           []byte
 	)
