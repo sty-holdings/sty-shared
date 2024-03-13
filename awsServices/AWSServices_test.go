@@ -55,7 +55,7 @@ func TestGetIdentityCredentials(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *awsSession
+		sessionPtr  *AWSSession
 	)
 
 	tests := []struct {
@@ -118,7 +118,7 @@ func TestGetId(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *awsSession
+		sessionPtr  *AWSSession
 	)
 
 	tests := []struct {
@@ -180,7 +180,7 @@ func TestGetParameters(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *awsSession
+		sessionPtr  *AWSSession
 	)
 
 	tests := []struct {
@@ -244,7 +244,7 @@ func TestLogin(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *awsSession
+		sessionPtr  *AWSSession
 	)
 
 	tests := []struct {
@@ -465,7 +465,7 @@ func TestParseAWSJWT(tPtr *testing.T) {
 		errorInfo   pi.ErrorInfo
 		gotError    bool
 		password    = "Yidiao09#1"
-		sessionPtr  *awsSession
+		sessionPtr  *AWSSession
 		tokens      = make(map[string]string)
 	)
 

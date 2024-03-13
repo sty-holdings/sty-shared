@@ -64,7 +64,7 @@ import (
 //	Errors: None
 //	Verifications: None
 func GetIdentityCredentials(
-	sessionPtr *awsSession,
+	sessionPtr *AWSSession,
 	identityId string,
 
 ) (
@@ -121,7 +121,7 @@ func GetIdentityCredentials(
 //	Errors: None
 //	Verifications: None
 func GetId(
-	sessionPtr *awsSession,
+	sessionPtr *AWSSession,
 	region, userPoolId string,
 ) (
 	identityId string,
@@ -182,7 +182,7 @@ func GetId(
 //	Errors: None
 //	Verifications: None
 func GetParameters(
-	sessionPtr *awsSession,
+	sessionPtr *AWSSession,
 	ssmParameters ...string,
 ) (
 	parametersOutput awsSSM.GetParametersOutput,
@@ -240,7 +240,7 @@ func GetParameters(
 func Login(
 	loginType, username string,
 	password *string,
-	sessionPtr *awsSession,
+	sessionPtr *AWSSession,
 ) (
 	tokens map[string]string,
 	errorInfo pi.ErrorInfo,
@@ -437,12 +437,12 @@ func Login(
 //	Errors: ErrEnvironmentInvalid, anything awsConfig.LoadDefaultConfig or getPublicKeySet returns,
 //	Verifications: None
 func NewAWSConfig(environment string) (
-	sessionPtr *awsSession,
+	sessionPtr *AWSSession,
 	errorInfo pi.ErrorInfo,
 ) {
 
 	var (
-		session awsSession
+		session AWSSession
 	)
 
 	sessionPtr = &session // Initialize session
@@ -483,7 +483,7 @@ func NewAWSConfig(environment string) (
 //	Errors: None
 //	Verifications: None
 func ParseAWSJWT(
-	sessionPtr *awsSession,
+	sessionPtr *AWSSession,
 	tokenType, token string,
 ) (
 	claims jwt.Claims,

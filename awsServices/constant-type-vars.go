@@ -62,7 +62,7 @@ const (
 	infoBits = "Caldera Derived Key"
 )
 
-type awsSession struct {
+type AWSSession struct {
 	tokens           cognitoTokens
 	baseConfig       aws.Config
 	identityPoolInfo cognitoIdentityInfo
