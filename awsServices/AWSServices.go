@@ -455,6 +455,10 @@ func NewAWSConfig(environment string) (
 	case ctv.ENVIRONMENT_LOCAL:
 		sessionPtr.styBaseConfig = styConfigLocal
 	default:
+		if environment == ctv.VAL_EMPTY {
+			errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, ctv.FN_ENVIRONMENT))
+			return
+		}
 		errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, environment))
 	}
 
