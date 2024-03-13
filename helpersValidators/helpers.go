@@ -178,7 +178,7 @@ func CreateAndRedirectLogOutput(logDirectory, redirectTo string) (
 		logFileHandlerPtr, logFQN, errorInfo = createLogFile(logDirectory)
 		log.SetOutput(io.MultiWriter(os.Stdout, logFileHandlerPtr))
 	default:
-		errorInfo = pi.NewErrorInfo(pi.ErrMissingServerName, fmt.Sprintf("%v%v", ctv.TXT_REDIRECT, redirectTo))
+		errorInfo = pi.NewErrorInfo(pi.ErrServerNameMissing, fmt.Sprintf("%v%v", ctv.TXT_REDIRECT, redirectTo))
 	}
 
 	return

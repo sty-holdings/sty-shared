@@ -77,7 +77,7 @@ func GenerateConfigFileSkeleton(serverName, SkeletonConfigFQD string) (errorInfo
 	)
 
 	if serverName == ctv.VAL_EMPTY {
-		pi.PrintError(pi.ErrMissingServerName, fmt.Sprintf("%v %v", ctv.TXT_SERVER_NAME, serverName))
+		pi.PrintError(pi.ErrServerNameMissing, fmt.Sprintf("%v %v", ctv.TXT_SERVER_NAME, serverName))
 		return
 	}
 	if SkeletonConfigFQD == ctv.VAL_EMPTY {

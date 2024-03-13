@@ -100,7 +100,7 @@ const (
 	NATS_ZERO                          = "The port value is zero. This is not allowed. Recommended values are 4222 and 9222."
 	MESSAGE_JSON_INVALID               = "The message body is not valid JSON."
 	MESSAGE_NAMESPACE_INVALID          = "The Message namespace value is invalid."
-	MISSING_SERVER_NAME                = "The server name in main.go is empty."
+	PROGRAM_NAME_MISSING               = "The program name in main.go is empty."
 	NATS_URL_INVALID                   = "The NATS URL value is invalid."
 	NATS_CONNECTION_FAILED             = "Connecting to NATS server failed."
 	NOT_DIVISIBLE_N                    = "Calculate value must not be divisable by N."
@@ -120,6 +120,7 @@ const (
 	REQUIRED_FILE_MISSING              = "A required file is missing."
 	RETRY_LIMIT_HIT                    = "You have tried too many times. Please try again in 15 mins or contact support@sty-holdings.com."
 	SERVER_CONFIGURATION_INVALID       = "The setting in the configuration file are inconsistant."
+	SERVER_NAME_MISSING                = "The server name in main.go is empty."
 	SERVICE_FAILED_AWS                 = "AWS service has failed. Investigate right away!"
 	SERVICE_FAILED_COGNITO             = "Cognito service has failed. Investigate right away!"
 	SERVICE_FAILED_FIREBASE            = "FIREBASE service has failed. Investigate right away!"
@@ -238,7 +239,8 @@ var (
 	ErrNatsPortInvalid                = errors.New(NATS_ZERO)
 	ErrMessageJSONInvalid             = errors.New(MESSAGE_JSON_INVALID)
 	ErrMessageNamespaceInvalid        = errors.New(MESSAGE_NAMESPACE_INVALID)
-	ErrMissingServerName              = errors.New(MISSING_SERVER_NAME)
+	ErrServerNameMissing              = errors.New(SERVER_NAME_MISSING)
+	ErrProgramNameMissing             = errors.New(PROGRAM_NAME_MISSING)
 	ErrNATSURLInvalid                 = errors.New(NATS_URL_INVALID)
 	ErrNATSConnectionFailed           = errors.New(NATS_CONNECTION_FAILED)
 	ErrNotDivisibleN                  = errors.New(NOT_DIVISIBLE_N)
