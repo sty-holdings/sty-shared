@@ -94,7 +94,7 @@ func GetIdentityCredentials(
 		return
 	}
 
-	tLogins[fmt.Sprintf("cognito-idp.%v.amazonaws.com/%v", sessionPtr.styBaseConfig.Region, sessionPtr.styBaseConfig.UserPoolId)] = sessionPtr.tokens.id
+	tLogins[fmt.Sprintf("cognito-idp.%v.amazonaws.com/%v", sessionPtr.styBaseConfig.region, sessionPtr.styBaseConfig.userPoolId)] = sessionPtr.tokens.id
 	if tGetIdentityCredentialsPtr, errorInfo.Error = tClientPtr.GetCredentialsForIdentity(
 		awsCTXToDo, &awsCI.GetCredentialsForIdentityInput{
 			IdentityId: aws.String(tIdentityId),
@@ -136,23 +136,23 @@ func GetId(
 		tUserPoolId     string
 	)
 
-	if sessionPtr.styBaseConfig.Region == ctv.VAL_EMPTY {
+	if sessionPtr.styBaseConfig.region == ctv.VAL_EMPTY {
 		if userPoolId == ctv.VAL_EMPTY {
 			errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v or AWSSession Access Token", ctv.TXT_MISSING_PARAMETER, ctv.FN_AWS_REGION))
 			return
 		}
 		tRegion = region
 	} else {
-		tRegion = sessionPtr.styBaseConfig.Region
+		tRegion = sessionPtr.styBaseConfig.region
 	}
-	if sessionPtr.styBaseConfig.UserPoolId == ctv.VAL_EMPTY {
+	if sessionPtr.styBaseConfig.userPoolId == ctv.VAL_EMPTY {
 		if userPoolId == ctv.VAL_EMPTY {
 			errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v or AWSSession Access Token", ctv.TXT_MISSING_PARAMETER, ctv.FN_USERPOOL_ID))
 			return
 		}
 		tUserPoolId = userPoolId
 	} else {
-		tUserPoolId = sessionPtr.styBaseConfig.UserPoolId
+		tUserPoolId = sessionPtr.styBaseConfig.userPoolId
 	}
 
 	if tClientPtr = awsCI.NewFromConfig(sessionPtr.baseConfig); tClientPtr == nil {
@@ -162,7 +162,7 @@ func GetId(
 	tLogins[fmt.Sprintf("cognito-idp.%v.amazonaws.com/%v", tRegion, tUserPoolId)] = sessionPtr.tokens.id
 	if tGetIdOutputPtr, errorInfo.Error = tClientPtr.GetId(
 		awsCTXToDo, &awsCI.GetIdInput{
-			IdentityPoolId: aws.String(sessionPtr.styBaseConfig.IdentityPoolId),
+			IdentityPoolId: aws.String(sessionPtr.styBaseConfig.identityPoolId),
 			Logins:         tLogins,
 		},
 	); errorInfo.Error != nil {
@@ -194,8 +194,8 @@ func GetParameters(
 		tParametersOutputPtr *awsSSM.GetParametersOutput
 	)
 
-	if sessionPtr.styBaseConfig.UserPoolId == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, sessionPtr.styBaseConfig.UserPoolId))
+	if sessionPtr.styBaseConfig.userPoolId == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, sessionPtr.styBaseConfig.userPoolId))
 		return
 	}
 
@@ -265,12 +265,12 @@ func Login(
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_PASSWORD, ctv.TXT_PROTECTED))
 		return
 	}
-	if sessionPtr.styBaseConfig.UserPoolId == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, sessionPtr.styBaseConfig.UserPoolId))
+	if sessionPtr.styBaseConfig.userPoolId == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_USERPOOL_ID, sessionPtr.styBaseConfig.userPoolId))
 		return
 	}
 
-	if cognitoLoginPtr, errorInfo = NewCognitoLogin(username, sessionPtr.styBaseConfig.UserPoolId, sessionPtr.styBaseConfig.ClientId, password, nil); errorInfo.Error != nil {
+	if cognitoLoginPtr, errorInfo = NewCognitoLogin(username, sessionPtr.styBaseConfig.userPoolId, sessionPtr.styBaseConfig.clientId, password, nil); errorInfo.Error != nil {
 		pi.PrintErrorInfo(errorInfo)
 	}
 
@@ -462,14 +462,14 @@ func NewAWSConfig(environment string) (
 		errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, environment))
 	}
 
-	if sessionPtr.baseConfig, errorInfo.Error = awsCfg.LoadDefaultConfig(awsCTXToDo, awsCfg.WithRegion(sessionPtr.styBaseConfig.Region)); errorInfo.
+	if sessionPtr.baseConfig, errorInfo.Error = awsCfg.LoadDefaultConfig(awsCTXToDo, awsCfg.WithRegion(sessionPtr.styBaseConfig.region)); errorInfo.
 		Error != nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, "Failed to create an AWS Session.")
 		return
 	}
 
 	sessionPtr.keyInfo.keySetURL = fmt.Sprintf(
-		"https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", sessionPtr.styBaseConfig.Region, sessionPtr.styBaseConfig.UserPoolId,
+		"https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", sessionPtr.styBaseConfig.region, sessionPtr.styBaseConfig.userPoolId,
 	)
 	sessionPtr.keyInfo.keySet, errorInfo = getPublicKeySet(sessionPtr.keyInfo.keySetURL)
 

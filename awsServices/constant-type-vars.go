@@ -63,19 +63,25 @@ const (
 )
 
 type AWSSession struct {
-	tokens           cognitoTokens
 	baseConfig       aws.Config
+	clientConfig     clientConfig
 	identityPoolInfo cognitoIdentityInfo
 	keyInfo          cognitoKeyInfo
 	styBaseConfig    awsConfig
+	tokens           cognitoTokens
 	username         string
 }
 
 type awsConfig struct {
-	ClientId       string
-	IdentityPoolId string
-	Region         string
-	UserPoolId     string
+	clientId       string
+	identityPoolId string
+	region         string
+	userPoolId     string
+}
+
+type clientConfig struct {
+	clientId string
+	username string
 }
 
 // ToDo Is this needed
@@ -137,22 +143,22 @@ type key struct {
 
 var (
 	styConfigLocal = awsConfig{
-		ClientId:       "677jaef1i0cri2hpbtvfce4152",
-		IdentityPoolId: "",
-		Region:         "us-west-2",
-		UserPoolId:     "us-west-2_lvAuSOXGf",
+		clientId:       "677jaef1i0cri2hpbtvfce4152",
+		identityPoolId: "",
+		region:         "us-west-2",
+		userPoolId:     "us-west-2_lvAuSOXGf",
 	}
 	styConfigDevelopment = awsConfig{
-		ClientId:       "5nfnlbaoiprg5q5n7jvd2lvm0d",
-		IdentityPoolId: "",
-		Region:         "us-west-2",
-		UserPoolId:     "us-west-2_d0U66vAT1",
+		clientId:       "5nfnlbaoiprg5q5n7jvd2lvm0d",
+		identityPoolId: "",
+		region:         "us-west-2",
+		userPoolId:     "us-west-2_d0U66vAT1",
 	}
 	styConfigProduction = awsConfig{
-		ClientId:       "4i4onptb55891872nfc00bk30a",
-		IdentityPoolId: "us-west-2:973d66b8-dece-4315-8ab3-58ad924b357b",
-		Region:         "us-west-2",
-		UserPoolId:     "us-west-2_lvAuSOXGf",
+		clientId:       "4i4onptb55891872nfc00bk30a",
+		identityPoolId: "us-west-2:973d66b8-dece-4315-8ab3-58ad924b357b",
+		region:         "us-west-2",
+		userPoolId:     "us-west-2_lvAuSOXGf",
 	}
 )
 

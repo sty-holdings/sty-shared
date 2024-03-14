@@ -19,3 +19,4 @@
 
 # Go workspace file
 go.work
+/configuration/unreadable-skeleton-config-file.json
