@@ -18,7 +18,7 @@ COPYRIGHT & WARRANTY:
 
 	Proprietary and confidential
 
-	Written by <Replace with FULL_NAME> / syacko
+	Written by Scott Yacko / syacko
 	STY-Holdings, Inc.
 	support@sty-holdings.com
 	www.sty-holdings.com

@@ -1,22 +1,36 @@
-// package sty_shared
+// Package sty-shared
 /*
+This is the STY-Holdings shared services
+
 NOTES:
-    None
 
-COPYRIGHT:
-	Copyright 2022
-	Licensed under the Apache License, Version 2.0 (the "License");
-	you may not use this file except in compliance with the License.
-	You may obtain a copy of the License at
+	None
 
-	http://www.apache.org/licenses/LICENSE-2.0
+COPYRIGHT & WARRANTY:
+
+	Copyright (c) 2022 STY-Holdings, inc
+	All rights reserved.
+
+	This software is the confidential and proprietary information of STY-Holdings, Inc.
+	Use is subject to license terms.
+
+	Unauthorized copying of this file, via any medium is strictly prohibited.
+
+	Proprietary and confidential
+
+	Written by Scott Yacko / syacko
+	STY-Holdings, Inc.
+	support@sty-holdings.com
+	www.sty-holdings.com
+
+	01-2024
+	USA
 
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-
 */
 package sty_shared
 
@@ -24,7 +38,7 @@ import (
 	"runtime"
 	"testing"
 
-	rcv "github.com/sty-holdings/resuable-const-vars/src"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 )
 
 func TestPrintDebugFunctionInfo(tPtr *testing.T) {

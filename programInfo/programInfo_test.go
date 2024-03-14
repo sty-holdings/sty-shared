@@ -18,7 +18,7 @@ COPYRIGHT & WARRANTY:
 
 	Proprietary and confidential
 
-	Written by <Replace with FULL_NAME> / syacko
+	Written by Scott Yacko / syacko
 	STY-Holdings, Inc.
 	support@sty-holdings.com
 	www.sty-holdings.com
@@ -39,7 +39,7 @@ import (
 	"runtime"
 	"testing"
 
-	rcv "github.com/sty-holdings/resuable-const-vars/src"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 )
 
 func TestGetFunctionInfo(tPtr *testing.T) {
