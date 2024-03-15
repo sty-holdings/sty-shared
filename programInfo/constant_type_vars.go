@@ -96,7 +96,7 @@ const (
 	MAP_IS_EMPTY                       = "Provided map is not populated."
 	MAP_MISSING_KEY                    = "Provided map has a nil or empty key."
 	MAP_MISSING_VALUE                  = "Provided map has a nil or empty value."
-	MAX_THREADS_INVALID                = "The config file max threads value is invalid."
+	MAX_THREADS_INVALID                = "The config file max threads value is less than 1."
 	NATS_ZERO                          = "The port value is zero. This is not allowed. Recommended values are 4222 and 9222."
 	MESSAGE_JSON_INVALID               = "The message body is not valid JSON."
 	MESSAGE_NAMESPACE_INVALID          = "The Message namespace value is invalid."

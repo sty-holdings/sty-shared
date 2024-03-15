@@ -4,7 +4,7 @@ This is the STY-Holdings shared services
 
 NOTES:
 
-	None
+	Validation of the config must be done in the caller.
 
 COPYRIGHT & WARRANTY:
 
@@ -38,10 +38,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 
 	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
-	hv "github.com/sty-holdings/sty-shared/v2024/helpersValidators"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
@@ -171,42 +169,6 @@ func ReadConfigFile(configFileFQN string) (
 
 	if configData, errorInfo.Error = os.ReadFile(configFileFQN); errorInfo.Error != nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrConfigFileMissing, tAdditionalInfo)
-	}
-
-	return
-}
-
-// ValidateConfiguration - checks the values in the configuration file are valid. ValidateConfiguration doesn't
-// test if the configuration file exists, readable, or parsable. Defaults for LogDirectory, MaxThreads, and PIDDirectory
-// are '/var/log/natsSerices-connect', 1, and '/var/run/natsSerices-connect', respectively.
-//
-//	Customer Messages: None
-//	Errors: ErrEnvironmentInvalid, ErrDirectoryMissing, ErrMaxThreadsInvalid
-//	Verifications: None
-func ValidateConfiguration(configIn map[string]interface{}) (
-	configOut map[string]interface{},
-	errorInfo pi.ErrorInfo,
-) {
-
-	configOut = configIn
-
-	for name, value := range configIn {
-		switch strings.ToLower(strings.Trim(name, ctv.SPACES_ONE)) {
-		case ctv.FN_ENVIRONMENT:
-			if hv.IsEnvironmentValid(strings.ToLower(strings.Trim(value.(string), ctv.SPACES_ONE))) == false {
-				errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, name))
-				return
-			}
-		case ctv.FN_LOG_DIRECTORY, ctv.FN_PID_DIRECTORY, ctv.FN_SKELETON:
-			if hv.DoesDirectoryExist(strings.ToLower(strings.Trim(value.(string), ctv.SPACES_ONE))) == false {
-				errorInfo = pi.NewErrorInfo(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v", ctv.TXT_DIRECTORY, name))
-			}
-		case ctv.FN_MAX_THREADS:
-			if value.(int) < 1 || value.(int) > THREAD_CAP {
-				pi.PrintError(pi.ErrMaxThreadsInvalid, fmt.Sprintf("%v%v - Default Set: %v", ctv.TXT_MAX_THREADS, value, DEFAULT_MAX_THREADS))
-				configOut[ctv.FN_MAX_THREADS] = DEFAULT_MAX_THREADS
-			}
-		}
 	}
 
 	return

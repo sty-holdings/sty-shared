@@ -44,5 +44,4 @@ const (
 	DEFAULT_SKELETON_CONFIG_NOTE_FILENAME    = "skeleton-config-file.txt"
 	DEFAULT_INVALID_SKELETON_CONFIG_FILENAME = "invalid-skeleton-config-file.json"
 	DEFAULT_UNREADABLE_CONFIG_FILENAME       = "unreadable-skeleton-config-file.json"
-	THREAD_CAP                               = 25 // This is set so system performance can be controlled. Update this as more is learned about the system.
 )
