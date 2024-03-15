@@ -43,23 +43,6 @@ import (
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
-// Configuration is a generic config file structure for application servers.
-type BaseConfiguration struct {
-	ConfigFQN         string
-	DebugModeOn       bool                   `json:"debug_mode_on"`
-	Environment       string                 `json:"environment"`
-	LogDirectory      string                 `json:"log_directory"`
-	MaxThreads        int                    `json:"max_threads"`
-	PIDDirectory      string                 `json:"pid_directory"`
-	Extensions        []BaseConfigExtensions `json:"load_extensions"`
-	SkeletonConfigFQD string                 `json:"skeleton_config_fqd"`
-}
-
-type BaseConfigExtensions struct {
-	Name           string `json:"name"`
-	ConfigFilename string `json:"config_filename"`
-}
-
 // GenerateConfigFileSkeleton will output to the console a skeleton file with notes.
 //
 //	Customer Messages: None
