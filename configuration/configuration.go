@@ -38,6 +38,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 	hv "github.com/sty-holdings/sty-shared/v2024/helpersValidators"
@@ -182,27 +183,30 @@ func ReadConfigFile(configFileFQN string) (
 //	Customer Messages: None
 //	Errors: ErrEnvironmentInvalid, ErrDirectoryMissing, ErrMaxThreadsInvalid
 //	Verifications: None
-func ValidateConfiguration(config BaseConfiguration) (errorInfo pi.ErrorInfo) {
+func ValidateConfiguration(configIn map[string]interface{}) (
+	configOut map[string]interface{},
+	errorInfo pi.ErrorInfo,
+) {
 
-	if hv.IsEnvironmentValid(config.Environment) == false {
-		errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, config.Environment))
-		return
-	}
-	if hv.DoesDirectoryExist(config.LogDirectory) == false {
-		pi.PrintError(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v - Default Set: %v", ctv.TXT_DIRECTORY, config.LogDirectory, DEFAULT_LOG_DIRECTORY))
-		config.LogDirectory = DEFAULT_LOG_DIRECTORY
-	}
-	if config.MaxThreads < 1 || config.MaxThreads > THREAD_CAP {
-		pi.PrintError(pi.ErrMaxThreadsInvalid, fmt.Sprintf("%v%v - Default Set: %v", ctv.TXT_MAX_THREADS, config.LogDirectory, DEFAULT_MAX_THREADS))
-		config.MaxThreads = DEFAULT_MAX_THREADS
-	}
-	if hv.DoesDirectoryExist(config.PIDDirectory) == false {
-		pi.PrintError(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v - Default Set: %v", ctv.TXT_DIRECTORY, config.LogDirectory, DEFAULT_PID_DIRECTORY))
-		config.PIDDirectory = DEFAULT_PID_DIRECTORY
-	}
-	if hv.DoesDirectoryExist(config.SkeletonConfigFQD) == false {
-		pi.PrintError(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v", ctv.TXT_DIRECTORY, config.SkeletonConfigFQD))
-		config.LogDirectory = DEFAULT_LOG_DIRECTORY
+	configOut = configIn
+
+	for name, value := range configIn {
+		switch strings.ToLower(strings.Trim(name, ctv.SPACES_ONE)) {
+		case ctv.FN_ENVIRONMENT:
+			if hv.IsEnvironmentValid(strings.ToLower(strings.Trim(value.(string), ctv.SPACES_ONE))) == false {
+				errorInfo = pi.NewErrorInfo(pi.ErrEnvironmentInvalid, fmt.Sprintf("%v%v", ctv.TXT_EVIRONMENT, name))
+				return
+			}
+		case ctv.FN_LOG_DIRECTORY, ctv.FN_PID_DIRECTORY, ctv.FN_SKELETON:
+			if hv.DoesDirectoryExist(strings.ToLower(strings.Trim(value.(string), ctv.SPACES_ONE))) == false {
+				errorInfo = pi.NewErrorInfo(pi.ErrDirectoryMissing, fmt.Sprintf("%v%v", ctv.TXT_DIRECTORY, name))
+			}
+		case ctv.FN_MAX_THREADS:
+			if value.(int) < 1 || value.(int) > THREAD_CAP {
+				pi.PrintError(pi.ErrMaxThreadsInvalid, fmt.Sprintf("%v%v - Default Set: %v", ctv.TXT_MAX_THREADS, value, DEFAULT_MAX_THREADS))
+				configOut[ctv.FN_MAX_THREADS] = DEFAULT_MAX_THREADS
+			}
+		}
 	}
 
 	return
