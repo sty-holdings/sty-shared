@@ -143,11 +143,11 @@ func GetConfigFile(
 //	Errors: errors returned from ReadConfigFile, ErrJSONInvalid
 //	Verifications: None
 func ProcessBaseConfigFile(configFileFQN string) (
-	config interface{},
+	configData map[string]interface{},
 	errorInfo pi.ErrorInfo,
 ) {
 
-	if config, errorInfo = GetConfigFile(configFileFQN); errorInfo.Error != nil {
+	if configData, errorInfo = GetConfigFile(configFileFQN); errorInfo.Error != nil {
 		return
 	}
 
