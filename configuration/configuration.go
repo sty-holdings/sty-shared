@@ -119,23 +119,6 @@ func GetConfigFile(
 	return
 }
 
-// ProcessBaseConfigFile - handles the base configuration file.
-//
-//	Customer Messages: None
-//	Errors: errors returned from ReadConfigFile, ErrJSONInvalid
-//	Verifications: None
-func ProcessBaseConfigFile(configFileFQN string) (
-	configData map[string]interface{},
-	errorInfo pi.ErrorInfo,
-) {
-
-	if configData, errorInfo = GetConfigFile(configFileFQN); errorInfo.Error != nil {
-		return
-	}
-
-	return
-}
-
 // ReadConfigFile opens the provide file, unmarshal the file and returns the Configuration object.
 //
 //	Customer Messages: None
