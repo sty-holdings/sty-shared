@@ -441,11 +441,7 @@ func NewAWSConfig(environment string) (
 	errorInfo pi.ErrorInfo,
 ) {
 
-	var (
-		session AWSSession
-	)
-
-	sessionPtr = &session // Initialize session
+	sessionPtr = &AWSSession{} // Initialize session
 
 	switch strings.ToLower(strings.Trim(environment, ctv.SPACES_ONE)) {
 	case ctv.ENVIRONMENT_PRODUCTION:

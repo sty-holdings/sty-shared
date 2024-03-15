@@ -113,24 +113,27 @@ func GenerateConfigFileSkeleton(serverName, SkeletonConfigFQD string) (errorInfo
 //	Verifications: None
 func GetConfigFile(
 	configFileFQN string,
-	configPtr interface{},
 ) (
+	config BaseConfiguration,
 	errorInfo pi.ErrorInfo,
 ) {
 
 	var (
 		tAdditionalInfo = fmt.Sprintf("%v%v", ctv.TXT_FILENAME, configFileFQN)
 		tConfigData     []byte
+		tConfigPtr      *BaseConfiguration
 	)
 
 	if tConfigData, errorInfo = ReadConfigFile(configFileFQN); errorInfo.Error != nil {
 		return
 	}
 
-	if errorInfo.Error = json.Unmarshal(tConfigData, &configPtr); errorInfo.Error != nil {
+	if errorInfo.Error = json.Unmarshal(tConfigData, &tConfigPtr); errorInfo.Error != nil {
 		errorInfo = pi.NewErrorInfo(errorInfo.Error, tAdditionalInfo)
 		return
 	}
+
+	config = *tConfigPtr
 
 	return
 }
@@ -145,7 +148,7 @@ func ProcessBaseConfigFile(configFileFQN string) (
 	errorInfo pi.ErrorInfo,
 ) {
 
-	if errorInfo = GetConfigFile(configFileFQN, &config); errorInfo.Error != nil {
+	if config, errorInfo = GetConfigFile(configFileFQN); errorInfo.Error != nil {
 		return
 	}
 
