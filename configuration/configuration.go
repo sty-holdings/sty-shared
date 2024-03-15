@@ -38,7 +38,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 
 	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
 	hv "github.com/sty-holdings/sty-shared/v2024/helpersValidators"
@@ -114,14 +113,14 @@ func GenerateConfigFileSkeleton(serverName, SkeletonConfigFQD string) (errorInfo
 func GetConfigFile(
 	configFileFQN string,
 ) (
-	config BaseConfiguration,
+	config interface{},
 	errorInfo pi.ErrorInfo,
 ) {
 
 	var (
 		tAdditionalInfo = fmt.Sprintf("%v%v", ctv.TXT_FILENAME, configFileFQN)
 		tConfigData     []byte
-		tConfigPtr      *BaseConfiguration
+		tConfigPtr      *interface{}
 	)
 
 	if tConfigData, errorInfo = ReadConfigFile(configFileFQN); errorInfo.Error != nil {
@@ -144,16 +143,13 @@ func GetConfigFile(
 //	Errors: errors returned from ReadConfigFile, ErrJSONInvalid
 //	Verifications: None
 func ProcessBaseConfigFile(configFileFQN string) (
-	config BaseConfiguration,
+	config interface{},
 	errorInfo pi.ErrorInfo,
 ) {
 
 	if config, errorInfo = GetConfigFile(configFileFQN); errorInfo.Error != nil {
 		return
 	}
-
-	config.ConfigFQN = configFileFQN
-	config.Environment = strings.ToLower(config.Environment)
 
 	return
 }
