@@ -113,14 +113,14 @@ func GenerateConfigFileSkeleton(serverName, SkeletonConfigFQD string) (errorInfo
 func GetConfigFile(
 	configFileFQN string,
 ) (
-	config interface{},
+	configData map[string]interface{},
 	errorInfo pi.ErrorInfo,
 ) {
 
 	var (
 		tAdditionalInfo = fmt.Sprintf("%v%v", ctv.TXT_FILENAME, configFileFQN)
 		tConfigData     []byte
-		tConfigPtr      *interface{}
+		tConfigPtr      *map[string]interface{}
 	)
 
 	if tConfigData, errorInfo = ReadConfigFile(configFileFQN); errorInfo.Error != nil {
@@ -132,7 +132,7 @@ func GetConfigFile(
 		return
 	}
 
-	config = *tConfigPtr
+	configData = *tConfigPtr
 
 	return
 }
