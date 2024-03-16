@@ -315,7 +315,7 @@ func Login(
 		tokens["refresh"] = *tRespondToAuthChallengeOutput.AuthenticationResult.RefreshToken
 	}
 
-	sessionPtr.username = username
+	sessionPtr.clientConfig.username = username
 	sessionPtr.tokens.access = tokens["access"]
 	sessionPtr.tokens.id = tokens["id"]
 	sessionPtr.tokens.refresh = tokens["refresh"]
