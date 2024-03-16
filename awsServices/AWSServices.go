@@ -58,6 +58,16 @@ import (
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
+// GetClientId returns the client ID stored in the sessionPtr.
+//
+// Customer Messages: None
+// Errors: None
+// Verifications: None
+func GetClientId(sessionPtr *AWSSession) string {
+
+	return sessionPtr.clientConfig.clientId
+}
+
 // GetIdentityCredentials - will return AWS temporary credentials.
 //
 //	Customer Messages: None
