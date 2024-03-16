@@ -79,14 +79,14 @@ func GetIdentityCredentials(
 		tLogins                    = make(map[string]string)
 	)
 
-	if sessionPtr.identityPoolInfo.IdentityId == ctv.VAL_EMPTY {
+	if sessionPtr.identityPoolInfo.identityId == ctv.VAL_EMPTY {
 		if identityId == ctv.VAL_EMPTY {
 			errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v or AWSSession Access Token", ctv.TXT_MISSING_PARAMETER, ctv.FN_AWS_IDENTITY_ID))
 			return
 		}
 		tIdentityId = identityId
 	} else {
-		tIdentityId = sessionPtr.identityPoolInfo.IdentityId
+		tIdentityId = sessionPtr.identityPoolInfo.identityId
 	}
 
 	if tClientPtr = awsCI.NewFromConfig(sessionPtr.baseConfig); tClientPtr == nil {
@@ -105,7 +105,7 @@ func GetIdentityCredentials(
 		return
 	}
 
-	sessionPtr.identityPoolInfo.IdentityId = *tGetIdentityCredentialsPtr.IdentityId
+	sessionPtr.identityPoolInfo.identityId = *tGetIdentityCredentialsPtr.IdentityId
 	sessionPtr.identityPoolInfo.credentials.AccessKeyID = *tGetIdentityCredentialsPtr.Credentials.AccessKeyId
 	sessionPtr.identityPoolInfo.credentials.SessionToken = *tGetIdentityCredentialsPtr.Credentials.SessionToken
 	sessionPtr.identityPoolInfo.credentials.SecretAccessKey = *tGetIdentityCredentialsPtr.Credentials.SecretKey
@@ -170,8 +170,8 @@ func GetId(
 		return
 	}
 
-	sessionPtr.identityPoolInfo.IdentityId = *tGetIdOutputPtr.IdentityId
-	identityId = sessionPtr.identityPoolInfo.IdentityId
+	sessionPtr.identityPoolInfo.identityId = *tGetIdOutputPtr.IdentityId
+	identityId = sessionPtr.identityPoolInfo.identityId
 
 	return
 }

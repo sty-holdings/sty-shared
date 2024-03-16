@@ -103,7 +103,7 @@ type cognitoClaims struct {
 
 type cognitoIdentityInfo struct {
 	credentials aws.Credentials
-	IdentityId  string
+	identityId  string
 }
 
 type cognitoKeyInfo struct {
