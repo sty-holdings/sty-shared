@@ -72,7 +72,6 @@ type AWSSession struct {
 	keyInfo          cognitoKeyInfo
 	styBaseConfig    awsConfig
 	tokens           cognitoTokens
-	username         string
 }
 
 type awsConfig struct {
@@ -83,8 +82,9 @@ type awsConfig struct {
 }
 
 type clientConfig struct {
-	clientId string
-	username string
+	clientId  string
+	secretKey string
+	username  string
 }
 
 // ToDo Is this needed

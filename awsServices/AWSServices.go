@@ -672,7 +672,7 @@ func ParseAWSJWT(
 // SetClientId - sets the client ID in the AWSSession struct.
 //
 // Customer Messages: None
-// Errors: Returns ErrRequiredArgumentMissing if clientId is empty.
+// Errors: ErrRequiredArgumentMissing
 // Verifications: None
 func SetClientId(
 	clientId string,
@@ -685,6 +685,26 @@ func SetClientId(
 	}
 
 	sessionPtr.clientConfig.clientId = clientId
+
+	return
+}
+
+// SetSecretKey - sets the secret key in the AWSSession struct.
+//
+// Customer Messages: None
+// Errors: ErrRequiredArgumentMissing
+// Verifications: None
+func SetSecretKey(
+	secretKey string,
+	sessionPtr *AWSSession,
+) (errorInfo pi.ErrorInfo) {
+
+	if secretKey == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_SECRET_KEY))
+		return
+	}
+
+	sessionPtr.clientConfig.secretKey = secretKey
 
 	return
 }
