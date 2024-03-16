@@ -669,6 +669,26 @@ func ParseAWSJWT(
 // 	return
 // }
 
+// SetClientId - sets the client ID in the AWSSession struct.
+//
+// Customer Messages: None
+// Errors: Returns ErrRequiredArgumentMissing if clientId is empty.
+// Verifications: None
+func SetClientId(
+	clientId string,
+	sessionPtr *AWSSession,
+) (errorInfo pi.ErrorInfo) {
+
+	if clientId == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_CLIENT_ID))
+		return
+	}
+
+	sessionPtr.clientConfig.clientId = clientId
+
+	return
+}
+
 // Private functions below here
 
 // areAWSClaimsValid - Checks if email is verified and token is either an Id or Access token.
