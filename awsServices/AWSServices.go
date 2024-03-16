@@ -69,6 +69,8 @@ func GetClientId(sessionPtr *AWSSession) string {
 }
 
 // GetIdentityCredentials - will return AWS temporary credentials.
+// The variables 'identityId' is option and are only used when sessionPtr values are empty.
+// The variable 'identityIdCredentials' is only needed if sessionPtr is nil.
 //
 //	Customer Messages: None
 //	Errors: None
@@ -126,6 +128,8 @@ func GetIdentityCredentials(
 }
 
 // GetId - will return System Manager parameters. WithDecryption is assumed.
+// The variables 'region' and 'userPoolId' are option and are only used when sessionPtr values are empty.
+// The variable 'identityId' is only needed if sessionPtr is nil.
 //
 //	Customer Messages: None
 //	Errors: None
@@ -214,6 +218,14 @@ func GetParameters(
 		return
 	}
 
+	if _, errorInfo = GetId(sessionPtr, ctv.VAL_EMPTY, ctv.VAL_EMPTY); errorInfo.Error != nil {
+		return
+	}
+
+	if _, errorInfo = GetIdentityCredentials(sessionPtr, ctv.VAL_EMPTY); errorInfo.Error != nil {
+		return
+	}
+
 	sessionPtr.baseConfig.Credentials = awsCred.StaticCredentialsProvider{Value: aws.Credentials{
 		AccessKeyID:     sessionPtr.identityPoolInfo.credentials.AccessKeyID,
 		SecretAccessKey: sessionPtr.identityPoolInfo.credentials.SecretAccessKey,
@@ -242,11 +254,12 @@ func GetParameters(
 	return
 }
 
-// Login - will validate and return tokens, if the login is successful.
+// Login - authenticates the user with the provided login type, username, and password. It
+// stores the tokens in the sessionPtr and any parameters returned from GetParameters
 //
-//	Customer Messages: None
-//	Errors: None
-//	Verifications: None
+// Customer Messages: None
+// Errors: None
+// Verifications: None
 func Login(
 	loginType, username string,
 	password *string,

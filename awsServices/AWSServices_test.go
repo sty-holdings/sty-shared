@@ -89,7 +89,7 @@ func TestGetIdentityCredentials(tPtr *testing.T) {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
 				sessionPtr, errorInfo = NewAWSConfig(environment)
-				_, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
+				errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
 				_, errorInfo = GetId(sessionPtr, ctv.VAL_EMPTY, ctv.VAL_EMPTY)
 				if _, errorInfo = GetIdentityCredentials(sessionPtr, ctv.VAL_EMPTY); errorInfo.Error != nil {
 					gotError = true
@@ -152,7 +152,7 @@ func TestGetId(tPtr *testing.T) {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
 				sessionPtr, errorInfo = NewAWSConfig(environment)
-				_, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
+				errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
 				if _, errorInfo = GetId(sessionPtr, ctv.VAL_EMPTY, ctv.VAL_EMPTY); errorInfo.Error != nil {
 					gotError = true
 				} else {
@@ -214,9 +214,9 @@ func TestGetParameters(tPtr *testing.T) {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
 				sessionPtr, errorInfo = NewAWSConfig(environment)
-				_, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
-				_, errorInfo = GetId(sessionPtr, ctv.VAL_EMPTY, ctv.VAL_EMPTY)
-				_, errorInfo = GetIdentityCredentials(sessionPtr, ctv.VAL_EMPTY)
+				errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
+				// _, errorInfo = GetId(sessionPtr, ctv.VAL_EMPTY, ctv.VAL_EMPTY)
+				// _, errorInfo = GetIdentityCredentials(sessionPtr, ctv.VAL_EMPTY)
 				if _, errorInfo = GetParameters(sessionPtr, "ai2-production-nats-token"); errorInfo.Error != nil {
 					gotError = true
 				} else {
@@ -278,7 +278,7 @@ func TestLogin(tPtr *testing.T) {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
 				sessionPtr, errorInfo = NewAWSConfig(environment)
-				if _, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr); errorInfo.Error != nil {
+				if errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr); errorInfo.Error != nil {
 					gotError = true
 				} else {
 					gotError = false
@@ -500,7 +500,7 @@ func TestParseAWSJWT(tPtr *testing.T) {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
 				sessionPtr, errorInfo = NewAWSConfig(environment)
-				tokens, errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
+				errorInfo = Login(ts.arguments.loginType, ts.arguments.username, ts.arguments.password, sessionPtr)
 				for tokenType, token := range tokens {
 					if ParseAWSJWT(sessionPtr, tokenType, token); errorInfo.Error != nil {
 						gotError = true

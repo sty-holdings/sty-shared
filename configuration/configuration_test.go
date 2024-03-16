@@ -65,7 +65,7 @@ func TestGenerateConfigFileSkeleton(tPtr *testing.T) {
 	)
 }
 
-func TestProcessBaseConfigFile(tPtr *testing.T) {
+func TestGetConfigFile(tPtr *testing.T) {
 
 	type arguments struct {
 		configFileName string
@@ -111,7 +111,7 @@ func TestProcessBaseConfigFile(tPtr *testing.T) {
 	for _, ts := range tests {
 		tPtr.Run(
 			ts.name, func(t *testing.T) {
-				if _, errorInfo = ProcessBaseConfigFile(ts.arguments.configFileName); errorInfo.Error != nil {
+				if _, errorInfo = GetConfigFile(ts.arguments.configFileName); errorInfo.Error != nil {
 					gotError = true
 				} else {
 					gotError = false
