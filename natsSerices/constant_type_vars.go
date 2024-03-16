@@ -71,6 +71,7 @@ type NATSConfiguration struct {
 type NATSService struct {
 	ConnPtr        *nats.Conn
 	CredentialsFQN string
+	InstanceName   string
 	Secure         bool
 	URL            string
 }
