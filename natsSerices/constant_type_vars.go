@@ -62,7 +62,8 @@ type MessageHandler struct {
 }
 
 type NATSConfiguration struct {
-	NATSCredentialsFilename string       `json:"nats_credentials_filename"`
+	NATSCredentialsFilename string `json:"nats_credentials_filename"`
+	NATSToken               string
 	NATSPort                int          `json:"nats_port"`
 	NATSTLSInfo             jwts.TLSInfo `json:"nats_tls_info"`
 	NATSURL                 string       `json:"nats_url"`
