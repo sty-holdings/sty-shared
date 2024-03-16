@@ -51,7 +51,7 @@ import (
 // The method can be cn.METHOD_DASHES, cn.METHOD_UNDERSCORES, ctv.VAL_EMPTY, "dashes", "underscores" or ""
 //
 //	Customer Messages: None
-//	Errors: error returned by natsSerices.Connect
+//	Errors: error returned by natsServices.Connect
 //	Verifications: None
 func BuildInstanceName(
 	method string,

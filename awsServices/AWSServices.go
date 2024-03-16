@@ -252,7 +252,6 @@ func Login(
 	password *string,
 	sessionPtr *AWSSession,
 ) (
-	tokens map[string]string,
 	errorInfo pi.ErrorInfo,
 ) {
 
@@ -261,6 +260,7 @@ func Login(
 		cognitoLoginPtr               *cognitoLogin
 		tInitiateAuthOutputPtr        *awsCIP.InitiateAuthOutput
 		tRespondToAuthChallengeOutput *awsCIP.RespondToAuthChallengeOutput
+		tTokens                       = make(map[string]string)
 	)
 
 	if loginType == ctv.VAL_EMPTY {
@@ -300,11 +300,11 @@ func Login(
 		return
 	}
 
-	tokens = make(map[string]string) // This is used for either awsCT.AuthFlowTypeUserPasswordAuth or awsCT.AuthFlowTypeUserSrpAuth
+	tTokens = make(map[string]string) // This is used for either awsCT.AuthFlowTypeUserPasswordAuth or awsCT.AuthFlowTypeUserSrpAuth
 	if loginType == string(awsCT.AuthFlowTypeUserPasswordAuth) {
-		tokens["access"] = *tInitiateAuthOutputPtr.AuthenticationResult.AccessToken
-		tokens["id"] = *tInitiateAuthOutputPtr.AuthenticationResult.IdToken
-		tokens["refresh"] = *tInitiateAuthOutputPtr.AuthenticationResult.RefreshToken
+		tTokens["access"] = *tInitiateAuthOutputPtr.AuthenticationResult.AccessToken
+		tTokens["id"] = *tInitiateAuthOutputPtr.AuthenticationResult.IdToken
+		tTokens["refresh"] = *tInitiateAuthOutputPtr.AuthenticationResult.RefreshToken
 	}
 
 	// respond to password verifier challenge
@@ -320,15 +320,15 @@ func Login(
 			errorInfo = pi.NewErrorInfo(errorInfo.Error, ctv.VAL_EMPTY)
 			return
 		}
-		tokens["access"] = *tRespondToAuthChallengeOutput.AuthenticationResult.AccessToken
-		tokens["id"] = *tRespondToAuthChallengeOutput.AuthenticationResult.IdToken
-		tokens["refresh"] = *tRespondToAuthChallengeOutput.AuthenticationResult.RefreshToken
+		tTokens["access"] = *tRespondToAuthChallengeOutput.AuthenticationResult.AccessToken
+		tTokens["id"] = *tRespondToAuthChallengeOutput.AuthenticationResult.IdToken
+		tTokens["refresh"] = *tRespondToAuthChallengeOutput.AuthenticationResult.RefreshToken
 	}
 
 	sessionPtr.clientConfig.username = username
-	sessionPtr.tokens.access = tokens["access"]
-	sessionPtr.tokens.id = tokens["id"]
-	sessionPtr.tokens.refresh = tokens["refresh"]
+	sessionPtr.tokens.access = tTokens["access"]
+	sessionPtr.tokens.id = tTokens["id"]
+	sessionPtr.tokens.refresh = tTokens["refresh"]
 
 	return
 }
