@@ -149,8 +149,8 @@ func GetConnectionWithToken(
 		nats.MaxReconnects(5),               // Set maximum reconnection attempts
 		nats.ReconnectWait(5 * time.Second), // Set reconnection wait time
 		nats.Token(config.NATSToken),
-		nats.RootCAs(config.NATSTLSInfo.TLSCABundle),
-		nats.ClientCert(config.NATSTLSInfo.TLSCert, config.NATSTLSInfo.TLSPrivateKey),
+		nats.RootCAs(config.NATSTLSInfo.TLSCABundleFQN),
+		nats.ClientCert(config.NATSTLSInfo.TLSCertFQN, config.NATSTLSInfo.TLSPrivateKeyFQN),
 	}
 
 	if tURL, errorInfo = buildURLPort(config.NATSURL, config.NATSPort); errorInfo.Error != nil {
