@@ -38,6 +38,13 @@ import (
 	"crypto"
 )
 
+//goland:noinspection GoSnakeCaseUsage,GoCommentStart
+const (
+	TLS_CA_BUNDLE_FILENAME = "tls-ca-bundle.crt"
+	TLS_CERT_FILENAME      = "tls-cert.crt"
+	TLS_PRIVATE_KEY        = "tls-private.key"
+)
+
 type GenerateCertificate struct {
 	CertFileName       string
 	Certificate        []byte

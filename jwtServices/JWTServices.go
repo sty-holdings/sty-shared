@@ -58,13 +58,16 @@ import (
 func BuildTLSTemporaryFiles(
 	tempDirectory string,
 	tlsInfo TLSInfo,
-) (errorInfo pi.ErrorInfo) {
+) (
+	tlsFQN map[string]string,
+	errorInfo pi.ErrorInfo,
+) {
 
 	if tlsInfo.TLSCABundle == ctv.VAL_EMPTY {
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_CA_BUNDLE))
 		return
 	} else {
-		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/tls-ca-bundle.crt", tempDirectory), []byte(tlsInfo.TLSCABundle), 0744); errorInfo.Error != nil {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/%v", tempDirectory, TLS_CA_BUNDLE_FILENAME), []byte(tlsInfo.TLSCABundle), 0744); errorInfo.Error != nil {
 			return
 		}
 	}
@@ -72,7 +75,7 @@ func BuildTLSTemporaryFiles(
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_CERTIFICATE))
 		return
 	} else {
-		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/tls-cert.crt", tempDirectory), []byte(tlsInfo.TLSCert), 0744); errorInfo.Error != nil {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/t%v", tempDirectory, TLS_CERT_FILENAME), []byte(tlsInfo.TLSCert), 0744); errorInfo.Error != nil {
 			return
 		}
 	}
@@ -80,7 +83,7 @@ func BuildTLSTemporaryFiles(
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_PRIVATE_KEY))
 		return
 	} else {
-		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/tls-private.key", tempDirectory), []byte(tlsInfo.TLSPrivateKey), 0744); errorInfo.Error != nil {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/%v", tempDirectory, TLS_PRIVATE_KEY), []byte(tlsInfo.TLSPrivateKey), 0744); errorInfo.Error != nil {
 			return
 		}
 	}
