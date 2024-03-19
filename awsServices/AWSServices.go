@@ -255,7 +255,7 @@ func GetParameters(
 }
 
 // Login - authenticates the user with the provided login type, username, and password. It
-// stores the tokens in the sessionPtr and any parameters returned from GetParameters
+// stores the tokens in the sessionPtr, along with the username and the clientId.
 //
 // Customer Messages: None
 // Errors: None
@@ -269,7 +269,7 @@ func Login(
 ) {
 
 	var (
-		tClientPtr                    *awsCIP.Client
+		tCognitoClientPtr             *awsCIP.Client
 		cognitoLoginPtr               *cognitoLogin
 		tInitiateAuthOutputPtr        *awsCIP.InitiateAuthOutput
 		tRespondToAuthChallengeOutput *awsCIP.RespondToAuthChallengeOutput
@@ -297,12 +297,12 @@ func Login(
 		pi.PrintErrorInfo(errorInfo)
 	}
 
-	if tClientPtr = awsCIP.NewFromConfig(sessionPtr.baseConfig); tClientPtr == nil {
+	if tCognitoClientPtr = awsCIP.NewFromConfig(sessionPtr.baseConfig); tCognitoClientPtr == nil {
 		errorInfo = pi.NewErrorInfo(pi.ErrServiceFailedAWS, fmt.Sprintf("%v%v", ctv.TXT_SERVICE, ctv.TXT_AWS_COGNITO))
 	}
 
 	// initiate auth
-	if tInitiateAuthOutputPtr, errorInfo.Error = tClientPtr.InitiateAuth(
+	if tInitiateAuthOutputPtr, errorInfo.Error = tCognitoClientPtr.InitiateAuth(
 		context.Background(), &awsCIP.InitiateAuthInput{
 			AuthFlow:       awsCT.AuthFlowType(loginType),
 			ClientId:       aws.String(cognitoLoginPtr.GetClientId()),
@@ -323,7 +323,7 @@ func Login(
 	// respond to password verifier challenge
 	if tInitiateAuthOutputPtr.ChallengeName == awsCT.ChallengeNameTypePasswordVerifier {
 		challengeResponses, _ := cognitoLoginPtr.PasswordVerifierChallenge(tInitiateAuthOutputPtr.ChallengeParameters, time.Now())
-		if tRespondToAuthChallengeOutput, errorInfo.Error = tClientPtr.RespondToAuthChallenge(
+		if tRespondToAuthChallengeOutput, errorInfo.Error = tCognitoClientPtr.RespondToAuthChallenge(
 			context.Background(), &awsCIP.RespondToAuthChallengeInput{
 				ChallengeName:      awsCT.ChallengeNameTypePasswordVerifier,
 				ChallengeResponses: challengeResponses,
@@ -339,7 +339,7 @@ func Login(
 	}
 
 	sessionPtr.clientConfig.username = username
-	sessionPtr.clientConfig.clientId = username
+	sessionPtr.clientConfig.clientId = sessionPtr.styBaseConfig.clientId
 	sessionPtr.tokens.access = tTokens["access"]
 	sessionPtr.tokens.id = tTokens["id"]
 	sessionPtr.tokens.refresh = tTokens["refresh"]
