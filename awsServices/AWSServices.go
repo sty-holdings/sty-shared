@@ -127,7 +127,7 @@ func GetIdentityCredentials(
 	return
 }
 
-// GetId - will return System Manager parameters. WithDecryption is assumed.
+// GetId - will return AWS Identity Id needed to get temporary credentials
 // The variables 'region' and 'userPoolId' are option and are only used when sessionPtr values are empty.
 // The variable 'identityId' is only needed if sessionPtr is nil.
 //
@@ -339,6 +339,7 @@ func Login(
 	}
 
 	sessionPtr.clientConfig.username = username
+	sessionPtr.clientConfig.clientId = username
 	sessionPtr.tokens.access = tTokens["access"]
 	sessionPtr.tokens.id = tTokens["id"]
 	sessionPtr.tokens.refresh = tTokens["refresh"]
@@ -691,6 +692,20 @@ func ParseAWSJWT(
 //
 // 	return
 // }
+
+// SetClientId - sets the client ID of the sessionPtr to the specified value.
+//
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func SetClientId(
+	clientId string,
+	sessionPtr *AWSSession,
+) {
+
+	sessionPtr.clientConfig.clientId = clientId
+
+}
 
 // Private functions below here
 
