@@ -59,7 +59,6 @@ func BuildTLSTemporaryFiles(
 	tempDirectory string,
 	tlsInfo TLSInfo,
 ) (
-	tlsFQN map[string]string,
 	errorInfo pi.ErrorInfo,
 ) {
 
@@ -83,7 +82,7 @@ func BuildTLSTemporaryFiles(
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_PRIVATE_KEY))
 		return
 	} else {
-		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/%v", tempDirectory, TLS_PRIVATE_KEY), []byte(tlsInfo.TLSPrivateKey), 0744); errorInfo.Error != nil {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/%v", tempDirectory, TLS_PRIVATE_KEY_FILENAME), []byte(tlsInfo.TLSPrivateKey), 0744); errorInfo.Error != nil {
 			return
 		}
 	}
