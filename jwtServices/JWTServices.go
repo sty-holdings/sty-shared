@@ -74,7 +74,7 @@ func BuildTLSTemporaryFiles(
 		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_CERTIFICATE))
 		return
 	} else {
-		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/t%v", tempDirectory, TLS_CERT_FILENAME), []byte(tlsInfo.TLSCert), 0744); errorInfo.Error != nil {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/%v", tempDirectory, TLS_CERT_FILENAME), []byte(tlsInfo.TLSCert), 0744); errorInfo.Error != nil {
 			return
 		}
 	}
