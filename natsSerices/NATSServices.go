@@ -77,6 +77,7 @@ func BuildInstanceName(
 }
 
 // GetConnection - will connect to a NATS leaf server with either a ssl or non-ssl connection.
+// This connection function requires the user credentials file be provided.
 //
 //	Customer Messages: None
 //	Errors: error returned by natsSerices.Connect
@@ -99,6 +100,55 @@ func GetConnection(
 		nats.MaxReconnects(5),               // Set maximum reconnection attempts
 		nats.ReconnectWait(5 * time.Second), // Set reconnection wait time
 		nats.UserCredentials(config.NATSCredentialsFilename),
+		nats.RootCAs(config.NATSTLSInfo.TLSCABundle),
+		nats.ClientCert(config.NATSTLSInfo.TLSCert, config.NATSTLSInfo.TLSPrivateKey),
+	}
+
+	if tURL, errorInfo = buildURLPort(config.NATSURL, config.NATSPort); errorInfo.Error != nil {
+		return
+	}
+	if connPtr, errorInfo.Error = nats.Connect(tURL, opts...); errorInfo.Error != nil {
+		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v: %v", instanceName, ctv.TXT_SECURE_CONNECTION_FAILED))
+		return
+	}
+
+	log.Printf("%v: A connection has been established with the NATS server at %v.", instanceName, config.NATSURL)
+	log.Printf(
+		"%v: URL: %v Server Name: %v Server Id: %v Address: %v",
+		instanceName,
+		connPtr.ConnectedUrl(),
+		connPtr.ConnectedClusterName(),
+		connPtr.ConnectedServerId(),
+		connPtr.ConnectedAddr(),
+	)
+
+	return
+}
+
+// GetConnectionWithToken - will connect to a NATS leaf server with either a ssl or non-ssl connection.
+// This connection function requires the NATS Token be provided.
+//
+//	Customer Messages: None
+//	Errors: error returned by natsServices.Connect
+//	Verifications: None
+func GetConnectionWithToken(
+	instanceName string,
+	config NATSConfiguration,
+) (
+	connPtr *nats.Conn,
+	errorInfo pi.ErrorInfo,
+) {
+
+	var (
+		opts []nats.Option
+		tURL string
+	)
+
+	opts = []nats.Option{
+		nats.Name(instanceName),             // Set a client name
+		nats.MaxReconnects(5),               // Set maximum reconnection attempts
+		nats.ReconnectWait(5 * time.Second), // Set reconnection wait time
+		nats.Token(config.NATSToken),
 		nats.RootCAs(config.NATSTLSInfo.TLSCABundle),
 		nats.ClientCert(config.NATSTLSInfo.TLSCert, config.NATSTLSInfo.TLSPrivateKey),
 	}
