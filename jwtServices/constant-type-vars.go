@@ -40,9 +40,9 @@ import (
 
 //goland:noinspection GoSnakeCaseUsage,GoCommentStart
 const (
-	TLS_CA_BUNDLE_FILENAME = "tls-ca-bundle.crt"
-	TLS_CERT_FILENAME      = "tls-cert.crt"
-	TLS_PRIVATE_KEY        = "tls-private.key"
+	TLS_CA_BUNDLE_FILENAME   = "tls-ca-bundle.crt"
+	TLS_CERT_FILENAME        = "tls-cert.crt"
+	TLS_PRIVATE_KEY_FILENAME = "tls-private.key"
 )
 
 type GenerateCertificate struct {
