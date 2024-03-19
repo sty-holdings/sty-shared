@@ -6,11 +6,10 @@ require (
 	cloud.google.com/go/firestore v1.14.0
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/golang-jwt/jwt/v5 v5.2.0
-	github.com/sty-holdings/constant-type-vars-go/v2024 v2024.5.10
-	github.com/sty-holdings/resuable-const-vars v2024.13.1+incompatible
 )
 
 require (
+	cloud.google.com/go v0.110.2 // indirect
 	cloud.google.com/go v0.110.2 // indirect
 	cloud.google.com/go/compute v1.19.3 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
@@ -46,6 +45,7 @@ require (
 	github.com/nats-io/nats.go v1.33.1 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
+	github.com/sty-holdings/constant-type-vars-go/v2024 v2024.5.12 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/net v0.22.0 // indirect

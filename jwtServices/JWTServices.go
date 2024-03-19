@@ -39,29 +39,53 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/golang-jwt/jwt/v5"
+	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
+	hv "github.com/sty-holdings/sty-shared/v2024/helpersValidators"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
-type GenerateCertificate struct {
-	CertFileName       string
-	Certificate        []byte
-	Host               string
-	PublicKey          crypto.PublicKey
-	PrivateKey         crypto.PrivateKey
-	PrivateKeyFileName string
-	RSABits            int
-	SelfCA             bool
-	ValidFor           string
-}
+// BuildTLSTemporaryFiles - creates temporary files for TLS information.
+// The function checks if the TLSCABundle, TLSCert, and TLSPrivateKey in tlsInfo are provided. If any of these values are empty,
+// the function returns an error indicating the missing.
+//
+//	Customer Messages: None
+//	Errors: ErrRequiredArgumentMissing, returned from WriteFile
+//	Verifications: None
+func BuildTLSTemporaryFiles(
+	tempDirectory string,
+	tlsInfo TLSInfo,
+) (errorInfo pi.ErrorInfo) {
 
-// TLSInfo files
-type TLSInfo struct {
-	TLSCert       string `json:"tls_certificate_fqn"`
-	TLSPrivateKey string `json:"tls_private_key_fqn"`
-	TLSCABundle   string `json:"tls_ca_bundle_fqn"`
+	if tlsInfo.TLSCABundle == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_CA_BUNDLE))
+		return
+	} else {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/tls-ca-bundle.crt", tempDirectory), []byte(tlsInfo.TLSCABundle), 0744); errorInfo.Error != nil {
+			return
+		}
+	}
+	if tlsInfo.TLSCert == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_CERTIFICATE))
+		return
+	} else {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/tls-cert.crt", tempDirectory), []byte(tlsInfo.TLSCert), 0744); errorInfo.Error != nil {
+			return
+		}
+	}
+	if tlsInfo.TLSPrivateKey == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_PRIVATE_KEY))
+		return
+	} else {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/tls-private.key", tempDirectory), []byte(tlsInfo.TLSPrivateKey), 0744); errorInfo.Error != nil {
+			return
+		}
+	}
+
+	return
 }
 
 // GenerateJWT
@@ -144,6 +168,25 @@ func ParsePrivateKey(tRawPrivateKey []byte) (
 	if privateKey, errorInfo.Error = jwt.ParseRSAPrivateKeyFromPEM(tRawPrivateKey); errorInfo.Error != nil {
 		errorInfo.Error = errors.New("Unable to parse the private key referred to in the configuration file.")
 		log.Println(errorInfo.Error)
+	}
+
+	return
+}
+
+// RemoveTLSTemporaryFiles - removes the temporary CA Bundle, Certificate, and Private Key files.
+//
+//	Customer Messages: None
+//	Errors: Return from RemoveFile
+//	Verifications: None
+func RemoveTLSTemporaryFiles(
+	tempDirectory string,
+) (errorInfo pi.ErrorInfo) {
+
+	if errorInfo = hv.RemoveFile(fmt.Sprintf("%v/tls-ca-bundle.crt", tempDirectory)); errorInfo.Error == nil {
+		if errorInfo = hv.RemoveFile(fmt.Sprintf("%v/tls-ca-cert.crt", tempDirectory)); errorInfo.Error == nil {
+			if errorInfo = hv.RemoveFile(fmt.Sprintf("%v/tls-private.key", tempDirectory)); errorInfo.Error == nil {
+			}
+		}
 	}
 
 	return

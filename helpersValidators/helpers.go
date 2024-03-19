@@ -525,6 +525,27 @@ func RedirectLogOutput(
 	return
 }
 
+// RemoveFile - removes a file for the file system.
+//
+//	Customer Messages: None
+//	Errors: None
+//	Verifications: None
+func RemoveFile(fqn string) (errorInfo pi.ErrorInfo) {
+
+	// This doesn't use the coreValidator.DoesFileExist by design.
+	if _, err := os.Stat(fqn); err != nil {
+		errorInfo = pi.NewErrorInfo(pi.ErrFileMissing, fmt.Sprintf("%v%v", ctv.TXT_FILENAME, fqn))
+		return
+	}
+
+	if errorInfo.Error = os.Remove(fqn); errorInfo.Error != nil {
+		errorInfo = pi.NewErrorInfo(pi.ErrFileRemovalFailed, fmt.Sprintf("%v%v", ctv.TXT_FILENAME, fqn))
+		return
+	}
+
+	return
+}
+
 // RemovePidFile - removes the pid file for the running instance
 //
 //	Customer Messages: None
@@ -532,14 +553,7 @@ func RedirectLogOutput(
 //	Verifications: None
 func RemovePidFile(pidFQN string) (errorInfo pi.ErrorInfo) {
 
-	// This doesn't use the coreValidator.DoesFileExist by design.
-	if _, err := os.Stat(pidFQN); err != nil {
-		errorInfo = pi.NewErrorInfo(pi.ErrFileMissing, fmt.Sprintf("%v%v", ctv.TXT_FILENAME, pidFQN))
-		return
-	}
-
-	if errorInfo.Error = os.Remove(pidFQN); errorInfo.Error != nil {
-		errorInfo = pi.NewErrorInfo(pi.ErrFileRemovalFailed, fmt.Sprintf("%v%v", ctv.TXT_FILENAME, pidFQN))
+	if errorInfo = RemoveFile(pidFQN); errorInfo.Error != nil {
 		return
 	}
 
