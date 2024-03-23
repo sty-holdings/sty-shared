@@ -309,11 +309,11 @@ func BuildTemporaryFiles(
 	errorInfo pi.ErrorInfo,
 ) {
 
-	if config.NATSCredentialsFilename == ctv.VAL_EMPTY {
-		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_CA_BUNDLE))
+	if config.NATSToken == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TOKEN))
 		return
 	} else {
-		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/%v", tempDirectory, CREDENTIAL_FILENAME), []byte(config.NATSCredentialsFilename), 0744); errorInfo.Error != nil {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/%v", tempDirectory, CREDENTIAL_FILENAME), []byte(config.NATSToken), 0744); errorInfo.Error != nil {
 			return
 		}
 	}
