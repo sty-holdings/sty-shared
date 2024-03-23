@@ -44,6 +44,7 @@ import (
 
 	"github.com/nats-io/nats.go"
 	ctv "github.com/sty-holdings/constant-type-vars-go/v2024"
+	hv "github.com/sty-holdings/sty-shared/v2024/helpersValidators"
 	pi "github.com/sty-holdings/sty-shared/v2024/programInfo"
 )
 
@@ -289,6 +290,32 @@ func buildJSONReply(reply interface{}) (
 	if jsonReply, errorInfo.Error = json.Marshal(reply); errorInfo.Error != nil {
 		errorInfo = pi.NewErrorInfo(errorInfo.Error, fmt.Sprintf("%v%v", ctv.TXT_REPLY_TYPE, reflect.ValueOf(reply).Type().String()))
 		return
+	}
+
+	return
+}
+
+// BuildTemporaryFiles - creates temporary files for Token.
+// The function checks if the  NATSCredentialsFilename is provided. If the value is empty,
+// the function returns an error.
+//
+//	Customer Messages: None
+//	Errors: ErrRequiredArgumentMissing, returned from WriteFile
+//	Verifications: None
+func BuildTemporaryFiles(
+	tempDirectory string,
+	config NATSConfiguration,
+) (
+	errorInfo pi.ErrorInfo,
+) {
+
+	if config.NATSCredentialsFilename == ctv.VAL_EMPTY {
+		errorInfo = pi.NewErrorInfo(pi.ErrRequiredArgumentMissing, fmt.Sprintf("%v%v", ctv.TXT_MISSING_PARAMETER, ctv.FN_TLS_CA_BUNDLE))
+		return
+	} else {
+		if errorInfo = hv.WriteFile(fmt.Sprintf("%v/%v", tempDirectory, CREDENTIAL_FILENAME), []byte(config.NATSCredentialsFilename), 0744); errorInfo.Error != nil {
+			return
+		}
 	}
 
 	return

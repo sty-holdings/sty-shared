@@ -43,6 +43,8 @@ const (
 	METHOD_UNDERSCORES = "underscores"
 	METHOD_BLANK       = ""
 
+	CREDENTIAL_FILENAME = "nats_credentials_filename"
+
 	// Test constants
 	TEST_CREDENTIALS_FILENAME = "/Users/syacko/workspace/styh-dev/src/albert/keys/local/.keys/natsSerices-savup-backend.key"
 	TEST_MESSAGE_ENVIRONMENT  = "local"
